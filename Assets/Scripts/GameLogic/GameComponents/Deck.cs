@@ -37,4 +37,9 @@ public class Deck : MonoBehaviour
     {
         deck.Remove(deck[deck.Count-1]);
     }
+
+    public void AA()
+    {
+        
+    }
 }
