@@ -15,6 +15,7 @@ public class Card: ScriptableObject
     public Type type;
     public string carddescription;
     public Faction faction;
+    public Effect effect;
     public int basepower; //power stands for attack
     public int power; 
     public Position position;
@@ -42,20 +43,19 @@ public class Card: ScriptableObject
         Egypt,
         Neutral,
     }
-   
 
-    public Card(int id,string name,Sprite image,Type type, string carddescription,Faction faction,int basepower,int power,Position position)
-        {
-            this.id = id;
-            cardname=name;
-            this.image=image;
-            this.type=type;
-            this.carddescription=carddescription;
-            this.faction=faction;
-            this.basepower=basepower;
-            this.power=power;
-            this.position=position;
-        }
+    public enum Effect
+    {
+        None,
+        SummonBoost,
+        SummonWeather,
+        DestroyStrong,
+        DestroyWeak,
+        Draw,
+        PowerXntimes,
+        RowCleanup,
+        Average,
+    }
 }
 
 

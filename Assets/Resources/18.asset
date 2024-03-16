@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 18
   cardname: Legionario
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  image: {fileID: 21300000, guid: 7e2a62d4087efe842b108ae4f73e5138, type: 3}
   type: 2
   carddescription: Legionario
   faction: 0

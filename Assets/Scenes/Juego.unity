@@ -1578,7 +1578,7 @@ GameObject:
   - component: {fileID: 391260800}
   - component: {fileID: 391260799}
   m_Layer: 0
-  m_Name: player
+  m_Name: player1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1599,7 +1599,9 @@ MonoBehaviour:
   hand: {fileID: 834097450}
   playerdeck: {fileID: 2095566815}
   graveyard: {fileID: 32403182}
+  field: {fileID: 0}
   totalpower: 0
+  player1: 1
 --- !u!4 &391260800
 Transform:
   m_ObjectHideFlags: 0
@@ -4188,6 +4190,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1696145023}
+  - component: {fileID: 1696145024}
   m_Layer: 0
   m_Name: field
   m_TagString: Untagged
@@ -4213,6 +4216,18 @@ Transform:
   - {fileID: 352948439}
   m_Father: {fileID: 982378961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1696145024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696145022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057fb8e347829f945901ad7ae8aa41c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1715711209 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8920348530738007160, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
@@ -5107,6 +5122,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c19a7cad923da1844bb425fdcbf01664, type: 2}
   - {fileID: 11400000, guid: ca046be923d6d2c4d8c8a6e9c9229dc4, type: 2}
   - {fileID: 11400000, guid: 01c4f03083c340346979a27aa0ba60c4, type: 2}
+  - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
   container: []
   decksize: 0
 --- !u!224 &2095566816

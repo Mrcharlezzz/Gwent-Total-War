@@ -8,8 +8,10 @@ public class Player : MonoBehaviour
     public Hand hand;
     public Deck playerdeck;
     public GraveYard graveyard;
+    public Field field;
     public LeaderCard leaderCard;
     public int totalpower;
+    public bool player1;
 
     public void DrawCard()
     {
@@ -198,9 +200,49 @@ public class Player : MonoBehaviour
             {
                 card.transform.position=card.GetComponent<DragandDrop>().startPosition;
             }
-            
-        
         }
+        #endregion
+
+        #region Effect Handling
+            
+            if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Card.Effect.None)
+            {
+                Debug.Log("Effectstep1");
+                if(display.effect==Card.Effect.SummonBoost)
+                {
+                    GameObject boostSlots =GameObject.Find("boostSlots");
+                    DropZone boostslot=GameObject.Find("MeleeBoost1").GetComponent<DropZone>();
+                    foreach(Transform child in boostSlots.transform)
+                    {
+                        DropZone childzone=child.gameObject.GetComponent<DropZone>();
+                        if(childzone.positionlist[0]==display.position&&(childzone.player1==player1))
+                        {
+                            boostslot=childzone;
+                        }
+                    }
+                    if(boostslot.transform.childCount>0)
+                    {
+                        Destroy(boostslot.transform.GetChild(0).gameObject);
+                    }
+                    boostslot.cardlist.Clear();
+
+                    GameObject boost= Instantiate(card,new Vector3(0,0,0),Quaternion.identity);
+                    boost.transform.SetParent(boostslot.transform,false);
+                    Carddisplay carddisplay= boost.GetComponent<Carddisplay>();
+                    carddisplay.displayId=4;
+                    
+                    Debug.Log(carddisplay.name);
+                    boostslot.cardlist.Add(carddisplay.card);
+                    
+                    ModifyingConditions conditions=boostslot.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+                    conditions.boostamount=carddisplay.card.basepower;
+                    conditions.boostaffected=true;
+                    conditions.modified=true;
+
+
+                }
+            }
+
         #endregion
     }
 }

@@ -14,8 +14,9 @@ public class Carddisplay : MonoBehaviour
     public string cardname;
     public Sprite image;
     public Card.Type type;
-    public string carddescription;
+    public Card.Effect effect;
     public Card.Faction faction;
+    public string carddescription;
     public bool Displaypower {get{
         if(power<0)
             return false;
@@ -50,6 +51,7 @@ public class Carddisplay : MonoBehaviour
         basepower=card.basepower;
         power= card.power;
         position= card.position;
+        effect=card.effect;
 
         if(type==Card.Type.Decoy)
         {

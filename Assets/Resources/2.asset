@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   cardname: Maximo Decimo Meridio
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  image: {fileID: 21300000, guid: 098834e035924d040b00744e940020e0, type: 3}
   type: 1
   carddescription: 'Padre de un hijo asesinado... Esposo de una esposa asesinada...
     Efecto: Filosofia estoica'
   faction: 0
+  effect: 1
   basepower: 4
   power: 4
   position: 2

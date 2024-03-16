@@ -15,7 +15,7 @@ public class DragandDrop : MonoBehaviour
     GameObject gamemaster;
     void Awake()
     {
-        player=GameObject.Find("player");
+        player=GameObject.Find("player1");
         gamemaster=GameObject.Find("gamemaster");
         alreadyplayed=false;
     }
