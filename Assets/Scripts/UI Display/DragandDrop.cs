@@ -10,13 +10,13 @@ public class DragandDrop : MonoBehaviour
     public Vector2 startPosition;
     public GameObject dropZone;
     public bool alreadyplayed;
-    private bool inPlayer1Turn=true;
-    public GameObject player;
+    public Player player;
     GameObject gamemaster;
     void Awake()
     {
-        player=GameObject.Find("player1");
+        
         gamemaster=GameObject.Find("gamemaster");
+        player=gamemaster.GetComponent<GameMaster>().currentplayer;
         alreadyplayed=false;
     }
     void Update()
@@ -66,7 +66,7 @@ public class DragandDrop : MonoBehaviour
         if(isOverDropZone)
         
         {
-            player.GetComponent<Player>().PlayCard(gameObject,dropZone);
+            player.PlayCard(gameObject,dropZone);
         }
 
         else

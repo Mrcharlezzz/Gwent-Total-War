@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public Deck playerdeck;
     public GraveYard graveyard;
     public Field field;
-    public LeaderCard leaderCard;
+    public Card leaderCard;
     public int totalpower;
     public bool player1;
 
@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
         bool isValidPosition=false;
         bool availableSlot=false;
         bool playable=false;
+        bool isValidField=false;
         
 
         DropZone zone=dropZone.GetComponent<DropZone>();
@@ -66,7 +67,14 @@ public class Player : MonoBehaviour
         {
             availableSlot=true;
         }
-        if(isValidType&&isValidPosition&&availableSlot)
+
+        if(zone.typelist[0]==Card.Type.Weather||player1==zone.player1)
+        {
+            isValidField=true;
+        }
+
+
+        if(isValidType&&isValidPosition&&availableSlot&&isValidField)
         {
             playable=true;
         }
@@ -184,17 +192,26 @@ public class Player : MonoBehaviour
             GameObject card2=dropZone;//In this case the decoy collides with a card, not a dropzone due to the layer dispositions
             GameObject parent=card2.transform.parent.gameObject;
             Carddisplay card2display=card2.GetComponent<Carddisplay>();
-            if(parent.GetComponent<ModifyingConditions>()!=null&&card2.GetComponent<Carddisplay>().type!=Card.Type.Golden)
+            if(parent.GetComponent<ModifyingConditions>()!=null&&card2.GetComponent<Carddisplay>().type!=Card.Type.Golden&&parent.GetComponent<DropZone>().player1==player1)
             {
                 card2display.power=card2display.basepower;
                 card2display.powerText.color=Color.black;
+
                 
                 hand.AddCard(card2display.card);
                 parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
                 Destroy(card2);
-                
+
                 parent.GetComponent<DropZone>().cardlist.Add(display.card);
+                parent.GetComponent<DropZone>().cardlist.Add(card2display.card);
                 card.transform.SetParent(parent.transform);
+                
+                //Implementar condicional para caso de q la carta devuelta tenga determinado effecto constant
+                if(card2display.effect!=Card.Effect.None)
+                {
+                    parent.GetComponent<ModifyingConditions>().modified=true;
+                    parent.GetComponent<ModifyingConditions>().powerXntimesAffected=true;
+                }
             }
             else
             {
@@ -205,9 +222,11 @@ public class Player : MonoBehaviour
 
         #region Effect Handling
             
+            
             if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Card.Effect.None)
             {
                 Debug.Log("Effectstep1");
+                //Summon Boost
                 if(display.effect==Card.Effect.SummonBoost)
                 {
                     GameObject boostSlots =GameObject.Find("boostSlots");
@@ -241,7 +260,21 @@ public class Player : MonoBehaviour
 
 
                 }
+
+            
+            
+            
+            
+                //Power X n times
+                if(display.effect==Card.Effect.PowerXntimes)
+                {
+                    ModifyingConditions conditions=dropZone.GetComponent<ModifyingConditions>();
+                    conditions.powerXntimesAffected=true;
+                    conditions.modified=true;
+                }   
             }
+
+            
 
         #endregion
     }

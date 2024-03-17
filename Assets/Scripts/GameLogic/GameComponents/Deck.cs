@@ -35,6 +35,7 @@ public class Deck : MonoBehaviour
     
     public void DrawCard()
     {
+        Debug.Log($"2- {deck.Count}");
         deck.Remove(deck[deck.Count-1]);
     }
 

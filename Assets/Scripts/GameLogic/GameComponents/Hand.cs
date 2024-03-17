@@ -10,11 +10,9 @@ public class Hand : MonoBehaviour
     public AddCards addCards;
     
     
-    
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        addCards=GameObject.Find("PlayerHand").GetComponent<AddCards>();
+        addCards=gameObject.GetComponent<AddCards>();
     }
 
     // Update is called once per frame

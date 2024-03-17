@@ -18,6 +18,7 @@ MonoBehaviour:
   type: 2
   carddescription: Pretoriano Comun
   faction: 0
+  effect: 6
   basepower: 1
   power: 1
-  position: 4
+  position: 2

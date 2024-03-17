@@ -8,5 +8,7 @@ public class ModifyingConditions : MonoBehaviour
     public bool weatheraffected=false;
     public bool weatheroff= false;
     public bool boostaffected=false;
+    public bool powerXntimesAffected;
+    public int nTimes=0;
     public int boostamount=0;
 }
