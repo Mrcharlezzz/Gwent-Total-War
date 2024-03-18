@@ -4,5 +4,19 @@ using UnityEngine;
 
 public class Field : MonoBehaviour
 {
-    public int multipleCount; //Made for the Power X n times effect
+    public GameObject unitRows;
+    public GameObject boostSlots;
+    
+    public void Clear()
+    {
+        foreach(Transform child in unitRows.transform)
+        {
+            child.gameObject.GetComponent<DropZone>().ZoneClear();
+        }
+        foreach(Transform child in boostSlots.transform)
+        {
+            child.gameObject.GetComponent<DropZone>().ZoneClear();
+        }
+    }
 }
+

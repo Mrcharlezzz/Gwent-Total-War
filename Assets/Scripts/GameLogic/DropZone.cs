@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class DropZone : MonoBehaviour
@@ -11,23 +12,65 @@ public class DropZone : MonoBehaviour
     public int multiplePower=0; //for power x n times effect
     public bool isUnitRow;
     public bool player1; // side of the field of the row (false means it is player2's)
+    GameMaster gameMaster;
      
     ModifyingConditions conditions;
+
+    
+    public void ZoneClear()
+    {
+        cardlist.Clear();
+        multiplePower=0;
+        if(gameObject.transform.childCount>0)
+        {
+            foreach(Transform child in gameObject.transform)
+            {
+                GraveYard graveYard;
+                if(player1)
+                {
+                    graveYard=gameMaster.player1.graveyard;
+                }
+                else
+                {
+                    graveYard=gameMaster.player2.graveyard;
+                }
+                graveYard.Add(child.GetComponent<Carddisplay>().card);
+                Destroy(child.gameObject);
+            }
+        }
+        
+        if(conditions!=null)
+        {    
+            conditions.modified=false;
+            conditions.weatheraffected=false;
+            conditions.weatheroff= false;
+            conditions.boostaffected=false;
+            conditions.powerXntimesAffected=false;
+            conditions.nTimes=0;
+            conditions.boostamount=0;
+        }
+    }
     
     void Awake()
     {
         conditions=gameObject.GetComponent<ModifyingConditions>();
+        gameMaster=GameObject.Find("gamemaster").GetComponent<GameMaster>();
     }
     void Update()
     {        
-        
+
         if(isUnitRow&&conditions.modified)
         {
-        
         conditions.modified=false;
         CheckConditions();
+        
+        
+        gameMaster.globalModified=true;
     }
 
+    
+    
+    
     
     void CheckWeatherOffCondition()
     {
@@ -152,7 +195,7 @@ public class DropZone : MonoBehaviour
         else
         {
             CheckWeatherOffCondition();
-            StartCoroutine(CheckPowerXnTimesEffectWithDelay(0.05f));//0.1 seconds delay in order to let unity update scene data
+            StartCoroutine(CheckPowerXnTimesEffectWithDelay(0.05f));//0.05 seconds delay in order to let unity update scene data
             CheckBoostAffectedCondition();
         }
         Debug.Log("Updated");

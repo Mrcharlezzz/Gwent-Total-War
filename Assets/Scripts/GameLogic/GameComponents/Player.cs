@@ -1,17 +1,70 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameMaster gameMaster;
     public Hand hand;
     public Deck playerdeck;
     public GraveYard graveyard;
     public Field field;
     public Card leaderCard;
-    public int totalpower;
+    public int totalpower=0;
+    public int roundpoints=0;
+    public TextMeshProUGUI totalPowerText;
     public bool player1;
+    public bool fieldModified=false;
+    public bool roundupdate=false;
+    public GameObject point1;
+    public GameObject point2;
+
+    
+    void Update()
+    {
+        if(roundupdate)
+        {
+            if(roundpoints==1)
+            {
+                point1.SetActive(true);
+            }
+            if(roundpoints==2)
+            {
+                point2.SetActive(true);
+            }
+            roundupdate=false;
+        }
+        
+        
+        if(fieldModified)
+        {
+            Transform unitrows=field.unitRows.transform;
+            totalpower=0;
+            foreach(Transform child in unitrows)
+            {
+                if(child.childCount>0)
+                {    
+                    foreach(Transform grandchild in child)
+                    {
+                        totalpower+=grandchild.gameObject.GetComponent<Carddisplay>().power;
+                    }
+                }
+            }
+
+            totalPowerText.text=totalpower.ToString();
+            fieldModified=false;
+        }
+    }
+    
+    public void PlayerClear()
+    {
+        field.Clear();
+        totalpower=0;
+        totalPowerText.text="0";
+    }
 
     public void DrawCard()
     {
@@ -77,6 +130,7 @@ public class Player : MonoBehaviour
         if(isValidType&&isValidPosition&&availableSlot&&isValidField)
         {
             playable=true;
+            gameMaster.NextTurn();
         }
         }
         #endregion
@@ -145,6 +199,8 @@ public class Player : MonoBehaviour
             Debug.Log("dropzone modifiedAAA");
             }
             card.transform.SetParent(dropZone.transform,false);
+
+            gameMaster.globalModified=true;
         }
         else
         {
@@ -212,6 +268,8 @@ public class Player : MonoBehaviour
                     parent.GetComponent<ModifyingConditions>().modified=true;
                     parent.GetComponent<ModifyingConditions>().powerXntimesAffected=true;
                 }
+
+                gameMaster.NextTurn();
             }
             else
             {

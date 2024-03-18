@@ -25,6 +25,7 @@ public class DragandDrop : MonoBehaviour
         {
             transform.position= new Vector2(Input.mousePosition.x,Input.mousePosition.y);
         }
+        player=gamemaster.GetComponent<GameMaster>().currentplayer;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
