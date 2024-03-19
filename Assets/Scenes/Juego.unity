@@ -668,10 +668,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610da31da6f4a1345b5606651e7193b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnUI: {fileID: 128210557}
   gameMaster: {fileID: 911483361}
   playerText: {fileID: 162542858}
-  pass: {fileID: 963447817}
+  pass: {fileID: 963447819}
 --- !u!1 &162542856
 GameObject:
   m_ObjectHideFlags: 0
@@ -3419,7 +3418,9 @@ MonoBehaviour:
   dragging: 0
   globalModified: 0
   turnUI: {fileID: 128210557}
+  message: {fileID: 1166359832}
   WeatherSlots: {fileID: 352948438}
+  pass: {fileID: 963447819}
 --- !u!1 &963447817
 GameObject:
   m_ObjectHideFlags: 0
@@ -4185,6 +4186,8 @@ GameObject:
   - component: {fileID: 1166359833}
   - component: {fileID: 1166359835}
   - component: {fileID: 1166359834}
+  - component: {fileID: 1166359836}
+  - component: {fileID: 1166359837}
   m_Layer: 5
   m_Name: UIMessage
   m_TagString: Untagged
@@ -4251,6 +4254,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1166359832}
   m_CullTransparentMesh: 1
+--- !u!114 &1166359836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166359832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3679d40931a05c5468054b1728ab5210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gamemaster: {fileID: 911483361}
+  text: {fileID: 992310080}
+  pass: {fileID: 963447819}
+  gameended: 0
+--- !u!114 &1166359837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166359832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c1f3faaeabb6f54eb69e3ea9c71d9d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1171881264
 GameObject:
   m_ObjectHideFlags: 0
@@ -5116,7 +5147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 968333217846313166, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 223.81012
+      value: 222.9
       objectReference: {fileID: 0}
     - target: {fileID: 968333217846313166, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -6689,7 +6720,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1862224701}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1166359836}
+        m_TargetAssemblyTypeName: Message, Assembly-CSharp
+        m_MethodName: Continue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1862224701
 MonoBehaviour:
   m_ObjectHideFlags: 0

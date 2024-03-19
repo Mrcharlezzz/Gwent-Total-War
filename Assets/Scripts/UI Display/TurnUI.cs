@@ -7,15 +7,14 @@ using UnityEngine.UI;
 
 public class TurnUI : MonoBehaviour
 {
-    public GameObject turnUI;
     public GameMaster gameMaster;
     public TextMeshProUGUI playerText;
-    public GameObject pass;
+    public Button pass;
 
     public void Begin()
     {
-        turnUI.SetActive(false);
+        gameObject.SetActive(false);
         gameMaster.currentplayer.hand.gameObject.SetActive(true);
-        pass.GetComponent<Button>().enabled=true;
+        pass.enabled=true;
     }
 }

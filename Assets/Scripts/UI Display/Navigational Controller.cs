@@ -3,9 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class NavigationController : MonoBehaviour
 {
-    public void CargarEscena(string Faction)
+    public void LoadScene(string nextscene)
     {
-        SceneManager.LoadScene(Faction);
+        SceneManager.LoadScene(nextscene);
     }
     
 }

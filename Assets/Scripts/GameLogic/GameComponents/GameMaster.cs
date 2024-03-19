@@ -19,7 +19,9 @@ public class GameMaster : MonoBehaviour
     private int turn=1;
     private bool playerpassed=false;
     public GameObject turnUI;
+    public GameObject message;
     public GameObject WeatherSlots;
+    public Button pass;
     public void StartGame()
     {
         //Initializes the Game
@@ -54,7 +56,7 @@ public class GameMaster : MonoBehaviour
         if(!playerpassed)
         {
             currentplayer.hand.gameObject.SetActive(false);
-            GameObject.Find("Pass").GetComponent<Button>().enabled=false;
+            pass.enabled=false;
 
             var aux=currentplayer;
             currentplayer=notcurrentplayer;
@@ -98,10 +100,20 @@ public class GameMaster : MonoBehaviour
             player1.roundpoints++;
             player2.roundpoints++;
         }
+
+
         if(roundWinner!=null)
         {
             currentplayer=roundWinner;
+            message.GetComponent<Message>().text.text=$"Round Winner:\n{roundWinner.gameObject.name}";
+            
         }
+        else{
+            message.GetComponent<Message>().text.text=$"Tied Round";
+        }
+        
+        pass.enabled=false;
+        message.SetActive(true);
 
         player1.roundupdate=true;
         player2.roundupdate=true;
@@ -131,6 +143,22 @@ public class GameMaster : MonoBehaviour
     }
     public void EndGame()
     {
+        if(player1.roundpoints>player2.roundpoints)
+        {
+            message.GetComponent<Message>().text.text=$"PLAYER 1\nIS THE\nWINNER!!!";   
+        }
+        else if(player1.roundpoints<player2.roundpoints)
+        {
+            message.GetComponent<Message>().text.text=$"PLAYER 2\nIS THE\nWINNER!!!";
+        }
+        else{
+            message.GetComponent<Message>().text.text=$"TIED UP";
+        }
+        pass.enabled=false;
+        message.GetComponent<Message>().gameended=true;
+        message.SetActive(true);
+        
+        
         //Pendiente implementar variante con UI message
     }
     public void DrawCards(Player player,int n)
