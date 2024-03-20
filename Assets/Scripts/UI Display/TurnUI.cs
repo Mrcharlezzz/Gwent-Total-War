@@ -16,5 +16,9 @@ public class TurnUI : MonoBehaviour
         gameObject.SetActive(false);
         gameMaster.currentplayer.hand.gameObject.SetActive(true);
         pass.enabled=true;
+        if(gameMaster.turn==1)
+        {
+            gameMaster.StartSelection();
+        }
     }
 }

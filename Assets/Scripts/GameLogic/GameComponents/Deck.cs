@@ -9,17 +9,7 @@ public class Deck : MonoBehaviour
    
     public int decksize;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void Shuffle()
     {
         for (int i=0;i<decksize;i++)

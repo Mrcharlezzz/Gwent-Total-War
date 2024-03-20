@@ -16,7 +16,8 @@ public class GameMaster : MonoBehaviour
     public bool dragging;
     public bool globalModified=false;
     private int round=1;
-    private int turn=1;
+    public int turn=0;
+    public int selectionCount=0;
     private bool playerpassed=false;
     public GameObject turnUI;
     public GameObject message;
@@ -42,30 +43,32 @@ public class GameMaster : MonoBehaviour
 
         DrawCards(currentplayer,10);
         DrawCards(notcurrentplayer,10);
-
         
-        GameObject.Find("Pass").GetComponent<Button>().enabled=false;
-        turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name}";
+        pass.enabled=false;
+        turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name} Selection";
         turnUI.SetActive(true);
 
+        StartSelection();
+        
+        
+
+        
 
     }
     public void NextTurn()
     {
         //Conditions for switching turns
+        turn++;
         if(!playerpassed)
         {
             currentplayer.hand.gameObject.SetActive(false);
-            pass.enabled=false;
+            PlayerSwitch();
 
-            var aux=currentplayer;
-            currentplayer=notcurrentplayer;
-            notcurrentplayer=aux;
-            
+            pass.enabled=false;
             turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name}";
             turnUI.SetActive(true);
         }
-        turn++;
+        
     }
     public void Pass()
     {
@@ -104,7 +107,10 @@ public class GameMaster : MonoBehaviour
 
         if(roundWinner!=null)
         {
-            currentplayer=roundWinner;
+            if(currentplayer!=roundWinner)
+            {
+                PlayerSwitch();
+            }
             message.GetComponent<Message>().text.text=$"Round Winner:\n{roundWinner.gameObject.name}";
             
         }
@@ -157,16 +163,64 @@ public class GameMaster : MonoBehaviour
         pass.enabled=false;
         message.GetComponent<Message>().gameended=true;
         message.SetActive(true);
-        
-        
-        //Pendiente implementar variante con UI message
     }
+
     public void DrawCards(Player player,int n)
     {
         for(int i=0;i<n;i++){
             player.DrawCard();
         }
     }
+
+    public void StartSelection()
+    {
+        //Card selection at the beggining of the game
+        Debug.Log("startselect");
+        Debug.Log($"current {currentplayer}");
+        pass.enabled=false;
+        foreach(Transform card in currentplayer.hand.gameObject.transform)
+        {
+            card.gameObject.GetComponent<DragandDrop>().enabled=false;
+            card.gameObject.GetComponent<Button>().enabled=true;
+        }   
+    }
+    public void EndSelection()
+    {
+        Debug.Log("End");
+        Debug.Log($"turn {turn}");
+        pass.enabled=true;
+        foreach(Transform card in currentplayer.hand.gameObject.transform)
+        {
+            card.gameObject.GetComponent<DragandDrop>().enabled=true;
+            card.gameObject.GetComponent<Button>().enabled=false;
+        }
+        currentplayer.playerdeck.Shuffle();
+        DrawCards(currentplayer,2);
+
+        if(turn==0)
+        {
+            turn++;
+            currentplayer.hand.gameObject.SetActive(false);
+            PlayerSwitch();
+
+            Debug.Log($"Turn {turn}");
+
+            pass.enabled=false;
+            turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name} Selection";
+            turnUI.SetActive(true);
+        }
+        else{
+            NextTurn();
+        }
+    }
+    
+    public void PlayerSwitch()
+    {
+        var aux=currentplayer;
+        currentplayer=notcurrentplayer;
+        notcurrentplayer=aux;
+    }
+
     
     
     void Start()

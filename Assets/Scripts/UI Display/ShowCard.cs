@@ -79,6 +79,7 @@ public class ShowCard : MonoBehaviour
     }
     public void PointerExit()
     {
+        Debug.Log("Exit");
         //Clear info Console
         cardName.GetComponent<TextMeshProUGUI>().text=""; 
         cardDescription.GetComponent<TextMeshProUGUI>().text="";
