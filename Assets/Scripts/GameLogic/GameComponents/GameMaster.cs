@@ -41,6 +41,9 @@ public class GameMaster : MonoBehaviour
         currentplayer.hand.gameObject.SetActive(false);
         notcurrentplayer.hand.gameObject.SetActive(false);
 
+        player1.playerdeck.Shuffle();
+        player2.playerdeck.Shuffle();
+
         DrawCards(currentplayer,10);
         DrawCards(notcurrentplayer,10);
         
@@ -175,8 +178,7 @@ public class GameMaster : MonoBehaviour
     public void StartSelection()
     {
         //Card selection at the beggining of the game
-        Debug.Log("startselect");
-        Debug.Log($"current {currentplayer}");
+
         pass.enabled=false;
         foreach(Transform card in currentplayer.hand.gameObject.transform)
         {

@@ -5,23 +5,20 @@ using UnityEngine;
 public class Deck : MonoBehaviour
 {
     public List<Card> deck = new List<Card>();
-    public List<Card> container = new List<Card>();
-   
     public int decksize;
     
 
     public void Shuffle()
     {
-        for (int i=0;i<decksize;i++)
+        for (int i=deck.Count-1;i>0;i--)
         {
-            container[0]=deck[i];
-            int randomindex=Random.Range(i,decksize);
-            deck[i]=deck[randomindex];
-            deck[randomindex]=container[0];
-            
+            int randomIndex=Random.Range(0,i+1);
+            Card container=deck[i];
+            deck[i]=deck[randomIndex];
+            deck[randomIndex]=container;
         }
-    }
     
+    }
     
     public void DrawCard()
     {
@@ -29,8 +26,4 @@ public class Deck : MonoBehaviour
         deck.Remove(deck[deck.Count-1]);
     }
 
-    public void AA()
-    {
-        
-    }
 }
