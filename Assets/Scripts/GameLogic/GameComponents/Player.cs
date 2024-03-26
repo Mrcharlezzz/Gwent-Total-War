@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     public bool roundupdate=false;
     public GameObject point1;
     public GameObject point2;
+    public GameObject prefab;
+    private ModifyingConditions conditions;
 
     
     void Update()
@@ -283,11 +285,28 @@ public class Player : MonoBehaviour
             
             if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Card.Effect.None)
             {
-                Debug.Log("Effectstep1");
+                
                 //Summon Boost
                 if(display.effect==Card.Effect.SummonBoost)
                 {
-                    GameObject boostSlots =GameObject.Find("boostSlots");
+                    int boostID=0;
+
+                    if(display.faction==Card.Faction.Rome)
+                    boostID=4;
+                    else
+                    boostID=0;
+
+                    GameObject boostSlots;
+                    if(player1)
+                    {
+                        boostSlots=GameObject.Find("boostSlots");
+                    }
+                    else
+                    {
+                        boostSlots=GameObject.Find("boostSlots2");
+                    }
+                    //OJO crear forma de update el carddisplay
+                    
                     DropZone boostslot=GameObject.Find("MeleeBoost1").GetComponent<DropZone>();
                     foreach(Transform child in boostSlots.transform)
                     {
@@ -303,20 +322,20 @@ public class Player : MonoBehaviour
                     }
                     boostslot.cardlist.Clear();
 
-                    GameObject boost= Instantiate(card,new Vector3(0,0,0),Quaternion.identity);
+                    GameObject boost= Instantiate(prefab,new Vector3(0,0,0),Quaternion.identity);
                     boost.transform.SetParent(boostslot.transform,false);
                     Carddisplay carddisplay= boost.GetComponent<Carddisplay>();
-                    carddisplay.displayId=4;
-                    
-                    Debug.Log(carddisplay.name);
+                    carddisplay.displayId=boostID;
+                    carddisplay.update=true;
+
                     boostslot.cardlist.Add(carddisplay.card);
                     
-                    ModifyingConditions conditions=boostslot.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
-                    conditions.boostamount=carddisplay.card.basepower;
+                    conditions=boostslot.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+                    Debug.Log($"boostamount {carddisplay.power}"); 
+                    conditions.boostamount=Resources.Load<Card>($"{boostID}").power; // carddisplay updates after this line is executed, therefore there must be a call to the original card
+                    
                     conditions.boostaffected=true;
                     conditions.modified=true;
-
-
                 }
 
             

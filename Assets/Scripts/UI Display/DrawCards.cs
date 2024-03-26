@@ -26,6 +26,7 @@ public class AddCards : MonoBehaviour
         playercard.transform.SetParent(PlayerHand.transform,false);
         Carddisplay carddisplay= playercard.GetComponent<Carddisplay>();
         carddisplay.displayId=n;
+        carddisplay.update=true;
         
     }
 }

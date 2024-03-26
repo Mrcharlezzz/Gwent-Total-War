@@ -2124,6 +2124,7 @@ MonoBehaviour:
   roundupdate: 0
   point1: {fileID: 61032662}
   point2: {fileID: 379000594}
+  prefab: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
 --- !u!4 &391260800
 Transform:
   m_ObjectHideFlags: 0
@@ -3006,6 +3007,7 @@ MonoBehaviour:
   roundupdate: 0
   point1: {fileID: 309223389}
   point2: {fileID: 2029439886}
+  prefab: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
 --- !u!1 &834097445 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
@@ -3417,6 +3419,8 @@ MonoBehaviour:
   Winner: {fileID: 391260799}
   dragging: 0
   globalModified: 0
+  turn: 0
+  selectionCount: 0
   turnUI: {fileID: 128210557}
   message: {fileID: 1166359832}
   WeatherSlots: {fileID: 352948438}
@@ -5511,7 +5515,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a55a1e06db1102840ba97655e16927ee, type: 2}
   - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
   - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
-  container: []
   decksize: 0
 --- !u!1001 &1492707929
 PrefabInstance:
@@ -6192,7 +6195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1709234568}
   m_Layer: 0
-  m_Name: boostSlots
+  m_Name: boostSlots2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7526,23 +7529,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e62a75a9e305e994c8fd047377bff9a9, type: 2}
   - {fileID: 11400000, guid: 424108d222cba2647bbccaae231d2739, type: 2}
   - {fileID: 11400000, guid: b304b474e0c24e844891d86b8b4b25c2, type: 2}
-  - {fileID: 11400000, guid: 04c2df9077ca37044a21bc90605371e2, type: 2}
-  - {fileID: 11400000, guid: f324f7b4b393b964680f7875af1e1930, type: 2}
-  - {fileID: 11400000, guid: a25ddcbd546d6fc4fb40ea028a520d9f, type: 2}
+  - {fileID: 11400000, guid: 850527c1c2a0622448e0cbbd3462509d, type: 2}
+  - {fileID: 11400000, guid: 0c46d2a6ec7e3624e8f2610b1ece6f25, type: 2}
+  - {fileID: 11400000, guid: ac0169afb6181124caf49fbac4af62f2, type: 2}
   - {fileID: 11400000, guid: 91a0c66b0647c2446bf0153ec36daed2, type: 2}
   - {fileID: 11400000, guid: f8dd78ceeea397041b782e73da1c9ba7, type: 2}
   - {fileID: 11400000, guid: 9fc57b8f93d905649a91382728c90227, type: 2}
   - {fileID: 11400000, guid: a0a914fa85330344ab148e938028f21f, type: 2}
   - {fileID: 11400000, guid: 01c4f03083c340346979a27aa0ba60c4, type: 2}
   - {fileID: 11400000, guid: 02d8947964b66e942974ba45e3c919f0, type: 2}
-  - {fileID: 11400000, guid: 850527c1c2a0622448e0cbbd3462509d, type: 2}
-  - {fileID: 11400000, guid: 0c46d2a6ec7e3624e8f2610b1ece6f25, type: 2}
-  - {fileID: 11400000, guid: ac0169afb6181124caf49fbac4af62f2, type: 2}
-  - {fileID: 11400000, guid: 1b240c44f43e37240a2b63c7037160db, type: 2}
-  - {fileID: 11400000, guid: a55a1e06db1102840ba97655e16927ee, type: 2}
-  - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
-  - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
-  container: []
+  - {fileID: 11400000, guid: 04c2df9077ca37044a21bc90605371e2, type: 2}
+  - {fileID: 11400000, guid: f324f7b4b393b964680f7875af1e1930, type: 2}
+  - {fileID: 11400000, guid: a25ddcbd546d6fc4fb40ea028a520d9f, type: 2}
   decksize: 0
 --- !u!224 &2095566816
 RectTransform:

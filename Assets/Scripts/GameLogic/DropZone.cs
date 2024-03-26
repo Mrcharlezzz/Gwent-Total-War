@@ -64,7 +64,6 @@ public class DropZone : MonoBehaviour
         conditions.modified=false;
         CheckConditions();
         
-        
         gameMaster.globalModified=true;
     }
 
@@ -132,6 +131,7 @@ public class DropZone : MonoBehaviour
             }
             conditions.powerXntimesAffected=false;
         }
+        gameMaster.globalModified=true;
             
     }
 
@@ -139,7 +139,7 @@ public class DropZone : MonoBehaviour
     {
         if(conditions.boostaffected)
         {
-            Debug.Log("aaaa");
+            Debug.Log("boostaffected");
             if(gameObject.GetComponent<DropZone>().cardlist.Count!=0)
             {
                 foreach (Transform child in gameObject.transform)

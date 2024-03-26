@@ -18,6 +18,7 @@ MonoBehaviour:
   type: 4
   carddescription: 'Aumenta la moral de los legionarios '
   faction: 0
+  effect: 0
   basepower: 3
   power: 3
   position: 2

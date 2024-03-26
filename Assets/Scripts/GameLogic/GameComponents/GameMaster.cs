@@ -40,22 +40,16 @@ public class GameMaster : MonoBehaviour
         
         currentplayer.hand.gameObject.SetActive(false);
         notcurrentplayer.hand.gameObject.SetActive(false);
-
+/*
         player1.playerdeck.Shuffle();
         player2.playerdeck.Shuffle();
-
+*/
         DrawCards(currentplayer,10);
         DrawCards(notcurrentplayer,10);
         
         pass.enabled=false;
         turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name} Selection";
         turnUI.SetActive(true);
-
-        StartSelection();
-        
-        
-
-        
 
     }
     public void NextTurn()
@@ -196,7 +190,7 @@ public class GameMaster : MonoBehaviour
             card.gameObject.GetComponent<DragandDrop>().enabled=true;
             card.gameObject.GetComponent<Button>().enabled=false;
         }
-        currentplayer.playerdeck.Shuffle();
+        //currentplayer.playerdeck.Shuffle(); 
         DrawCards(currentplayer,2);
 
         if(turn==0)
