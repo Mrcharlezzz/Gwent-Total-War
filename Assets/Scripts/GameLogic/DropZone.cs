@@ -80,7 +80,7 @@ public class DropZone : MonoBehaviour
                     foreach (Transform child in gameObject.transform)
                     {
                         Carddisplay tempcard=child.gameObject.GetComponent<Carddisplay>();
-                        if(tempcard.type!=Card.Type.Golden)
+                        if(tempcard.type!=Card.Type.Golden&&!(conditions.averaged&&tempcard.averaged))
                         {
                             tempcard.power=tempcard.basepower;
                             tempcard.powerText.text=tempcard.power.ToString();
@@ -93,10 +93,8 @@ public class DropZone : MonoBehaviour
             }
     }
 
-    IEnumerator CheckPowerXnTimesEffectWithDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        
+    void CheckPowerXnTimesEffect()
+    {   
         if(conditions.powerXntimesAffected)
         {
             Debug.Log("modified");
@@ -145,7 +143,7 @@ public class DropZone : MonoBehaviour
                 foreach (Transform child in gameObject.transform)
                 {
                 Carddisplay tempcard=child.gameObject.GetComponent<Carddisplay>();
-                    if(tempcard.type!=Card.Type.Golden)
+                    if(tempcard.type!=Card.Type.Golden&&!(conditions.averaged&&tempcard.averaged))
                     {
                         if(tempcard.effect==Card.Effect.PowerXntimes)
                         {
@@ -179,7 +177,7 @@ public class DropZone : MonoBehaviour
                 foreach (Transform child in gameObject.transform)
                 {
                     Carddisplay tempcard=child.gameObject.GetComponent<Carddisplay>();
-                    if(tempcard.type!=Card.Type.Golden)
+                    if(tempcard.type!=Card.Type.Golden&&!(conditions.averaged&&tempcard.averaged))
                     {
                         if(tempcard.power>1)
                         {
@@ -195,7 +193,7 @@ public class DropZone : MonoBehaviour
         else
         {
             CheckWeatherOffCondition();
-            StartCoroutine(CheckPowerXnTimesEffectWithDelay(0.05f));//0.05 seconds delay in order to let unity update scene data
+            CheckPowerXnTimesEffect();
             CheckBoostAffectedCondition();
         }
         Debug.Log("Updated");

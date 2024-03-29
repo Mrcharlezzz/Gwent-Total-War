@@ -28,6 +28,7 @@ public class Carddisplay : MonoBehaviour
     public int power;
     public Card.Position position;
     public bool update=false;
+    public bool averaged=false;
 
     //References to GameObject
 

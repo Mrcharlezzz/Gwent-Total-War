@@ -22,7 +22,9 @@ public class Player : MonoBehaviour
     public GameObject point1;
     public GameObject point2;
     public GameObject prefab;
-    private ModifyingConditions conditions;
+    private ModifyingConditions conditions0;
+    private ModifyingConditions conditions1;
+    private Carddisplay temporaldisplay;
 
     
     void Update()
@@ -141,8 +143,8 @@ public class Player : MonoBehaviour
             
         if(display.type==Card.Type.Weather&&playable)
         {
-            ModifyingConditions conditions0=dropZone.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
-            ModifyingConditions conditions1=dropZone.GetComponent<BufferLink>().dropzones[1].GetComponent<ModifyingConditions>();
+            conditions0=dropZone.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+            conditions1=dropZone.GetComponent<BufferLink>().dropzones[1].GetComponent<ModifyingConditions>();
             
             conditions0.modified=true;
             conditions1.modified=true;
@@ -165,6 +167,8 @@ public class Player : MonoBehaviour
                     Destroy(child.gameObject);
                 }
             }
+            conditions0.averaged=false;
+            conditions1.averaged=false;
         }
 
         #endregion
@@ -173,9 +177,10 @@ public class Player : MonoBehaviour
         
         if(display.type==Card.Type.Boost&&playable)
         {
-        ModifyingConditions conditions0=dropZone.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
-        conditions0.modified=true;
+        conditions0=dropZone.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
         conditions0.boostaffected=true;
+        conditions0.averaged=false;
+        conditions0.modified=true;
         conditions0.boostamount=display.power; 
  
 
@@ -219,8 +224,8 @@ public class Player : MonoBehaviour
             
             foreach(Transform child in weatherslots)
             {
-                ModifyingConditions conditions0=child.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
-                ModifyingConditions conditions1=child.gameObject.GetComponent<BufferLink>().dropzones[1].GetComponent<ModifyingConditions>();
+                conditions0=child.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+                conditions1=child.gameObject.GetComponent<BufferLink>().dropzones[1].GetComponent<ModifyingConditions>();
                 
                 conditions0.weatheraffected=false;
                 conditions0.weatheroff=true;
@@ -259,6 +264,11 @@ public class Player : MonoBehaviour
                 hand.AddCard(card2display.card);
                 parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
                 Destroy(card2);
+                graveyard.Add(card2display.card);
+
+                //Pendiente mandar para el cementerio
+
+
 
                 parent.GetComponent<DropZone>().cardlist.Add(display.card);
                 parent.GetComponent<DropZone>().cardlist.Add(card2display.card);
@@ -285,74 +295,296 @@ public class Player : MonoBehaviour
             
             if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Card.Effect.None)
             {
-                
-                //Summon Boost
-                if(display.effect==Card.Effect.SummonBoost)
-                {
-                    int boostID=0;
-
-                    if(display.faction==Card.Faction.Rome)
-                    boostID=4;
-                    else
-                    boostID=0;
-
-                    GameObject boostSlots;
-                    if(player1)
-                    {
-                        boostSlots=GameObject.Find("boostSlots");
-                    }
-                    else
-                    {
-                        boostSlots=GameObject.Find("boostSlots2");
-                    }
-                    //OJO crear forma de update el carddisplay
-                    
-                    DropZone boostslot=GameObject.Find("MeleeBoost1").GetComponent<DropZone>();
-                    foreach(Transform child in boostSlots.transform)
-                    {
-                        DropZone childzone=child.gameObject.GetComponent<DropZone>();
-                        if(childzone.positionlist[0]==display.position&&(childzone.player1==player1))
-                        {
-                            boostslot=childzone;
-                        }
-                    }
-                    if(boostslot.transform.childCount>0)
-                    {
-                        Destroy(boostslot.transform.GetChild(0).gameObject);
-                    }
-                    boostslot.cardlist.Clear();
-
-                    GameObject boost= Instantiate(prefab,new Vector3(0,0,0),Quaternion.identity);
-                    boost.transform.SetParent(boostslot.transform,false);
-                    Carddisplay carddisplay= boost.GetComponent<Carddisplay>();
-                    carddisplay.displayId=boostID;
-                    carddisplay.update=true;
-
-                    boostslot.cardlist.Add(carddisplay.card);
-                    
-                    conditions=boostslot.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
-                    Debug.Log($"boostamount {carddisplay.power}"); 
-                    conditions.boostamount=Resources.Load<Card>($"{boostID}").power; // carddisplay updates after this line is executed, therefore there must be a call to the original card
-                    
-                    conditions.boostaffected=true;
-                    conditions.modified=true;
-                }
-
-            
-            
-            
-            
-                //Power X n times
-                if(display.effect==Card.Effect.PowerXntimes)
-                {
-                    ModifyingConditions conditions=dropZone.GetComponent<ModifyingConditions>();
-                    conditions.powerXntimesAffected=true;
-                    conditions.modified=true;
-                }   
+                SummonBoost(display);
+                SummonWeather(display);
+                PowerxNTimes(display,dropZone);
+                DrawEffect(display);
+                DestroyStrong(display);
+                DestroyWeak(display);
+                Average(display);
             }
 
             
 
         #endregion
     }
+
+    void SummonBoost(Carddisplay display)
+    {
+        if(display.effect==Card.Effect.SummonBoost)
+        {
+            int weatherID=0;
+
+            if(display.faction==Card.Faction.Rome)
+            weatherID=4;
+            else
+            weatherID=0;
+
+            GameObject boostSlots;
+            if(player1)
+            {
+                boostSlots=GameObject.Find("boostSlots");
+            }
+            else
+            {
+                boostSlots=GameObject.Find("boostSlots2");
+            }
+            //OJO crear forma de update el carddisplay
+                
+            DropZone boostslot=GameObject.Find("MeleeBoost1").GetComponent<DropZone>();
+            foreach(Transform child in boostSlots.transform)
+            {
+                DropZone childzone=child.gameObject.GetComponent<DropZone>();
+                if(childzone.positionlist[0]==display.position&&(childzone.player1==player1))
+                {
+                    boostslot=childzone;
+                }
+            }
+            if(boostslot.transform.childCount>0)
+            {
+                Destroy(boostslot.transform.GetChild(0).gameObject);
+            }
+            boostslot.cardlist.Clear();
+
+            GameObject boost= Instantiate(prefab,new Vector3(0,0,0),Quaternion.identity);
+            boost.transform.SetParent(boostslot.transform,false);
+            Carddisplay carddisplay= boost.GetComponent<Carddisplay>();
+            carddisplay.displayId=weatherID;
+            carddisplay.update=true;
+
+            boostslot.cardlist.Add(carddisplay.card);
+                    
+            conditions0=boostslot.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+            Debug.Log($"boostamount {carddisplay.power}"); 
+            conditions0.boostamount=Resources.Load<Card>($"{weatherID}").power; // carddisplay updates after this line is executed, therefore there must be a call to the original card
+                    
+            conditions0.boostaffected=true;
+            conditions0.averaged=false;
+            conditions0.modified=true;
+        }
+    }
+
+    void PowerxNTimes(Carddisplay display, GameObject dropZone)
+    {
+    if(display.effect==Card.Effect.PowerXntimes)
+        {
+            conditions0=dropZone.GetComponent<ModifyingConditions>();
+            conditions0.powerXntimesAffected=true;
+            conditions0.modified=true;
+        }
+    }
+
+    void SummonWeather(Carddisplay display)
+    {
+        if(display.effect==Card.Effect.SummonWeather)
+        {
+            int weatherID=0;
+
+            if(display.faction==Card.Faction.Rome)
+            weatherID=23;
+            else
+            weatherID=23;
+
+            GameObject weatherSlots=GameObject.Find("weatherSlots");
+                
+            DropZone weatherSlot=GameObject.Find("MeleeWeather").GetComponent<DropZone>();
+            foreach(Transform child in weatherSlots.transform)
+            {
+                DropZone childzone=child.gameObject.GetComponent<DropZone>();
+                if(childzone.positionlist[0]==display.position&&(childzone.player1==player1))
+                {
+                    weatherSlot=childzone;
+                }
+            }
+            if(weatherSlot.transform.childCount>0)
+            {
+                Destroy(weatherSlot.transform.GetChild(0).gameObject);
+            }
+            weatherSlot.cardlist.Clear();
+
+            GameObject boost= Instantiate(prefab,new Vector3(0,0,0),Quaternion.identity);
+            boost.transform.SetParent(weatherSlot.transform,false);
+            Carddisplay carddisplay= boost.GetComponent<Carddisplay>();
+            carddisplay.displayId=weatherID;
+            carddisplay.update=true;
+
+            weatherSlot.cardlist.Add(carddisplay.card);
+                    
+            //Hacerlo para conditions0 y conditions1
+            
+            
+
+            // carddisplay updates after this line is executed, therefore there must be a call to the original card
+
+            conditions0=weatherSlot.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
+            conditions0.boostamount=Resources.Load<Card>($"{weatherID}").power; 
+            conditions0.boostaffected=true;
+            conditions0.averaged=false;
+            conditions0.modified=true;
+
+            conditions1=weatherSlot.gameObject.GetComponent<BufferLink>().dropzones[1].GetComponent<ModifyingConditions>();
+            conditions1.boostamount=Resources.Load<Card>($"{weatherID}").power; 
+            conditions1.boostaffected=true;
+            conditions1.averaged=false;
+            conditions1.modified=true;
+        }
+    }
+    void DrawEffect(Carddisplay display)
+    {
+        if(display.effect==Card.Effect.Draw)
+        {
+            DrawCard();
+        }
+    }
+
+    void DestroyStrong(Carddisplay display) //
+    {
+        if(display.effect==Card.Effect.DestroyStrong)
+        {    
+            int max=0;
+            GameObject destroyedcard=prefab;
+            
+            
+            foreach(Transform dropzone in gameMaster.player1.field.unitRows.transform)
+            {
+                if(dropzone.childCount>0)
+                {   
+                    foreach(Transform card in dropzone)
+                    {   
+                        temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
+                        
+                        if(temporaldisplay.type!=Card.Type.Golden)
+                        {    
+                            if(temporaldisplay.power>max)
+                            {
+                                max=temporaldisplay.power;
+                                destroyedcard=card.gameObject;
+                            }
+                        }
+                    }
+                }
+            }
+            foreach(Transform dropzone in gameMaster.player2.field.unitRows.transform)
+            {
+                if(dropzone.childCount>0)
+                {    
+                    foreach(Transform card in dropzone)
+                    {   
+                        temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
+                        if(temporaldisplay.type!=Card.Type.Golden)
+                        {    
+                            if(temporaldisplay.power>max)
+                            {
+                                max=temporaldisplay.power;
+                                destroyedcard=card.gameObject;
+                            }
+                        }
+                    }
+                }
+            }
+            if(destroyedcard!=prefab)
+            {
+                destroyedcard.transform.parent.gameObject.GetComponent<DropZone>().cardlist.Remove(destroyedcard.GetComponent<Carddisplay>().card);
+                Destroy(destroyedcard);
+            }
+        }
+    }
+
+    void DestroyWeak(Carddisplay display)
+    {
+        if(display.effect==Card.Effect.DestroyWeak)
+        {
+            Debug.Log("destroyweak");
+            int min=int.MaxValue;
+            GameObject destroyedcard=prefab;
+            
+            Debug.Log($"effectplayer{gameMaster.currentplayer.gameObject.name}");
+            foreach(Transform dropzone in gameMaster.currentplayer.field.unitRows.transform)
+            {
+                if(dropzone.childCount>0)
+                {   
+                    foreach(Transform card in dropzone)
+                    {   
+                        temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
+                        
+                        if(temporaldisplay.type!=Card.Type.Golden)
+                        {    
+                            if(temporaldisplay.power<min)
+                            {
+                                min=temporaldisplay.power;
+                                destroyedcard=card.gameObject;
+                            }
+                        }
+                    }
+                }
+            }
+            Debug.Log($"min {min}");
+
+            if(min!=int.MaxValue)
+            {
+                Debug.Log($"card {destroyedcard.GetComponent<Carddisplay>().cardname}");
+                destroyedcard.transform.parent.gameObject.GetComponent<DropZone>().cardlist.Remove(destroyedcard.GetComponent<Carddisplay>().card);
+                Destroy(destroyedcard);  
+            }
+        }
+    }
+
+    void Average(Carddisplay display)
+    {
+        if(display.effect==Card.Effect.Average)
+        {
+            int unitamount=0;
+            foreach(Transform dropzone in gameMaster.player1.field.unitRows.transform)
+            {
+                unitamount+=dropzone.gameObject.GetComponent<DropZone>().cardlist.Count;
+            }
+            foreach(Transform dropzone in gameMaster.player2.field.unitRows.transform)
+            {
+                unitamount+=dropzone.gameObject.GetComponent<DropZone>().cardlist.Count;
+            }
+            int average=(gameMaster.player1.totalpower+gameMaster.player2.totalpower)/unitamount;
+
+            foreach(Transform dropzone in gameMaster.player1.field.unitRows.transform)
+            {
+                if(dropzone.childCount>0)
+                {   
+                    dropzone.GetComponent<ModifyingConditions>().averaged=true;
+                    foreach(Transform card in dropzone)
+                    {   
+                        temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
+                        
+                        if(temporaldisplay.type!=Card.Type.Golden)
+                        {    
+                            temporaldisplay.power=average;
+                            temporaldisplay.powerText.text=average.ToString();
+                            temporaldisplay.powerText.color=Color.yellow;
+                            temporaldisplay.averaged=true;
+                        }
+                    }
+                }
+            }
+            foreach(Transform dropzone in gameMaster.player2.field.unitRows.transform)
+            {
+                if(dropzone.childCount>0)
+                {
+                    dropzone.GetComponent<ModifyingConditions>().averaged=true;
+                    foreach(Transform card in dropzone)
+                    {   
+                        temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
+                        if(temporaldisplay.type!=Card.Type.Golden)
+                        {    
+                            temporaldisplay.power=average;
+                            temporaldisplay.powerText.text=average.ToString();
+                            temporaldisplay.powerText.color=Color.yellow;
+                            temporaldisplay.averaged=true;
+                        }
+                    }
+                }
+            } 
+        }
+    }
+
+
+
+
 }

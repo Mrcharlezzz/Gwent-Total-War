@@ -4693,6 +4693,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!224 &1243063825 stripped
@@ -4722,6 +4723,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!1001 &1271013808
@@ -4941,6 +4943,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!1 &1394319419
@@ -5268,6 +5271,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!1 &1426238570
@@ -5493,8 +5497,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deck:
-  - {fileID: 11400000, guid: 83f307e892f41264890109a6cb78930e, type: 2}
-  - {fileID: 11400000, guid: 2da9b9e5010c20a469efccf49834334e, type: 2}
+  - {fileID: 11400000, guid: 2cc7c8a867f17194986f317a2c522dca, type: 2}
+  - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
   - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
   - {fileID: 11400000, guid: e62a75a9e305e994c8fd047377bff9a9, type: 2}
   - {fileID: 11400000, guid: 424108d222cba2647bbccaae231d2739, type: 2}
@@ -5513,8 +5517,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ac0169afb6181124caf49fbac4af62f2, type: 2}
   - {fileID: 11400000, guid: 1b240c44f43e37240a2b63c7037160db, type: 2}
   - {fileID: 11400000, guid: a55a1e06db1102840ba97655e16927ee, type: 2}
-  - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
+  - {fileID: 11400000, guid: 2da9b9e5010c20a469efccf49834334e, type: 2}
   - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
+  - {fileID: 11400000, guid: 58efea73ea4483643a10ad79651959c7, type: 2}
+  - {fileID: 11400000, guid: 12a2010b6d5d0024485c5b409285240f, type: 2}
+  - {fileID: 11400000, guid: 83f307e892f41264890109a6cb78930e, type: 2}
+  - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
   decksize: 0
 --- !u!1001 &1492707929
 PrefabInstance:
@@ -5925,6 +5933,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!1 &1644212984
@@ -7135,6 +7144,7 @@ MonoBehaviour:
   weatheroff: 0
   boostaffected: 0
   powerXntimesAffected: 0
+  averaged: 0
   nTimes: 0
   boostamount: 0
 --- !u!1 &2029439886
@@ -7527,8 +7537,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2da9b9e5010c20a469efccf49834334e, type: 2}
   - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
   - {fileID: 11400000, guid: e62a75a9e305e994c8fd047377bff9a9, type: 2}
-  - {fileID: 11400000, guid: 424108d222cba2647bbccaae231d2739, type: 2}
-  - {fileID: 11400000, guid: b304b474e0c24e844891d86b8b4b25c2, type: 2}
+  - {fileID: 11400000, guid: 02d8947964b66e942974ba45e3c919f0, type: 2}
+  - {fileID: 11400000, guid: 01c4f03083c340346979a27aa0ba60c4, type: 2}
   - {fileID: 11400000, guid: 850527c1c2a0622448e0cbbd3462509d, type: 2}
   - {fileID: 11400000, guid: 0c46d2a6ec7e3624e8f2610b1ece6f25, type: 2}
   - {fileID: 11400000, guid: ac0169afb6181124caf49fbac4af62f2, type: 2}
@@ -7536,11 +7546,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f8dd78ceeea397041b782e73da1c9ba7, type: 2}
   - {fileID: 11400000, guid: 9fc57b8f93d905649a91382728c90227, type: 2}
   - {fileID: 11400000, guid: a0a914fa85330344ab148e938028f21f, type: 2}
-  - {fileID: 11400000, guid: 01c4f03083c340346979a27aa0ba60c4, type: 2}
-  - {fileID: 11400000, guid: 02d8947964b66e942974ba45e3c919f0, type: 2}
+  - {fileID: 11400000, guid: 424108d222cba2647bbccaae231d2739, type: 2}
+  - {fileID: 11400000, guid: f276fe47aedbb4e40ae6362b2001b819, type: 2}
   - {fileID: 11400000, guid: 04c2df9077ca37044a21bc90605371e2, type: 2}
   - {fileID: 11400000, guid: f324f7b4b393b964680f7875af1e1930, type: 2}
   - {fileID: 11400000, guid: a25ddcbd546d6fc4fb40ea028a520d9f, type: 2}
+  - {fileID: 11400000, guid: 2f995fdec216ac145a11e8e392ef20d5, type: 2}
+  - {fileID: 11400000, guid: b304b474e0c24e844891d86b8b4b25c2, type: 2}
   decksize: 0
 --- !u!224 &2095566816
 RectTransform:

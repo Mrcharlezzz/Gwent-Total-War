@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66018e5ffcfa30749a92dbd7597e745f, type: 3}
-  m_Name: 5
+  m_Name: 30
   m_EditorClassIdentifier: 
-  id: 5
-  cardname: Marco Claudio Marcelo
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
-  type: 1
-  carddescription: 'power fo justice average '
-  faction: 0
-  effect: 8
-  basepower: 2
-  power: 2
-  position: 4
+  id: 30
+  cardname: Asesino
+  image: {fileID: 21300000, guid: b02a1ff7f82361c4380b45184782be73, type: 3}
+  type: 2
+  carddescription: Mejor asesino a sueldo del Oriente Medio contratado para eliminar
+    silentemente poderosos generales
+  faction: 3
+  effect: 3
+  basepower: 1
+  power: 1
+  position: 8

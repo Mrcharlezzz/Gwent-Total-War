@@ -16,8 +16,9 @@ MonoBehaviour:
   cardname: Cayo Mario
   image: {fileID: 21300000, guid: 208cdf9ed54b3f34abc1ebfd007a467c, type: 3}
   type: 1
-  carddescription: Cayo Mario
+  carddescription: Not implemented
   faction: 0
+  effect: 7
   basepower: 4
   power: 4
   position: 3

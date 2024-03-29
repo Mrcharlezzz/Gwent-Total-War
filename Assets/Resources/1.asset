@@ -16,8 +16,9 @@ MonoBehaviour:
   cardname: Marco Aurelio
   image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
   type: 1
-  carddescription: Catapulta Comun
+  carddescription: Roba una carta
   faction: 0
+  effect: 5
   basepower: 3
   power: 3
   position: 7

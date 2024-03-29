@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: 29
   m_EditorClassIdentifier: 
   id: 29
-  cardname: Neblina
-  image: {fileID: 21300000, guid: 028ef918df97bce4698dafa936e71150, type: 3}
-  type: 3
-  carddescription: Dificulta la vision a larga distancia
+  cardname: catapulta
+  image: {fileID: 21300000, guid: b02a1ff7f82361c4380b45184782be73, type: 3}
+  type: 2
+  carddescription: catapulta
   faction: 3
-  basepower: 0
-  power: 0
-  position: 3
+  effect: 0
+  basepower: 5
+  power: 5
+  position: 4
