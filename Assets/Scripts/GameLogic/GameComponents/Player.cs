@@ -674,6 +674,8 @@ public class Player : MonoBehaviour
                     temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
                     if(temporaldisplay.type!=Card.Type.Golden)
                     {
+                        Cleanzone.GetComponent<DropZone>().cardlist.Remove(temporaldisplay.card);
+                        
                         if(temporaldisplay.player1==player1)
                         {
                             graveyard.Add(temporaldisplay.card);
@@ -681,9 +683,8 @@ public class Player : MonoBehaviour
                         else{
                             othergraveyard.Add(temporaldisplay.card);
                         }
-                        
-                        Cleanzone.GetComponent<DropZone>().cardlist.Remove(temporaldisplay.card);
-                        Destroy(card);
+                        Destroy(card.gameObject);
+
                         gameMaster.globalModified=true;
                     }
                 }

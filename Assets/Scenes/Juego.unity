@@ -7957,6 +7957,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a25ddcbd546d6fc4fb40ea028a520d9f, type: 2}
   - {fileID: 11400000, guid: 2f995fdec216ac145a11e8e392ef20d5, type: 2}
   - {fileID: 11400000, guid: b304b474e0c24e844891d86b8b4b25c2, type: 2}
+  - {fileID: 11400000, guid: e62a75a9e305e994c8fd047377bff9a9, type: 2}
   decksize: 0
 --- !u!224 &2095566816
 RectTransform:
