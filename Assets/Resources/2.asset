@@ -23,3 +23,4 @@ MonoBehaviour:
   basepower: 4
   power: 4
   position: 2
+  effectposition: 2

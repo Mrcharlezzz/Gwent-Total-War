@@ -27,8 +27,10 @@ public class Carddisplay : MonoBehaviour
     public int basepower;
     public int power;
     public Card.Position position;
+    public Card.Position effectposition;
     public bool update=false;
     public bool averaged=false;
+    public bool player1=false;
 
     //References to GameObject
 
@@ -54,6 +56,7 @@ public class Carddisplay : MonoBehaviour
             basepower=card.basepower;
             power= card.power;
             position= card.position;
+            effectposition=card.effectposition;
             effect=card.effect;
 
             if(type==Card.Type.Decoy)

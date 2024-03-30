@@ -11,15 +11,6 @@ public class AddCards : MonoBehaviour
     public GameObject PlayerHand;
 
     
-    
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-       
-    }
-
-    // Update is called once per frame
     public void Add(int n)
     {
         GameObject playercard= Instantiate(card,new Vector3(0,0,0),Quaternion.identity);
@@ -27,6 +18,9 @@ public class AddCards : MonoBehaviour
         Carddisplay carddisplay= playercard.GetComponent<Carddisplay>();
         carddisplay.displayId=n;
         carddisplay.update=true;
-        
+        if(gameObject.GetComponent<Hand>().player1)
+        {
+            carddisplay.player1=true;
+        }   
     }
 }

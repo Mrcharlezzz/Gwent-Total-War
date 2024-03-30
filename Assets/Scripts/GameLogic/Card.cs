@@ -19,6 +19,7 @@ public class Card: ScriptableObject
     public int basepower; //power stands for attack
     public int power; 
     public Position position;
+    public Position effectposition;
 
     public enum Position
     {

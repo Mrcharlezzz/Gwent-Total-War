@@ -8,6 +8,7 @@ public class Hand : MonoBehaviour
     public int size{get{return cards.Count;} }
     public List<Card> cards= new List<Card>();
     public AddCards addCards;
+    public bool player1;
     
     
     void Awake()
@@ -15,11 +16,6 @@ public class Hand : MonoBehaviour
         addCards=gameObject.GetComponent<AddCards>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void AddCard(Card card)
     {

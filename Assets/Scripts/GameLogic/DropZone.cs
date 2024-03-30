@@ -68,9 +68,6 @@ public class DropZone : MonoBehaviour
     }
 
     
-    
-    
-    
     void CheckWeatherOffCondition()
     {
         if(conditions.weatheroff)
