@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LeaderCard
+public class LeaderCard: MonoBehaviour
 {
+    public GameMaster gameMaster;
+    public bool alreadyused=false;
+    public bool Alejandro;
     
-    public static void Julio()
+    public void Julio()
     {
-        //Implementar efefcto de Julio Cesar
+        if(gameMaster.currentplayer==gameMaster.player1&&!alreadyused)
+        {
+            alreadyused=true;
+            gameMaster.player1.DrawCard();
+            gameMaster.NextTurn();
+        }
     }
-     public static void Alejandro()
-    {
-        //Implementar efefcto de Alejandro 
-    }
-     public static void Ramses2()
-    {
-        //Implementar efefcto de Ramses2 
-    }
+    
 }

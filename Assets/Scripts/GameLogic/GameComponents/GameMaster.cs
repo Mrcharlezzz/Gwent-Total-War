@@ -117,7 +117,8 @@ public class GameMaster : MonoBehaviour
         
         pass.enabled=false;
         message.SetActive(true);
-
+        
+        player1.leaderCard.alreadyused=false;
         player1.roundupdate=true;
         player2.roundupdate=true;
 

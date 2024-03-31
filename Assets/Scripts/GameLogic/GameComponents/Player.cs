@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     public GraveYard graveyard;
     public GraveYard othergraveyard; 
     public Field field;
-    public Card leaderCard;
+    public LeaderCard leaderCard;
     public int totalpower=0;
     public int roundpoints=0;
     public TextMeshProUGUI totalPowerText;
@@ -67,7 +67,10 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-
+            if(!player1&&leaderCard.Alejandro)
+            {
+                totalpower=totalpower+totalpower/5;
+            }
             totalPowerText.text=totalpower.ToString();
             fieldModified=false;
         }
@@ -468,7 +471,7 @@ public class Player : MonoBehaviour
         if(display.effect==Card.Effect.DestroyStrong)
         {    
             int max=0;
-            GameObject destroyedcard=prefab;
+            List<GameObject> possiblydestroyed=new List<GameObject>();
             
             
             foreach(Transform dropzone in gameMaster.player1.field.unitRows.transform)
@@ -481,10 +484,10 @@ public class Player : MonoBehaviour
                         
                         if(temporaldisplay.type!=Card.Type.Golden)
                         {    
-                            if(temporaldisplay.power>max)
+                            if(temporaldisplay.power>=max)
                             {
                                 max=temporaldisplay.power;
-                                destroyedcard=card.gameObject;
+                                possiblydestroyed.Add(card.gameObject);
                             }
                         }
                     }
@@ -499,28 +502,47 @@ public class Player : MonoBehaviour
                         temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
                         if(temporaldisplay.type!=Card.Type.Golden)
                         {    
-                            if(temporaldisplay.power>max)
+                            if(temporaldisplay.power>=max)
                             {
                                 max=temporaldisplay.power;
-                                destroyedcard=card.gameObject;
+                                possiblydestroyed.Add(card.gameObject);
                             }
                         }
                     }
                 }
             }
-            if(destroyedcard!=prefab)
-            {
-                destroyedcard.transform.parent.gameObject.GetComponent<DropZone>().cardlist.Remove(destroyedcard.GetComponent<Carddisplay>().card);
-                Destroy(destroyedcard);
-
-                if(destroyedcard.GetComponent<Carddisplay>().player1==player1)
+            
+            if(possiblydestroyed.Count>0)
+            {    
+                List<GameObject> toRemove = new List<GameObject>();
+                foreach(GameObject strongcard in possiblydestroyed)
                 {
-                    graveyard.Add(destroyedcard.GetComponent<Carddisplay>().card);
+                    if(strongcard.GetComponent<Carddisplay>().power<max)
+                    {
+                        toRemove.Add(strongcard);
+                    }
                 }
-                else{
-                    othergraveyard.Add(destroyedcard.GetComponent<Carddisplay>().card);
+                foreach(GameObject item in toRemove)
+                {
+                    possiblydestroyed.Remove(item);
                 }
-                gameMaster.globalModified=true;
+
+                int random=Random.Range(0,possiblydestroyed.Count);
+                GameObject destroyedcard=possiblydestroyed[random];
+                if(destroyedcard!=prefab)
+                {
+                    destroyedcard.transform.parent.gameObject.GetComponent<DropZone>().cardlist.Remove(destroyedcard.GetComponent<Carddisplay>().card);
+                    Destroy(destroyedcard);
+
+                    if(destroyedcard.GetComponent<Carddisplay>().player1==player1)
+                    {
+                        graveyard.Add(destroyedcard.GetComponent<Carddisplay>().card);
+                    }
+                    else{
+                        othergraveyard.Add(destroyedcard.GetComponent<Carddisplay>().card);
+                    }
+                    gameMaster.globalModified=true;
+                }
             }
         }
     }
@@ -529,11 +551,9 @@ public class Player : MonoBehaviour
     {
         if(display.effect==Card.Effect.DestroyWeak)
         {
-            Debug.Log("destroyweak");
             int min=int.MaxValue;
-            GameObject destroyedcard=prefab;
+            List<GameObject> possiblydestroyed= new List<GameObject>();
             
-            Debug.Log($"effectplayer{gameMaster.currentplayer.gameObject.name}");
             foreach(Transform dropzone in gameMaster.currentplayer.field.unitRows.transform)
             {
                 if(dropzone.childCount>0)
@@ -544,20 +564,34 @@ public class Player : MonoBehaviour
                         
                         if(temporaldisplay.type!=Card.Type.Golden)
                         {    
-                            if(temporaldisplay.power<min)
+                            if(temporaldisplay.power<=min)
                             {
                                 min=temporaldisplay.power;
-                                destroyedcard=card.gameObject;
+                                possiblydestroyed.Add(card.gameObject);
                             }
                         }
                     }
                 }
             }
-            Debug.Log($"min {min}");
 
-            if(min!=int.MaxValue)
+            List<GameObject> toRemove = new List<GameObject>();
+            foreach(GameObject weakcard in possiblydestroyed)
             {
-                Debug.Log($"card {destroyedcard.GetComponent<Carddisplay>().cardname}");
+                if(weakcard.GetComponent<Carddisplay>().power>min)
+                {
+                    toRemove.Add(weakcard);
+                }
+            }
+            foreach(GameObject item in toRemove)
+            {
+                possiblydestroyed.Remove(item);
+            }
+
+            if(possiblydestroyed.Count>0)
+            {
+                int random=Random.Range(0,possiblydestroyed.Count);
+                GameObject destroyedcard=possiblydestroyed[random];
+
                 destroyedcard.transform.parent.gameObject.GetComponent<DropZone>().cardlist.Remove(destroyedcard.GetComponent<Carddisplay>().card);
                 Destroy(destroyedcard);  
                 
@@ -626,7 +660,7 @@ public class Player : MonoBehaviour
     {
         if(display.effect==Card.Effect.RowCleanup)
         {
-            GameObject Cleanzone=GameObject.Find("MeleeWeather");
+            List<GameObject> possiblecleanzones= new List<GameObject>();
             int min=int.MaxValue;
 
             foreach (Transform dropzone in gameMaster.player1.field.unitRows.transform)
@@ -645,9 +679,11 @@ public class Player : MonoBehaviour
                 if(cardcount<min&&cardcount>0)
                 {
                     min =cardcount;
-                    Cleanzone=dropzone.gameObject;
+                    possiblecleanzones.Add(dropzone.gameObject);
                 }
+            
             }
+
             foreach (Transform dropzone in gameMaster.player2.field.unitRows.transform)
             {
                 int cardcount=0;
@@ -664,11 +700,36 @@ public class Player : MonoBehaviour
                 if(cardcount<min&&cardcount>0)
                 {
                     min =cardcount;
-                    Cleanzone=dropzone.gameObject;
+                    possiblecleanzones.Add(dropzone.gameObject);
                 }
             }
-            if(min!=int.MaxValue)
+
+            List<GameObject> toRemove= new List<GameObject>();
+            foreach(GameObject cleanzone in possiblecleanzones)
             {
+                int count=0;
+                foreach(Transform card in cleanzone.transform)
+                {
+                    if(card.gameObject.GetComponent<Carddisplay>().type!=Card.Type.Golden)
+                    {
+                        count++;
+                    }
+                }
+                if(count>min)
+                {
+                    toRemove.Add(cleanzone);
+                }
+            }
+            foreach(GameObject item in toRemove)
+            {
+                possiblecleanzones.Remove(item);
+            }
+            if(possiblecleanzones.Count>0)
+            {
+                int random=Random.Range(0,possiblecleanzones.Count);
+                GameObject Cleanzone=possiblecleanzones[random];
+
+                
                 foreach(Transform card in Cleanzone.transform)
                 {
                     temporaldisplay=card.gameObject.GetComponent<Carddisplay>();
