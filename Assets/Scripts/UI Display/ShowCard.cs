@@ -16,6 +16,7 @@ public class ShowCard : MonoBehaviour
     public GameObject cardPosition;
     public GameObject cardFaction;
     public GameObject cardType;
+
     public void Awake()//References to info console children
     {
         tempCanvas=GameObject.Find("Canvas");
@@ -52,27 +53,20 @@ public class ShowCard : MonoBehaviour
         }
         
         // Zoom card image
-        if(Input.mousePosition.y>390) 
+        if(Input.mousePosition.y>405) 
         {
-            showCard=Instantiate(gameObject,new Vector2(535,290),Quaternion.identity);
+            showCard=Instantiate(gameObject,new Vector2(410,220),Quaternion.identity);
             showCard.transform.SetParent(tempCanvas.transform,false);
         }
         else{
-            showCard=Instantiate(gameObject,new Vector2(535,495),Quaternion.identity);
+            showCard=Instantiate(gameObject,new Vector2(410,415),Quaternion.identity);
             showCard.transform.SetParent(tempCanvas.transform,false);
         }
 
+        foreach(Transform child in showCard.transform)
         {
-            RectTransform rect = showCard.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(rect.sizeDelta.x * 3, rect.sizeDelta.y * 3);
+            child.localScale= new Vector3(3,3,3);
         }
-
-        
-        Transform child = showCard.transform.Find("CardImage");
-        RectTransform childRect = child.GetComponent<RectTransform>();
-        childRect.sizeDelta = new Vector2(childRect.sizeDelta.x * 3, childRect.sizeDelta.y * 3);
-
-
     }
     
         

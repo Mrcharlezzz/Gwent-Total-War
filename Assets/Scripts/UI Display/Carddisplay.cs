@@ -73,16 +73,6 @@ public class Carddisplay : MonoBehaviour
             powerText.text=power.ToString();
             posText.text=position.ToString();
             CardImage.sprite=image;
-            if(Displaypower)// Chequear estas condicionales
-            {
-                powerText.gameObject.SetActive(true);
-                borderseparation.gameObject.SetActive(true);
-            }
-            else
-            {
-                powerText.gameObject.SetActive(false);
-                borderseparation.gameObject.SetActive(false);
-            }
         }
     }
 }
