@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 5
   carddescription: Permiten la retirada de las tropas agpotadas
   faction: 3
+  effect: 0
   basepower: 0
   power: 0
   position: 1
+  effectposition: 0

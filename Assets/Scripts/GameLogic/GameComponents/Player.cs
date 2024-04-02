@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -295,16 +296,14 @@ public class Player : MonoBehaviour
     {
         if(display.type==Card.Type.Decoy)    
         {    
-            Debug.Log("Is Working");
-            
             GameObject card2=dropzone.gameObject;//In this case the decoy collides with a card, not a dropzone due to the layer dispositions
             GameObject parent=card2.transform.parent.gameObject;
             Carddisplay card2display=card2.GetComponent<Carddisplay>();
             if(parent.GetComponent<ModifyingConditions>()!=null&&card2.GetComponent<Carddisplay>().type!=Card.Type.Golden&&parent.GetComponent<DropZone>().player1==player1)
             {
                 card2display.power=card2display.basepower;
-                card2display.powerText.color=Color.black;
 
+                CardPowerImageColorchange(card2.transform,Color.white);
                 
                 hand.AddCard(card2display.card);
                 parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
@@ -315,7 +314,6 @@ public class Player : MonoBehaviour
                 parent.GetComponent<DropZone>().cardlist.Add(card2display.card);
                 display.gameObject.transform.SetParent(parent.transform);
                 
-                //Implementar condicional para caso de q la carta devuelta tenga determinado effecto constant
                 if(card2display.effect!=Card.Effect.None)
                 {
                     parent.GetComponent<ModifyingConditions>().modified=true;
@@ -629,7 +627,7 @@ public class Player : MonoBehaviour
                         {    
                             temporaldisplay.power=average;
                             temporaldisplay.powerText.text=average.ToString();
-                            temporaldisplay.powerText.color=Color.yellow;
+                            CardPowerImageColorchange(card.transform,Color.yellow);
                             temporaldisplay.averaged=true;
                         }
                     }
@@ -646,8 +644,9 @@ public class Player : MonoBehaviour
                         if(temporaldisplay.type!=Card.Type.Golden)
                         {    
                             temporaldisplay.power=average;
+                            temporaldisplay.card.power=average;
                             temporaldisplay.powerText.text=average.ToString();
-                            temporaldisplay.powerText.color=Color.yellow;
+                            CardPowerImageColorchange(card.transform,Color.yellow);
                             temporaldisplay.averaged=true;
                         }
                     }
@@ -751,5 +750,9 @@ public class Player : MonoBehaviour
                 }
             }
         }
+    }
+    static void CardPowerImageColorchange(Transform child,Color color)
+    {
+        child.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color=color;
     }
 }

@@ -31,6 +31,7 @@ public class Carddisplay : MonoBehaviour
     public bool update=false;
     public bool averaged=false;
     public bool player1=false;
+    public bool initialdisplay=false;
 
     //References to GameObject
 
@@ -51,6 +52,17 @@ public class Carddisplay : MonoBehaviour
         {    
             update=false;
             card=Resources.Load<Card>($"{displayId}");
+            
+            /*
+            When the card is drawn, the power modifications of previous games
+            (these may remain if the execution was interrupted) must be reverted
+            */  
+            if(initialdisplay)
+            {
+                initialdisplay=false;
+                card.power=card.basepower;
+            }
+
             id= card.id;
             cardname= card.cardname;
             image= card.image;

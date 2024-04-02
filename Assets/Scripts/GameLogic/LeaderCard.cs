@@ -7,6 +7,7 @@ public class LeaderCard: MonoBehaviour
     public GameMaster gameMaster;
     public bool alreadyused=false;
     public bool Alejandro;
+
     
     public void Julio()
     {

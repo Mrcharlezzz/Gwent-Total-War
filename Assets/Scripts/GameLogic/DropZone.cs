@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour
 {
@@ -81,7 +82,7 @@ public class DropZone : MonoBehaviour
                         {
                             tempcard.power=tempcard.basepower;
                             tempcard.powerText.text=tempcard.power.ToString();
-                            tempcard.powerText.color=Color.black;
+                            CardPowerImageColorchange(child,Color.white);
                         }
                     }
                 }
@@ -119,7 +120,7 @@ public class DropZone : MonoBehaviour
                         display0.powerText.text=display0.power.ToString();
                         if(conditions.nTimes!=1)
                         {
-                            display0.powerText.color=Color.green;
+                            CardPowerImageColorchange(child,Color.green);
                         }
                     }
                 }
@@ -144,20 +145,16 @@ public class DropZone : MonoBehaviour
                     {
                         if(tempcard.effect==Card.Effect.PowerXntimes)
                         {
-                            Debug.Log($"Mult {multiplePower}");
                             tempcard.power=multiplePower+conditions.boostamount;
-                            Debug.Log("Measure");
-                            Debug.Log(multiplePower);
-                            Debug.Log(conditions.boostamount);
                         }
                         else{
                             tempcard.power=tempcard.basepower+conditions.boostamount;   
                         }
                     
                         tempcard.powerText.text=tempcard.power.ToString();
-                        if(tempcard.power>tempcard.basepower)
+                        if(tempcard.power>=tempcard.basepower)
                         {
-                            tempcard.powerText.color=Color.green;
+                            CardPowerImageColorchange(child,Color.green);
                         }    
                     }
                 }
@@ -179,7 +176,8 @@ public class DropZone : MonoBehaviour
                         if(tempcard.power>1)
                         {
                         tempcard.power=1;
-                        tempcard.powerText.color=Color.red; 
+                        
+                        CardPowerImageColorchange(child,Color.red);
                         tempcard.powerText.text=tempcard.power.ToString();  
                         }
                         
@@ -194,6 +192,11 @@ public class DropZone : MonoBehaviour
             CheckBoostAffectedCondition();
         }
         Debug.Log("Updated");
+    }
+
+    void CardPowerImageColorchange(Transform child,Color color)
+    {
+        child.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color=color;
     }
 }
 }

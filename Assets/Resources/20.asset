@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 2
   carddescription: Legionario
   faction: 0
+  effect: 0
   basepower: 3
   power: 3
   position: 2
+  effectposition: 0

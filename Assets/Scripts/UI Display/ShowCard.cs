@@ -52,20 +52,28 @@ public class ShowCard : MonoBehaviour
         cardPosition.GetComponent<TextMeshProUGUI>().text="Position: "+gameObject.GetComponent<Carddisplay>().position.ToString();
         }
         
-        // Zoom card image
-        if(Input.mousePosition.y>405) 
+        
+        Vector2 position;
+
+        if(gameObject.GetComponent<Carddisplay>().type==Card.Type.Leader||gameObject.name=="graveyard1"||gameObject.name=="graveyard2")
         {
-            showCard=Instantiate(gameObject,new Vector2(410,220),Quaternion.identity);
-            showCard.transform.SetParent(tempCanvas.transform,false);
+            position =new Vector2(68,135);
         }
         else{
-            showCard=Instantiate(gameObject,new Vector2(410,415),Quaternion.identity);
-            showCard.transform.SetParent(tempCanvas.transform,false);
+            position=Input.mousePosition.y>405 ? new Vector2(410,220): new Vector2(410, 415);
         }
 
+        
+
+        // Instantiate the card at the determined position
+        showCard=Instantiate(gameObject, position, Quaternion.identity);
+        showCard.GetComponent<Carddisplay>().card.power=gameObject.GetComponent<Carddisplay>().power;
+        showCard.transform.SetParent(tempCanvas.transform, false);
+
+        // Adjust the scale
         foreach(Transform child in showCard.transform)
         {
-            child.localScale= new Vector3(3,3,3);
+            child.localScale=new Vector3(3, 3, 3);
         }
     }
     
@@ -73,7 +81,7 @@ public class ShowCard : MonoBehaviour
     }
     public void PointerExit()
     {
-        Debug.Log("Exit");
+        
         //Clear info Console
         cardName.GetComponent<TextMeshProUGUI>().text=""; 
         cardDescription.GetComponent<TextMeshProUGUI>().text="";
@@ -84,7 +92,7 @@ public class ShowCard : MonoBehaviour
         
         //Destroy zoom
         Destroy(showCard);
+        
+        
     }
-    
-
 }
