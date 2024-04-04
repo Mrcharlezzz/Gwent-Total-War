@@ -19,7 +19,7 @@ MonoBehaviour:
   carddescription: pretoriano comun
   faction: 0
   effect: 6
-  basepower: 1
-  power: 1
+  basepower: 2
+  power: 2
   position: 2
   effectposition: 0

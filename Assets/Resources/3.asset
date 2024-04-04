@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: 3
   m_EditorClassIdentifier: 
   id: 3
-  cardname: Cayo Mario
+  cardname: "Augusto C\xE9sar"
   image: {fileID: 21300000, guid: 208cdf9ed54b3f34abc1ebfd007a467c, type: 3}
   type: 1
   carddescription: Destruye todas las unidades en la fila del campo no vacia con
     menos unidades
   faction: 0
   effect: 7
-  basepower: 4
-  power: 4
+  basepower: 3
+  power: 3
   position: 3
   effectposition: 0

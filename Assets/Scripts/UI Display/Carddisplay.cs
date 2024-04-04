@@ -38,7 +38,7 @@ public class Carddisplay : MonoBehaviour
     public Image CardImage;
     public TextMeshProUGUI posText;
     public TextMeshProUGUI powerText;
-    public Image borderseparation;
+    public GameObject powerborder;
 
     
     // Start is called before the first frame update
@@ -75,6 +75,8 @@ public class Carddisplay : MonoBehaviour
             effectposition=card.effectposition;
             effect=card.effect;
 
+            //Layer use for decoy collisions
+
             if(type==Card.Type.Decoy)
             {
                 int decoyLayerIndex = LayerMask.NameToLayer("Decoy");
@@ -85,6 +87,12 @@ public class Carddisplay : MonoBehaviour
             powerText.text=power.ToString();
             posText.text=position.ToString();
             CardImage.sprite=image;
+
+            //Not showing card power
+            if(card.type==Card.Type.Leader||card.type==Card.Type.Clear||card.type==Card.Type.Weather)
+            {
+                powerborder.SetActive(false);
+            }
         }
     }
 }

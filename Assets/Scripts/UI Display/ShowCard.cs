@@ -12,8 +12,6 @@ public class ShowCard : MonoBehaviour
     private DragandDrop dragandDrop;
     public GameObject cardName;
     public GameObject cardDescription;
-    public GameObject cardPower;
-    public GameObject cardPosition;
     public GameObject cardFaction;
     public GameObject cardType;
 
@@ -22,8 +20,6 @@ public class ShowCard : MonoBehaviour
         tempCanvas=GameObject.Find("Canvas");
         cardName=GameObject.Find("cardName");
         cardDescription=GameObject.Find("cardDescription");
-        cardPower=GameObject.Find("cardPower");
-        cardPosition=GameObject.Find("cardPosition");
         cardFaction=GameObject.Find("cardFaction");
         cardType=GameObject.Find("cardType");
         gamemaster=GameObject.Find("gamemaster");
@@ -39,22 +35,14 @@ public class ShowCard : MonoBehaviour
     {
         //show card info in info Console while mouse is on the card
         Card.Type type=gameObject.GetComponent<Carddisplay>().type;
-        cardName.GetComponent<TextMeshProUGUI>().text="Name: "+gameObject.GetComponent<Carddisplay>().cardname;
-        cardDescription.GetComponent<TextMeshProUGUI>().text="Description: "+gameObject.GetComponent<Carddisplay>().carddescription;
-        cardFaction.GetComponent<TextMeshProUGUI>().text="Faction: "+gameObject.GetComponent<Carddisplay>().faction.ToString();
-        cardType.GetComponent<TextMeshProUGUI>().text="Type: "+gameObject.GetComponent<Carddisplay>().type.ToString();
-        if((type==Card.Type.Golden)||(type==Card.Type.Silver)||(type==Card.Type.Decoy))
-        {
-        cardPower.GetComponent<TextMeshProUGUI>().text="Power: "+gameObject.GetComponent<Carddisplay>().power.ToString();
-        }
-        if(type!=Card.Type.Clear)
-        {
-        cardPosition.GetComponent<TextMeshProUGUI>().text="Position: "+gameObject.GetComponent<Carddisplay>().position.ToString();
-        }
+        cardName.GetComponent<TextMeshProUGUI>().text="Nombre: "+ gameObject.GetComponent<Carddisplay>().cardname;
+        cardDescription.GetComponent<TextMeshProUGUI>().text="Descripción: "+ gameObject.GetComponent<Carddisplay>().carddescription;
+        cardFaction.GetComponent<TextMeshProUGUI>().text="Facción: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().faction.ToString());
+        cardType.GetComponent<TextMeshProUGUI>().text="Tipo: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().type.ToString());
         
-        
-        Vector2 position;
 
+        //Different instantiation position for leaders and graveyards particular cases
+        Vector2 position;
         if(gameObject.GetComponent<Carddisplay>().type==Card.Type.Leader||gameObject.name=="graveyard1"||gameObject.name=="graveyard2")
         {
             position =new Vector2(68,135);
@@ -87,12 +75,25 @@ public class ShowCard : MonoBehaviour
         cardDescription.GetComponent<TextMeshProUGUI>().text="";
         cardFaction.GetComponent<TextMeshProUGUI>().text="";
         cardType.GetComponent<TextMeshProUGUI>().text="";
-        cardPower.GetComponent<TextMeshProUGUI>().text="";
-        cardPosition.GetComponent<TextMeshProUGUI>().text="";
         
         //Destroy zoom
         Destroy(showCard);
-        
-        
+    }
+
+    public string SpanishTranslator(string a)
+    {
+        switch(a)
+        {
+            case "Rome": return"Roma";
+            case "Greece": return"Grecia";
+            case "Silver": return"Unidad de Plata";
+            case "Golden": return"Unidad de Oro";
+            case "Boost": return"Aumento";
+            case "Weather": return"Clima";
+            case "Decoy": return"Señuelo";
+            case "Clear": return"Despeje";
+            case "Leader": return"Líder";
+            default: return a;
+        }
     }
 }

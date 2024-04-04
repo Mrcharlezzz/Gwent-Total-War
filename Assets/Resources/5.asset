@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: 5
   m_EditorClassIdentifier: 
   id: 5
-  cardname: Marco Claudio Marcelo
+  cardname: "C\xF3nsul"
   image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
-  type: 1
+  type: 2
   carddescription: 'power fo justice average '
   faction: 0
   effect: 8
-  basepower: 2
-  power: 2
-  position: 4
+  basepower: 0
+  power: 0
+  position: 8
+  effectposition: 0

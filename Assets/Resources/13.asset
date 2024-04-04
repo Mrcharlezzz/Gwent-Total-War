@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 2
   carddescription: Equite
   faction: 0
-  basepower: 2
-  power: 2
+  effect: 0
+  basepower: 3
+  power: 3
   position: 5
+  effectposition: 0

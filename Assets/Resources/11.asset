@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 2
   carddescription: El Papa de los cachorros, el perro
   faction: 0
-  basepower: 2
-  power: 2
+  effect: 0
+  basepower: 3
+  power: 3
   position: 3
+  effectposition: 0

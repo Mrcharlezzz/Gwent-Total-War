@@ -1022,10 +1022,11 @@ MonoBehaviour:
   update: 0
   averaged: 0
   player1: 0
+  initialdisplay: 0
   CardImage: {fileID: 8212527172396860814}
   posText: {fileID: 9115360850638722919}
   powerText: {fileID: 8706961009465892002}
-  borderseparation: {fileID: 0}
+  powerborder: {fileID: 5174761619671674795}
 --- !u!114 &576462809804299976
 MonoBehaviour:
   m_ObjectHideFlags: 0

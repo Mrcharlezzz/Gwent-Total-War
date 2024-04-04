@@ -19,7 +19,7 @@ MonoBehaviour:
   carddescription: Roba una carta
   faction: 0
   effect: 5
-  basepower: 3
-  power: 3
+  basepower: 4
+  power: 4
   position: 7
   effectposition: 0

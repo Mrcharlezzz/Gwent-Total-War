@@ -41,7 +41,6 @@ public class Card: ScriptableObject
     {
         Rome,
         Greece,
-        Egypt,
         Neutral,
     }
 

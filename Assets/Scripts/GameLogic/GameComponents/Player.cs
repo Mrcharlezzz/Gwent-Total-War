@@ -311,7 +311,6 @@ public class Player : MonoBehaviour
                 parent.GetComponent<ModifyingConditions>().modified=true;
 
                 parent.GetComponent<DropZone>().cardlist.Add(display.card);
-                parent.GetComponent<DropZone>().cardlist.Add(card2display.card);
                 display.gameObject.transform.SetParent(parent.transform);
                 
                 if(card2display.effect!=Card.Effect.None)
@@ -319,6 +318,8 @@ public class Player : MonoBehaviour
                     parent.GetComponent<ModifyingConditions>().modified=true;
                     parent.GetComponent<ModifyingConditions>().powerXntimesAffected=true;
                 }
+
+                display.gameObject.GetComponent<DragandDrop>().alreadyplayed=true;
 
                 gameMaster.NextTurn();
             }

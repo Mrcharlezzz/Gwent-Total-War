@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 2
   carddescription: Escorpion
   faction: 0
-  basepower: 2
-  power: 2
-  position: 4
+  effect: 0
+  basepower: 3
+  power: 3
+  position: 7
+  effectposition: 0

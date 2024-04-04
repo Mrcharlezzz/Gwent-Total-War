@@ -20,7 +20,7 @@ MonoBehaviour:
     Efecto: Filosofia estoica'
   faction: 0
   effect: 1
-  basepower: 4
-  power: 4
+  basepower: 3
+  power: 3
   position: 2
   effectposition: 2

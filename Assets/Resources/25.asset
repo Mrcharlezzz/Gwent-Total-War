@@ -18,6 +18,8 @@ MonoBehaviour:
   type: 3
   carddescription: Agua pa Mayeya
   faction: 3
+  effect: 0
   basepower: 0
   power: 0
-  position: 3
+  position: 4
+  effectposition: 0
