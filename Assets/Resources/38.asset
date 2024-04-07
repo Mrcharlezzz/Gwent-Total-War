@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 38
   cardname: Hoplita Espartano
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  image: {fileID: 21300000, guid: 279e6db079526fc44a5cab036cf5ffa3, type: 3}
   type: 2
   carddescription: Escorpion
   faction: 1

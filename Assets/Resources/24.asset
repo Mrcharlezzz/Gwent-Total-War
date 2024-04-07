@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 24
   cardname: Neblina
-  image: {fileID: 21300000, guid: 028ef918df97bce4698dafa936e71150, type: 3}
+  image: {fileID: 21300000, guid: 8f678b4f21b0c714db006f0454696965, type: 3}
   type: 3
   carddescription: Dificulta la vision a larga distancia
-  faction: 3
+  faction: 2
+  effect: 0
   basepower: 0
   power: 0
   position: 3
+  effectposition: 0

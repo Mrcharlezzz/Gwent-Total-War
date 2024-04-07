@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 42
   cardname: "Caballer\xEDa Hetaroi"
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  image: {fileID: 21300000, guid: 38aa90b09c612154d8031a68d49d049f, type: 3}
   type: 2
   carddescription: Escorpion
   faction: 1

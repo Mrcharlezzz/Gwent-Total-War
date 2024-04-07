@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: 27
   m_EditorClassIdentifier: 
   id: 27
-  cardname: senuelo
-  image: {fileID: 21300000, guid: 3522762ba746bb84f930d636f48ee827, type: 3}
+  cardname: "Se\xF1uelo"
+  image: {fileID: 21300000, guid: 25c089b8118b3be4fa83d642e12e86ea, type: 3}
   type: 5
-  carddescription: Permiten la retirada de las tropas agpotadas
+  carddescription: "\"Que? Donde est\xE1 el que acabo de apu\xF1alar?\" Pues era
+    un se\xF1uelo ;) Efecto: Devuelve una carta del campo a la mano y ocupa su posici\xF3n"
   faction: 3
   effect: 0
   basepower: 0

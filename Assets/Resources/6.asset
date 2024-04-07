@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 6
   m_EditorClassIdentifier: 
   id: 6
-  cardname: pretoriano
-  image: {fileID: 21300000, guid: 8dfad79cf0c8139468d2fc1e9208625d, type: 3}
+  cardname: Legionario
+  image: {fileID: 21300000, guid: abfebc8c13b05b7489b4910a85f180c9, type: 3}
   type: 2
-  carddescription: Pretoriano Comun
+  carddescription: 
   faction: 0
   effect: 6
   basepower: 2

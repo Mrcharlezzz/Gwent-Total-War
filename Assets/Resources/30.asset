@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 30
   cardname: Asesino
-  image: {fileID: 21300000, guid: b02a1ff7f82361c4380b45184782be73, type: 3}
+  image: {fileID: 21300000, guid: 9615b77dc5025b4438b5265c61a39a8d, type: 3}
   type: 2
   carddescription: Mejor asesino a sueldo del Oriente Medio contratado para eliminar
     silentemente poderosos generales
@@ -22,5 +22,5 @@ MonoBehaviour:
   effect: 3
   basepower: 1
   power: 1
-  position: 8
+  position: 5
   effectposition: 0

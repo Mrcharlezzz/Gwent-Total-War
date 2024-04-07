@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 52
   cardname: Escudo de Aquiles
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  image: {fileID: 21300000, guid: 12c73ba6ec1ae52449fa24abf99e6c63, type: 3}
   type: 4
-  carddescription: Escorpion
+  carddescription: "Escudo del legendario Aqu\xEDles. Garantiza una defensa f\xE9rrea
+    (menos en el tal\xF3n). Efecto: Aumenta el poder de las unidades de melee en
+    4"
   faction: 1
   effect: 0
   basepower: 4

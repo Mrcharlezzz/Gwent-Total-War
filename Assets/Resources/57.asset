@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66018e5ffcfa30749a92dbd7597e745f, type: 3}
+  m_Name: 57
+  m_EditorClassIdentifier: 
+  id: 57
+  cardname: Astas Afiladas
+  image: {fileID: 21300000, guid: 16f321b86fd119e43883af672dd40cd5, type: 3}
+  type: 4
+  carddescription: "Un ligero roce de estas lanzas arrojadizas puede causar heridas
+    tan profundas como las placas en las que hay que meterse para aprobar l\xF3gica.
+    Efecto: Aumenta el poder de las unidades de rango en 4"
+  faction: 0
+  effect: 0
+  basepower: 4
+  power: 4
+  position: 3
+  effectposition: 0

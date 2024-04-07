@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: 4
   m_EditorClassIdentifier: 
   id: 4
-  cardname: Estandarte del Aguila
-  image: {fileID: 21300000, guid: 10257b4456523a24c85263b42f02e3db, type: 3}
+  cardname: Estandarte SPQR
+  image: {fileID: 21300000, guid: 26878434865551646840126c29e78aa6, type: 3}
   type: 4
-  carddescription: 'Aumenta la moral de los legionarios '
+  carddescription: "Bajo la insignia de su Rep\xFAblica se dispara la moral de los
+    legionarios. Efecto: Aumenta en 4 el poder de las unidades de melee "
   faction: 0
   effect: 0
   basepower: 4

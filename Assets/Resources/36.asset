@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: 36
   m_EditorClassIdentifier: 
   id: 36
-  cardname: "Lis\xEDmaco"
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  cardname: "Hefesti\xF3n"
+  image: {fileID: 21300000, guid: 98426757917fa0145b9fc763584ef855, type: 3}
   type: 1
-  carddescription: escorpion
+  carddescription: 
   faction: 1
-  effect: 0
+  effect: 1
   basepower: 4
   power: 4
   position: 3

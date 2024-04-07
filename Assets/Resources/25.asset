@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 25
   cardname: Lluvia
-  image: {fileID: 21300000, guid: de1dc6928e236514bab23532a417d6e1, type: 3}
+  image: {fileID: 21300000, guid: 7cc957d0df8daa9469a402dc2b1368ef, type: 3}
   type: 3
   carddescription: Agua pa Mayeya
-  faction: 3
+  faction: 2
   effect: 0
   basepower: 0
   power: 0

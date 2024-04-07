@@ -973,8 +973,6 @@ MonoBehaviour:
   showCard: {fileID: 0}
   cardName: {fileID: 0}
   cardDescription: {fileID: 0}
-  cardPower: {fileID: 0}
-  cardPosition: {fileID: 0}
   cardFaction: {fileID: 0}
   cardType: {fileID: 0}
 --- !u!114 &5244831887435599107

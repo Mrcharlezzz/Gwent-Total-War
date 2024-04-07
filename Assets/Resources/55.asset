@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 55
   cardname: "Or\xE1culo Hel\xE9nico"
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  image: {fileID: 21300000, guid: eb7057cc0a6444445b6f70c68ac7e9c7, type: 3}
   type: 2
-  carddescription: Vidente venerado por su habilidad para comunicarse con los dioses
-    y prever su futuron/n Invoca un clima de melee
-  faction: 0
+  carddescription: "Or\xE1culo venerado por su habilidad para comunicarse con los
+    dioses y prever su futuron. Efecto: invoca el clima \"Terreno Enfangado\""
+  faction: 1
   effect: 2
   basepower: 1
   power: 1
-  position: 6
+  position: 7
   effectposition: 2

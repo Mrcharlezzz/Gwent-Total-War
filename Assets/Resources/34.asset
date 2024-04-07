@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 34
   cardname: Caballo de Troya
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  image: {fileID: 21300000, guid: 213677184bc83bf48903ba82ff4de41d, type: 3}
   type: 1
-  carddescription: Escorpion
+  carddescription: 
   faction: 1
-  effect: 0
-  basepower: 5
-  power: 5
+  effect: 7
+  basepower: 4
+  power: 4
   position: 4
   effectposition: 0

@@ -9,10 +9,12 @@ public class TurnUI : MonoBehaviour
 {
     public GameMaster gameMaster;
     public TextMeshProUGUI playerText;
+    public TextMeshProUGUI selectiontext;
     public Button pass;
 
     public void Begin()
     {
+        selectiontext.enabled=false;
         gameObject.SetActive(false);
         gameMaster.currentplayer.hand.gameObject.SetActive(true);
         pass.enabled=true;

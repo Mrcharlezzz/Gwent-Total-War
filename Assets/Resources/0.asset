@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   cardname: "Escipi\xF3n el Africano"
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  image: {fileID: 21300000, guid: 0d4ac9994508f1341b303433218dbf32, type: 3}
   type: 1
-  carddescription: Destruye la carta mas debil del campo rival
+  carddescription: "Efecto: destruye la carta m\xE1s d\xE9bil del campo rival"
   faction: 0
   effect: 4
   basepower: 4

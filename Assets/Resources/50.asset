@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 50
   cardname: Catapulta
-  image: {fileID: 21300000, guid: 6f10ab2b3a8003b4db778ebd2f47c3db, type: 3}
+  image: {fileID: 21300000, guid: 488673f50b7196642bd77b92fa49bef3, type: 3}
   type: 2
-  carddescription: Escorpion
-  faction: 1
+  carddescription: 
+  faction: 2
   effect: 0
   basepower: 5
   power: 5

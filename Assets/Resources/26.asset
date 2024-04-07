@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: 26
   m_EditorClassIdentifier: 
   id: 26
-  cardname: Ventolera
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  cardname: "D\xEDa Soleado"
+  image: {fileID: 21300000, guid: 13aa95296d30bc54da711edcc6b3f470, type: 3}
   type: 6
-  carddescription: Todo se vuela
+  carddescription: "D\xEDa tranquilo y despejado. Efecto: elimina todos los climas"
   faction: 3
+  effect: 0
   basepower: 0
   power: 0
   position: 1
+  effectposition: 0

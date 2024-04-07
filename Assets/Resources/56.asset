@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 56
   cardname: Demetrios phiopolites
-  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  image: {fileID: 21300000, guid: 683947c1a045e174fae9c576aa221f93, type: 3}
   type: 2
   carddescription: "Sabio de la antigua Grecia versado en las artes pol\xEDticas
-    dedicado a la justicia social\\n Todas las unidades en el campo tienen poder
-    igual al promedio de sus poderes"
-  faction: 0
-  effect: 0
+    dedicado a la justicia social. Efecto: todas las unidades en el campo tienen
+    poder igual al promedio de sus poderes"
+  faction: 1
+  effect: 8
   basepower: 0
-  power: 0
+  power: 4
   position: 8
   effectposition: 0

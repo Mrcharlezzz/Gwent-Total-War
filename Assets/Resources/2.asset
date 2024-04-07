@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   cardname: Maximo Decimo Meridio
-  image: {fileID: 21300000, guid: 098834e035924d040b00744e940020e0, type: 3}
+  image: {fileID: 21300000, guid: 6b0cbdef7d8981946b03278aff797a0e, type: 3}
   type: 1
   carddescription: 'Padre de un hijo asesinado... Esposo de una esposa asesinada...
-    Efecto: Filosofia estoica'
+    Efecto: Invoca el aumento de melee "Estandarte SPQR"'
   faction: 0
   effect: 1
   basepower: 3

@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: 20
   m_EditorClassIdentifier: 
   id: 20
-  cardname: Legionario
-  image: {fileID: 21300000, guid: 7e2a62d4087efe842b108ae4f73e5138, type: 3}
+  cardname: Catapulta
+  image: {fileID: 21300000, guid: 488673f50b7196642bd77b92fa49bef3, type: 3}
   type: 2
-  carddescription: Legionario
-  faction: 0
+  carddescription: 
+  faction: 2
   effect: 0
-  basepower: 3
-  power: 3
-  position: 2
+  basepower: 4
+  power: 4
+  position: 4
   effectposition: 0

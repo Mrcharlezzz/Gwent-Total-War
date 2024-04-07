@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 54
   cardname: Mecanismos mejorados
-  image: {fileID: 21300000, guid: eb6cfc3f452be0a4498e3c8b4aac86df, type: 3}
+  image: {fileID: 21300000, guid: fb2cf7eb6f102f347af44ba7ad266f10, type: 3}
   type: 4
   carddescription: Ingenieros especializados han optimizado el funcionamiento de
     las maquinarias de asedio\n +4 de poder para las unidades de asedio

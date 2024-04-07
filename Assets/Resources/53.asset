@@ -13,14 +13,13 @@ MonoBehaviour:
   m_Name: 53
   m_EditorClassIdentifier: 
   id: 53
-  cardname: Aceite incendiario
-  image: {fileID: 21300000, guid: 7c0a11ba6825693448e67f79da0bb417, type: 3}
-  type: 4
-  carddescription: Usado para encender los proyectiles en llamas\n +4 de poder para
-    las unidades de rango
+  cardname: No Implementada
+  image: {fileID: 21300000, guid: d7a7eb7e61b9b6c4c8caf1f1b900b099, type: 3}
+  type: 2
+  carddescription: 
   faction: 3
   effect: 0
-  basepower: 4
-  power: 4
+  basepower: 0
+  power: 0
   position: 3
   effectposition: 0

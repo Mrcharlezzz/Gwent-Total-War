@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 9
   cardname: Velites
-  image: {fileID: 21300000, guid: cfbe9abc3ba05b143ac353c06db682eb, type: 3}
+  image: {fileID: 21300000, guid: 4902c1448562fbb419ab1adbf7dc8cb2, type: 3}
   type: 2
   carddescription: El Papa de los cachorros, el perro
   faction: 0

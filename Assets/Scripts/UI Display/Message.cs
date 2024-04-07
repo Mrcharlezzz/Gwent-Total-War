@@ -8,6 +8,7 @@ public class Message : MonoBehaviour
 {
     public GameMaster gamemaster;
     public TextMeshProUGUI text;
+    public GameObject winnertext;
     public Button pass;
     public bool gameended=false;
 
@@ -19,6 +20,7 @@ public class Message : MonoBehaviour
         }
         gameended=false;
         gameObject.SetActive(false);
+        winnertext.SetActive(true);
         gamemaster.currentplayer.hand.gameObject.SetActive(true);
         pass.enabled=true;
     }

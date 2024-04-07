@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.VersionControl;
@@ -40,15 +41,16 @@ public class GameMaster : MonoBehaviour
         
         currentplayer.hand.gameObject.SetActive(false);
         notcurrentplayer.hand.gameObject.SetActive(false);
-/*
+
         player1.playerdeck.Shuffle();
         player2.playerdeck.Shuffle();
-*/
+
         DrawCards(currentplayer,10);
         DrawCards(notcurrentplayer,10);
         
         pass.enabled=false;
-        turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name} Selection";
+        turnUI.GetComponent<TurnUI>().playerText.text=SpanishTranslate($"{currentplayer.gameObject.name}");
+        turnUI.GetComponent<TurnUI>().selectiontext.enabled=true;
         turnUI.SetActive(true);
 
     }
@@ -62,7 +64,7 @@ public class GameMaster : MonoBehaviour
             PlayerSwitch();
 
             pass.enabled=false;
-            turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name}";
+            turnUI.GetComponent<TurnUI>().playerText.text=SpanishTranslate($"{currentplayer.gameObject.name}");
             turnUI.SetActive(true);
         }
         
@@ -108,11 +110,12 @@ public class GameMaster : MonoBehaviour
             {
                 PlayerSwitch();
             }
-            message.GetComponent<Message>().text.text=$"Round Winner:\n{roundWinner.gameObject.name}";
+            message.GetComponent<Message>().text.text=SpanishTranslate($"{roundWinner.gameObject.name}");
             
         }
         else{
-            message.GetComponent<Message>().text.text=$"Tied Round";
+            message.GetComponent<Message>().text.text=$"Empate";
+            message.GetComponent<Message>().winnertext.SetActive(false);
         }
         
         pass.enabled=false;
@@ -147,16 +150,20 @@ public class GameMaster : MonoBehaviour
     }
     public void EndGame()
     {
+        message.GetComponent<Message>().winnertext.GetComponent<TextMeshProUGUI>().fontSize=50;
+        message.GetComponent<Message>().text.fontSize=50; 
+        message.GetComponent<Message>().winnertext.GetComponent<TextMeshProUGUI>().text="LA GUERRA LA HA GANADO:";
         if(player1.roundpoints>player2.roundpoints)
         {
-            message.GetComponent<Message>().text.text=$"PLAYER 1\nIS THE\nWINNER!!!";   
+            message.GetComponent<Message>().text.text="JUGADOR 1!!!";   
         }
         else if(player1.roundpoints<player2.roundpoints)
         {
-            message.GetComponent<Message>().text.text=$"PLAYER 2\nIS THE\nWINNER!!!";
+            message.GetComponent<Message>().text.text="JUGADOR 2!!!";
         }
         else{
-            message.GetComponent<Message>().text.text=$"TIED UP";
+            message.GetComponent<Message>().winnertext.SetActive(false);
+            message.GetComponent<Message>().text.text=$"... solo muertes innecesarias\n Empate";
         }
         pass.enabled=false;
         message.GetComponent<Message>().gameended=true;
@@ -191,7 +198,7 @@ public class GameMaster : MonoBehaviour
             card.gameObject.GetComponent<DragandDrop>().enabled=true;
             card.gameObject.GetComponent<Button>().enabled=false;
         }
-        //currentplayer.playerdeck.Shuffle(); 
+        currentplayer.playerdeck.Shuffle(); 
         DrawCards(currentplayer,2);
 
         if(turn==0)
@@ -203,7 +210,8 @@ public class GameMaster : MonoBehaviour
             Debug.Log($"Turn {turn}");
 
             pass.enabled=false;
-            turnUI.GetComponent<TurnUI>().playerText.text=$"{currentplayer.gameObject.name} Selection";
+            turnUI.GetComponent<TurnUI>().playerText.text=SpanishTranslate($"{currentplayer.gameObject.name}");
+            turnUI.GetComponent<TurnUI>().selectiontext.enabled=true;
             turnUI.SetActive(true);
         }
         else{
@@ -216,6 +224,16 @@ public class GameMaster : MonoBehaviour
         var aux=currentplayer;
         currentplayer=notcurrentplayer;
         notcurrentplayer=aux;
+    }
+
+    string SpanishTranslate(string a)
+    {
+        switch (a)
+        {
+            case "player1": return "Jugador 1";
+            case "player2": return "Jugador 2";
+            default: return a;
+        }
     }
 
     

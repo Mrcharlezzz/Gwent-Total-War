@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 3
   cardname: "Augusto C\xE9sar"
-  image: {fileID: 21300000, guid: 208cdf9ed54b3f34abc1ebfd007a467c, type: 3}
+  image: {fileID: 21300000, guid: e5036484e76936746bb577967fd693d3, type: 3}
   type: 1
   carddescription: Destruye todas las unidades en la fila del campo no vacia con
     menos unidades
