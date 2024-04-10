@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 31
   cardname: Alejandro Magno
-  image: {fileID: 21300000, guid: 38406a07cc04c6d47aaf7a0c3a667d4c, type: 3}
+  image: {fileID: 21300000, guid: adfea28062fc4a749b7a0f0b20c026de, type: 3}
   type: 0
   carddescription: "Fundador del imperio Macedonio, el m\xE1s grande de su tiempo.
     Conocido por su capacidad para tomar decisiones r\xE1pidas y audaces. Efecto
