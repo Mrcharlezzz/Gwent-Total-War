@@ -17,6 +17,7 @@ public class ShowCard : MonoBehaviour
     public GameObject cardType;
     public GameObject RangeRow1;
     public GameObject RangeRow2;
+    public GameObject PassButton;
 
     public void Awake()//References to info console children
     {
@@ -28,6 +29,7 @@ public class ShowCard : MonoBehaviour
         gamemaster=GameObject.Find("gamemaster");
         RangeRow1=GameObject.Find("RangeRow");
         RangeRow2=GameObject.Find("RangeRow2");
+        PassButton=GameObject.Find("Pass");
     }
     void Start()
     {
@@ -49,7 +51,7 @@ public class ShowCard : MonoBehaviour
         //Different instantiation position for leaders and graveyards particular cases
         Vector2 position;
         
-        position=Input.mousePosition.y>405 ? RangeRow1.transform.position : RangeRow2.transform.position;
+        position=Input.mousePosition.y>PassButton.transform.position.y ? RangeRow1.transform.position : RangeRow2.transform.position;
 
         // Instantiate the card at the determined position
         showCard=Instantiate(gameObject, new Vector2(0,0), Quaternion.identity);

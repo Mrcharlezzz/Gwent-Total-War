@@ -7,6 +7,11 @@ public class NavigationController : MonoBehaviour
     {
         SceneManager.LoadScene(nextscene);
     }
+    public void Quit()
+    {
+        Application.Quit();
+        Debug.Log("Quit");
+    }
     
 }
 

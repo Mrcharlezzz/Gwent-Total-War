@@ -23,6 +23,10 @@ public class DragandDrop : MonoBehaviour
     {
         if(dragging)
         {
+            if(gameObject.GetComponent<ShowCard>().showCard != null)
+            {
+                Destroy(gameObject.GetComponent<ShowCard>().showCard);
+            }
             transform.position= new Vector2(Input.mousePosition.x,Input.mousePosition.y);
         }
         player=gamemaster.GetComponent<GameMaster>().currentplayer;
