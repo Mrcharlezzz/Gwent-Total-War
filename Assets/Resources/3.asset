@@ -16,10 +16,11 @@ MonoBehaviour:
   cardname: "Augusto C\xE9sar"
   image: {fileID: 21300000, guid: e5036484e76936746bb577967fd693d3, type: 3}
   type: 1
-  carddescription: Destruye todas las unidades en la fila del campo no vacia con
-    menos unidades
+  carddescription: "Primer emperador romano, unific\xF3 el Imperio Romano y estableci\xF3
+    un per\xEDodo de paz y prosperidad conocido como la Pax Romana. Efecto: roba
+    una carta"
   faction: 0
-  effect: 7
+  effect: 5
   basepower: 3
   power: 3
   position: 3

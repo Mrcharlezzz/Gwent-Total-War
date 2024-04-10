@@ -16,10 +16,12 @@ MonoBehaviour:
   cardname: Marco Aurelio
   image: {fileID: 21300000, guid: 6c29b345cb317ea4183c4ae070169511, type: 3}
   type: 1
-  carddescription: Roba una carta
+  carddescription: "Emperador romano conocido por su filosof\xEDa estoica. Pero no
+    atendi\xF3 a su hijo y este lo asesin\xF3 por los daddy issues. Efecto: destruye
+    la carta m\xE1s d\xE9bil del campo rival"
   faction: 0
-  effect: 5
-  basepower: 4
-  power: 4
+  effect: 4
+  basepower: 3
+  power: 3
   position: 7
   effectposition: 0

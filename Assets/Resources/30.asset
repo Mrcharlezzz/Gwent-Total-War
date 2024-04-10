@@ -16,8 +16,9 @@ MonoBehaviour:
   cardname: Asesino
   image: {fileID: 21300000, guid: 9615b77dc5025b4438b5265c61a39a8d, type: 3}
   type: 2
-  carddescription: Mejor asesino a sueldo del Oriente Medio contratado para eliminar
-    silentemente poderosos generales
+  carddescription: "Mejor asesino a sueldo del Oriente Medio contratado para eliminar
+    silentemente poderosos generales. Efecto: Destruye la carta con m\xE1s poder
+    de todo el campo"
   faction: 3
   effect: 3
   basepower: 1

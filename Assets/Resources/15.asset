@@ -16,10 +16,11 @@ MonoBehaviour:
   cardname: "Escorpi\xF3n"
   image: {fileID: 21300000, guid: ef800c5a67b40674eb9bc6f0e79d8d53, type: 3}
   type: 2
-  carddescription: Escorpion
+  carddescription: "Poderosa arma de asedio. Puede derribar fortificaciones y causar
+    estragos en las l\xEDneas enemigas"
   faction: 2
   effect: 0
-  basepower: 4
-  power: 4
+  basepower: 3
+  power: 3
   position: 7
   effectposition: 0

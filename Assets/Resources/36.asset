@@ -16,10 +16,12 @@ MonoBehaviour:
   cardname: "Hefesti\xF3n"
   image: {fileID: 21300000, guid: 98426757917fa0145b9fc763584ef855, type: 3}
   type: 1
-  carddescription: 
+  carddescription: "Uno de los generales de Alejandro Magno, adem\xE1s de sus habilidades
+    militares, tambi\xE9n se destac\xF3 en la diplomacia y la gesti\xF3n de asuntos
+    pol\xEDticos-administrativos. Efecto: roba una carta"
   faction: 1
-  effect: 1
+  effect: 5
   basepower: 4
   power: 4
-  position: 3
+  position: 2
   effectposition: 0

@@ -16,7 +16,9 @@ MonoBehaviour:
   cardname: Seleuco
   image: {fileID: 21300000, guid: 6d504f524e4a3e5479dfe6aac4134b29, type: 3}
   type: 1
-  carddescription: 
+  carddescription: "Uno de los generales de Alejandro Magno y posteriormente fundador
+    del Imperio Sel\xE9ucida en Asia Menor. Efecto: destruye la carta m\xE1s d\xE9bil
+    del campo rival"
   faction: 1
   effect: 4
   basepower: 4

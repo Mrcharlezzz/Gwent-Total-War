@@ -16,10 +16,12 @@ MonoBehaviour:
   cardname: Odiseo
   image: {fileID: 21300000, guid: 45215c570ddb32e4f9f3c6f75716b2c8, type: 3}
   type: 1
-  carddescription: 
+  carddescription: "Rey de \xCDtaca y  h\xE9roe griego que particip\xF3 en la Guerra
+    de Troya, donde se destac\xF3 por su astucia, inteligencia y valent\xEDa. Efecto:
+    invoca el aumento de rango \"Aceite Incendiario\""
   faction: 1
-  effect: 5
+  effect: 1
   basepower: 3
   power: 3
-  position: 2
-  effectposition: 0
+  position: 3
+  effectposition: 3

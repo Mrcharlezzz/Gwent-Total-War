@@ -16,8 +16,9 @@ MonoBehaviour:
   cardname: "Julio C\xE9sar"
   image: {fileID: 21300000, guid: 962e5e7917008174c992675b7d439b51, type: 3}
   type: 0
-  carddescription: '*Descripcion* Efecto: Una vez por ronda permite al jugador robar
-    una carta'
+  carddescription: "El \xFAltimo de los republicanos, conocido por sus exitosas campa\xF1as
+    militares en la Galia, que le permitieron expandir y consolidar el poder de Roma. 
+    Efecto: Una vez por ronda permite al jugador robar una carta"
   faction: 0
   effect: 0
   basepower: 0

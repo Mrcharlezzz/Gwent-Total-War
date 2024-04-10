@@ -16,7 +16,8 @@ MonoBehaviour:
   cardname: Neblina
   image: {fileID: 21300000, guid: 8f678b4f21b0c714db006f0454696965, type: 3}
   type: 3
-  carddescription: Dificulta la vision a larga distancia
+  carddescription: 'Dificulta la vision a larga distancia. Efecto: todas las unidades
+    de rango en el campo de batalla disminuyen su poder a 1'
   faction: 2
   effect: 0
   basepower: 0

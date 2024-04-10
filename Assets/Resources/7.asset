@@ -16,7 +16,9 @@ MonoBehaviour:
   cardname: Legionario
   image: {fileID: 21300000, guid: abfebc8c13b05b7489b4910a85f180c9, type: 3}
   type: 2
-  carddescription: 
+  carddescription: "El legionario es un soldado caracter\xEDstico romano entrenado
+    para combatir por el imperio.\\nEfecto: Su poder se multiplica por la cantidad
+    de legionarios que hay en el campo"
   faction: 0
   effect: 6
   basepower: 2

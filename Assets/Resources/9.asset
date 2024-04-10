@@ -16,10 +16,11 @@ MonoBehaviour:
   cardname: Velites
   image: {fileID: 21300000, guid: 4902c1448562fbb419ab1adbf7dc8cb2, type: 3}
   type: 2
-  carddescription: El Papa de los cachorros, el perro
+  carddescription: "Soldados j\xF3venes y \xE1giles armados con jabalinas o dardos
+    que utilizaban para hostigar a las fuerzas enemigas"
   faction: 0
   effect: 0
-  basepower: 3
-  power: 3
+  basepower: 4
+  power: 4
   position: 3
   effectposition: 0

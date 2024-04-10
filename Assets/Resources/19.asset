@@ -16,7 +16,8 @@ MonoBehaviour:
   cardname: Catapulta
   image: {fileID: 21300000, guid: 488673f50b7196642bd77b92fa49bef3, type: 3}
   type: 2
-  carddescription: 
+  carddescription: "La catapulta es una formidable arma de asedio, dise\xF1ada para
+    traer una lluvia de destrucci\xF3n sobre las l\xEDneas enemigas"
   faction: 2
   effect: 0
   basepower: 4

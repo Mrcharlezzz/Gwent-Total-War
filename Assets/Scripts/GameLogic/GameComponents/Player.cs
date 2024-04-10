@@ -341,7 +341,7 @@ public class Player : MonoBehaviour
             if(display.faction==Card.Faction.Rome)
             boostID=4;
             else
-            boostID=0;
+            boostID=21;
 
             GameObject boostSlots;
             if(player1)
@@ -358,7 +358,7 @@ public class Player : MonoBehaviour
             foreach(Transform child in boostSlots.transform)
             {
                 DropZone childzone=child.gameObject.GetComponent<DropZone>();
-                if(childzone.positionlist[0]==display.effectposition&&(childzone.player1==player1))
+                if(childzone.positionlist[0]==display.effectposition)
                 {
                     boostslot=childzone;
                 }
@@ -405,10 +405,10 @@ public class Player : MonoBehaviour
     {
         if(display.effect==Card.Effect.SummonWeather)
         {
-            int weatherID=0;
+            int weatherID;
 
             if(display.faction==Card.Faction.Rome)
-            weatherID=23;
+            weatherID=24;
             else
             weatherID=23;
 
@@ -418,7 +418,7 @@ public class Player : MonoBehaviour
             foreach(Transform child in weatherSlots.transform)
             {
                 DropZone childzone=child.gameObject.GetComponent<DropZone>();
-                if(childzone.positionlist[0]==display.effectposition&&(childzone.player1==player1))
+                if(childzone.positionlist[0]==display.effectposition)
                 {
                     weatherSlot=childzone;
                 }

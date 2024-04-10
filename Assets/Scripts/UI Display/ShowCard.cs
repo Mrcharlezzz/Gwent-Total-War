@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ public class ShowCard : MonoBehaviour
     public GameObject cardDescription;
     public GameObject cardFaction;
     public GameObject cardType;
+    public GameObject RangeRow1;
+    public GameObject RangeRow2;
 
     public void Awake()//References to info console children
     {
@@ -23,6 +26,8 @@ public class ShowCard : MonoBehaviour
         cardFaction=GameObject.Find("cardFaction");
         cardType=GameObject.Find("cardType");
         gamemaster=GameObject.Find("gamemaster");
+        RangeRow1=GameObject.Find("RangeRow");
+        RangeRow2=GameObject.Find("RangeRow2");
     }
     void Start()
     {
@@ -43,20 +48,15 @@ public class ShowCard : MonoBehaviour
 
         //Different instantiation position for leaders and graveyards particular cases
         Vector2 position;
-        if(gameObject.GetComponent<Carddisplay>().type==Card.Type.Leader||gameObject.name=="graveyard1"||gameObject.name=="graveyard2")
-        {
-            position =new Vector2(68,135);
-        }
-        else{
-            position=Input.mousePosition.y>405 ? new Vector2(410,220): new Vector2(410, 415);
-        }
-
         
+        position=Input.mousePosition.y>405 ? RangeRow1.transform.position : RangeRow2.transform.position;
 
         // Instantiate the card at the determined position
-        showCard=Instantiate(gameObject, position, Quaternion.identity);
-        showCard.GetComponent<Carddisplay>().card.power=gameObject.GetComponent<Carddisplay>().power;
+        showCard=Instantiate(gameObject, new Vector2(0,0), Quaternion.identity);
+        
         showCard.transform.SetParent(tempCanvas.transform, false);
+        showCard.transform.position=position;
+        showCard.GetComponent<Carddisplay>().card.power=gameObject.GetComponent<Carddisplay>().power;
 
         // Adjust the scale
         foreach(Transform child in showCard.transform)

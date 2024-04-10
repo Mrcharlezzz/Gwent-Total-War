@@ -16,7 +16,9 @@ MonoBehaviour:
   cardname: "C\xF3nsul"
   image: {fileID: 21300000, guid: 1d8a3c24c8304624bb429921b9528e59, type: 3}
   type: 2
-  carddescription: 'power fo justice average '
+  carddescription: "Pol\xEDtico romano dedicado a la justicia social y a cuestiones
+    militares y administrativas. Efecto: todas las unidades en el campo tienen poder
+    igual al promedio de sus poderes"
   faction: 0
   effect: 8
   basepower: 0

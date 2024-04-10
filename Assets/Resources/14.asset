@@ -16,7 +16,9 @@ MonoBehaviour:
   cardname: Equite
   image: {fileID: 21300000, guid: a64d726dc17b5f947ac7fb1c701cba90, type: 3}
   type: 2
-  carddescription: Equite
+  carddescription: "Soldados montados a caballo armados con lanzas o espadas cortas
+    que utilizaban para cargar contra las l\xEDneas enemigas y hostigar a las tropas
+    enemigas a la distancia"
   faction: 0
   effect: 0
   basepower: 3

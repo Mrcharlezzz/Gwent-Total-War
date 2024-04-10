@@ -16,7 +16,8 @@ MonoBehaviour:
   cardname: Lluvia
   image: {fileID: 21300000, guid: 7cc957d0df8daa9469a402dc2b1368ef, type: 3}
   type: 3
-  carddescription: Agua pa Mayeya
+  carddescription: 'El agua arruina los mecanismos de las maquinarias de asedio Efecto:
+    todas las unidades de asedio en el campo de batalla disminuyen su poder a 1'
   faction: 2
   effect: 0
   basepower: 0

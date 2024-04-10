@@ -21,7 +21,7 @@ MonoBehaviour:
     en 4'
   faction: 2
   effect: 0
-  basepower: 2
-  power: 2
+  basepower: 4
+  power: 4
   position: 4
   effectposition: 0
