@@ -149,6 +149,8 @@ public class GameMaster : MonoBehaviour
     }
     public void EndGame()
     {
+        //In case of Draw result in the last round winnertext never turns on
+        message.GetComponent<Message>().winnertext.SetActive(true); 
         message.GetComponent<Message>().winnertext.GetComponent<TextMeshProUGUI>().fontSize=50;
         message.GetComponent<Message>().text.fontSize=50; 
         message.GetComponent<Message>().winnertext.GetComponent<TextMeshProUGUI>().text="LA GUERRA LA HA GANADO:";
