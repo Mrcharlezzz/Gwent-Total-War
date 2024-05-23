@@ -12,7 +12,7 @@ public class GraveYard : MonoBehaviour
         gameObject.transform.GetChild(1).gameObject.SetActive(true);
         
         //When the card is destroyed all power modifications must be reverted 
-        card.power=card.basepower;
+        //card.power=card.basepower;
         cards.Add(card);
         gameObject.GetComponent<Carddisplay>().displayId=card.id;
         gameObject.GetComponent<Carddisplay>().update=true;
