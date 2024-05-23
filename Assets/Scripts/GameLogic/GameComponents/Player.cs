@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
 
 
         //Effects handling
-        if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Card.Effect.None)
+        if((display.type==Card.Type.Golden||display.type==Card.Type.Silver)&&playable&&display.effect!=Unit.IntEffect.None)
         {
             SummonBoost(display);
             SummonWeather(display);
@@ -299,7 +299,7 @@ public class Player : MonoBehaviour
             Carddisplay card2display=card2.GetComponent<Carddisplay>();
             if(parent.GetComponent<ModifyingConditions>()!=null&&card2.GetComponent<Carddisplay>().type!=Card.Type.Golden&&parent.GetComponent<DropZone>().player1==player1)
             {
-                card2display.power=card2display.basepower;
+                //card2display.power=card2display.basepower;
 
                 CardPowerImageColorchange(card2.transform,Color.white);
                 
@@ -311,7 +311,7 @@ public class Player : MonoBehaviour
                 parent.GetComponent<DropZone>().cardlist.Add(display.card);
                 display.gameObject.transform.SetParent(parent.transform);
                 
-                if(card2display.effect!=Card.Effect.None)
+                if(card2display.effect!=Unit.IntEffect.None)
                 {
                     parent.GetComponent<ModifyingConditions>().modified=true;
                     parent.GetComponent<ModifyingConditions>().powerXntimesAffected=true;
@@ -332,7 +332,7 @@ public class Player : MonoBehaviour
     //Effects
     void SummonBoost(Carddisplay display)
     {
-        if(display.effect==Card.Effect.SummonBoost)
+        if(display.effect==Unit.IntEffect.SummonBoost)
         {
             int boostID=0;
 
@@ -356,7 +356,7 @@ public class Player : MonoBehaviour
             foreach(Transform child in boostSlots.transform)
             {
                 DropZone childzone=child.gameObject.GetComponent<DropZone>();
-                if(childzone.positionlist[0]==display.effectposition)
+                if(childzone.positionlist[0]==display.auxcard.effectposition)
                 {
                     boostslot=childzone;
                 }
@@ -381,7 +381,7 @@ public class Player : MonoBehaviour
             conditions0=boostslot.gameObject.GetComponent<BufferLink>().dropzones[0].GetComponent<ModifyingConditions>();
 
             //carddisplay updates after this line is executed, therefore there must be a call to the original card
-            conditions0.boostamount=Resources.Load<Card>($"{boostID}").power; 
+            //conditions0.boostamount=Resources.Load<Card>($"{boostID}").power; 
                     
             conditions0.boostaffected=true;
             conditions0.averaged=false;
@@ -391,7 +391,7 @@ public class Player : MonoBehaviour
 
     void PowerxNTimes(Carddisplay display, GameObject dropZone)
     {
-    if(display.effect==Card.Effect.PowerXntimes)
+    if(display.effect==Unit.IntEffect.PowerXntimes)
         {
             conditions0=dropZone.GetComponent<ModifyingConditions>();
             conditions0.powerXntimesAffected=true;
@@ -401,7 +401,7 @@ public class Player : MonoBehaviour
 
     void SummonWeather(Carddisplay display)
     {
-        if(display.effect==Card.Effect.SummonWeather)
+        if(display.effect==Unit.IntEffect.SummonWeather)
         {
             int weatherID;
 
@@ -416,7 +416,7 @@ public class Player : MonoBehaviour
             foreach(Transform child in weatherSlots.transform)
             {
                 DropZone childzone=child.gameObject.GetComponent<DropZone>();
-                if(childzone.positionlist[0]==display.effectposition)
+                if(childzone.positionlist[0]==display.auxcard.effectposition)
                 {
                     weatherSlot=childzone;
                 }
@@ -457,7 +457,7 @@ public class Player : MonoBehaviour
     }
     void DrawEffect(Carddisplay display)
     {
-        if(display.effect==Card.Effect.Draw)
+        if(display.effect==Unit.IntEffect.Draw)
         {
             DrawCard();
         }
@@ -465,7 +465,7 @@ public class Player : MonoBehaviour
 
     void DestroyStrong(Carddisplay display) //
     {
-        if(display.effect==Card.Effect.DestroyStrong)
+        if(display.effect==Unit.IntEffect.DestroyStrong)
         {    
             int max=0;
             List<GameObject> possiblydestroyed=new List<GameObject>();
@@ -546,7 +546,7 @@ public class Player : MonoBehaviour
 
     void DestroyWeak(Carddisplay display)
     {
-        if(display.effect==Card.Effect.DestroyWeak)
+        if(display.effect==Unit.IntEffect.DestroyWeak)
         {
             int min=int.MaxValue;
             List<GameObject> possiblydestroyed= new List<GameObject>();
@@ -600,7 +600,7 @@ public class Player : MonoBehaviour
 
     void Average(Carddisplay display)
     {
-        if(display.effect==Card.Effect.Average)
+        if(display.effect==Unit.IntEffect.Average)
         {
             int unitamount=0;
             foreach(Transform dropzone in gameMaster.player1.field.unitRows.transform)
@@ -643,7 +643,7 @@ public class Player : MonoBehaviour
                         if(temporaldisplay.type!=Card.Type.Golden)
                         {    
                             temporaldisplay.power=average;
-                            temporaldisplay.card.power=average;
+                            temporaldisplay.power=average;
                             temporaldisplay.powerText.text=average.ToString();
                             CardPowerImageColorchange(card.transform,Color.yellow);
                             temporaldisplay.averaged=true;
@@ -656,7 +656,7 @@ public class Player : MonoBehaviour
 
     void RowCleanUp(Carddisplay display)
     {
-        if(display.effect==Card.Effect.RowCleanup)
+        if(display.effect==Unit.IntEffect.RowCleanup)
         {
             List<GameObject> possiblecleanzones= new List<GameObject>();
             int min=int.MaxValue;

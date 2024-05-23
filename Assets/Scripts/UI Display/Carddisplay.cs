@@ -8,30 +8,21 @@ using UnityEngine.UI;
 public class Carddisplay : MonoBehaviour
 {
     public Card card;
+    public Unit auxcard;
     public int displayId; // this will allow me to display different cards from the inspector in the same Card GameObject
     //References to class Card
     public int id;
     public string cardname;
     public Sprite image;
     public Card.Type type;
-    public Card.Effect effect;
-    public Card.Faction faction;
     public string carddescription;
-    public bool Displaypower {get{
-        if(power<0)
-            return false;
-        else
-            return true;
-    }}
-
-    public int basepower;
+    public Unit.IntEffect effect;
+    public Card.Faction faction;
     public int power;
     public Card.Position position;
-    public Card.Position effectposition;
     public bool update=false;
-    public bool averaged=false;
     public bool player1=false;
-    public bool initialdisplay=false;
+    public bool averaged=false;
 
     //References to GameObject
 
@@ -51,17 +42,13 @@ public class Carddisplay : MonoBehaviour
         if(update)
         {    
             update=false;
-            card=Resources.Load<Card>($"{displayId}");
+            card=Database.Search(displayId);
             
             /*
             When the card is drawn, the power modifications of previous games
             (these may remain if the execution was interrupted) must be reverted
-            */  
-            if(initialdisplay)
-            {
-                initialdisplay=false;
-                card.power=card.basepower;
-            }
+            */ 
+
 
             id= card.id;
             cardname= card.cardname;
@@ -69,11 +56,14 @@ public class Carddisplay : MonoBehaviour
             type= card.type;
             carddescription= card.carddescription;
             faction= card.faction;
-            basepower=card.basepower;
-            power= card.power;
-            position= card.position;
-            effectposition=card.effectposition;
-            effect=card.effect;
+
+            if(card.IsUnit())
+            {
+                auxcard=(Unit)card;
+                power= auxcard.powers[4];
+                position= auxcard.position;
+                effect=auxcard.effect;
+            }
 
             //Layer use for decoy collisions
 
@@ -89,10 +79,11 @@ public class Carddisplay : MonoBehaviour
             CardImage.sprite=image;
 
             //Not showing card power
-            if(card.type==Card.Type.Leader||card.type==Card.Type.Clear||card.type==Card.Type.Weather)
+            if(card.IsUnit())
             {
                 powerborder.SetActive(false);
             }
         }
     }
+    
 }
