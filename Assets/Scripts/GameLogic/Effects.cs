@@ -12,34 +12,10 @@ public class EffectDefinition
     public Action action;
     public void Execute()
     {
-        
+        foreach(string key in parameters.Keys)
+        {
+            action.context.context[key]=parameters[key];
+        }
+        action.Execute(action.context,action.targets);
     }
 }
-
-public class Action
-{
-    
-    public Context context;
-    public List<Card> target;
-    public List<StatementNode> statements;
-}
-
-public class Context
-{
-    public  Dictionary <string, object> intcontext;
-    public GlobalContext globalcontext;
-}
-
-public abstract class StatementNode
-{
-    public abstract void Execute();
-}
-
-public class DeclarationNode
-{
-
-}
-
-
-
-

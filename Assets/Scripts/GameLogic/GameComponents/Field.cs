@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Field : MonoBehaviour
+public class Field : GameComponent
 {
     public GameObject unitRows;
     public GameObject boostSlots;
-    
+
     public void Clear()
     {
         foreach(Transform child in unitRows.transform)

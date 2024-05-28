@@ -13,6 +13,7 @@ public class GameMaster : MonoBehaviour
     public Player currentplayer;
     public Player notcurrentplayer;
     public Player Winner;
+    public List<Card> board;
     public bool dragging;
     public bool globalModified=false;
     private int round=1;
@@ -171,12 +172,6 @@ public class GameMaster : MonoBehaviour
         message.SetActive(true);
     }
 
-    public void DrawCards(Player player,int n)
-    {
-        for(int i=0;i<n;i++){
-            player.DrawCard();
-        }
-    }
 
     public void StartSelection()
     {
@@ -219,6 +214,12 @@ public class GameMaster : MonoBehaviour
             NextTurn();
         }
     }
+    public void DrawCards(Player player,int n)
+    {
+        for(int i=0;i<n;i++){
+            player.DrawCard();
+        }
+    }
     
     public void PlayerSwitch()
     {
@@ -237,7 +238,6 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    
     
     void Start()
     {

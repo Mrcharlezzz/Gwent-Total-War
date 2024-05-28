@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Hand : MonoBehaviour
+public class Hand : GameComponent
 {
     public int size{get{return cards.Count;} }
-    public List<Card> cards= new List<Card>();
     public AddCards addCards;
     public bool player1;
     
@@ -17,9 +16,9 @@ public class Hand : MonoBehaviour
     }
 
 
-    public void AddCard(Card card)
+    public void Add(Card card)
     {
-        cards.Add(card);
+        Push(card);
         addCards.Add(card.id);
     }
     public void RemoveCard(Card card)

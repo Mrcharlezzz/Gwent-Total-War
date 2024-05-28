@@ -35,6 +35,11 @@ public class Player : MonoBehaviour
     bool playable=false;
     bool isValidField=false;
 
+    public Player Other()
+    {
+        if(this==gameMaster.player1) return gameMaster.player2;
+        return gameMaster.player1;
+    }
     
     void Update()
     {
@@ -87,14 +92,14 @@ public class Player : MonoBehaviour
         
         if(hand.size==10)
         {
-            graveyard.Add(playerdeck.deck[playerdeck.deck.Count-1]);
+            graveyard.Add(playerdeck.cards[playerdeck.cards.Count-1]);
             playerdeck.DrawCard();
         }
         else
         {
             
-            Debug.Log(playerdeck.deck.Count-1); //DO NOT ERASE :)
-            hand.AddCard(playerdeck.deck[playerdeck.deck.Count-1]);
+            Debug.Log(playerdeck.cards.Count-1); //DO NOT ERASE :)
+            hand.Add(playerdeck.cards[playerdeck.cards.Count-1]);
             playerdeck.DrawCard();
         }
     }
@@ -303,7 +308,7 @@ public class Player : MonoBehaviour
 
                 CardPowerImageColorchange(card2.transform,Color.white);
                 
-                hand.AddCard(card2display.card);
+                hand.Add(card2display.card);
                 parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
                 Destroy(card2);
                 parent.GetComponent<ModifyingConditions>().modified=true;

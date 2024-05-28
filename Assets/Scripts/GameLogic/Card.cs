@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
@@ -10,7 +11,8 @@ using UnityEngine.SocialPlatforms.Impl;
 public class Card: ScriptableObject
 {
     public int id;
-    public string cardname;
+    public Player owner;
+    new public string name;
     public Sprite image;
     public Type type;
     public string carddescription;
@@ -18,6 +20,12 @@ public class Card: ScriptableObject
     public Position position;
 
     public Onactivation activation;
+
+    public void ActivateEffect()
+    {
+        activation.triggerplayer=owner;
+        activation.Execute();
+    }
     
 
     public enum Position
@@ -82,11 +90,13 @@ public class Unit: Card{
 }
 
 public class Onactivation{
+    public Player triggerplayer;
     List<EffectActivation> activations;
     public void Execute()
     {
         foreach(EffectActivation activation in activations)
         {
+            activation.effect.definition.action.context.triggerplayer = triggerplayer;
             activation.Execute();
         }
     }
@@ -99,7 +109,14 @@ public class EffectActivation
     public EffectActivation postAction;
     public void Execute()
     {
-        effect.definition.action.target=selector.Select();
+        var temp=selector.Select();
+        if(selector.single&&temp.Count>0)
+        {
+            List<Card> singlecard=new List<Card>();
+            singlecard.Add(temp[0]); 
+            effect.definition.action.targets=singlecard;
+        }
+        else effect.definition.action.targets=temp;
         effect.Execute();
         postAction.Execute();
     }
@@ -118,157 +135,15 @@ public class Effect
         definition.Execute();
     }
 }
+
+//Used ListFind object with predicate based selection Evaluate method
 public class Selector
 {
-    List<Card> source = new List<Card>();
-    bool single;
-    Predicate filtre;
+    public bool single;
+    public ListFind filtre;
     public List<Card> Select()
     {
-        List<Card> select=new List<Card>();
-                
-        foreach(Card card in source)
-        {
-            if(filtre.Evaluate(new GlobalContext(),card))
-            {
-                select.Add(card);
-                if(single) break;
-            }
-        }
-        return select;
+        return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
     }
 }
 
-public class Predicate
-{
-    Expression predicate;
-    public bool Evaluate(GlobalContext context, Card card)
-    {
-        return (bool)predicate.Evaluate(context, card);
-    }
-}
-
-public abstract class Expression
-{
-    public abstract object Evaluate(GlobalContext context, Card card);
-}
-public abstract class BinaryOperator : Expression
-{
-    protected Expression left;
-    protected Expression right;
-}
-public class PlusNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)+(int)right.Evaluate(context, card);
-    }
-}
-public class MinusNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)-(int)right.Evaluate(context, card);
-    }
-}
-public class MultiplicationNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)*(int)right.Evaluate(context, card);
-    }
-}
-public class DivisionNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)/(int)right.Evaluate(context, card);
-    }
-}
-public class PowerNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return OptimizedPower((int)left.Evaluate(context, card),(int)right.Evaluate(context, card));
-    }
-    static int OptimizedPower(int argument, int power)
-    {
-        int result=1;
-        for(;power>=0;power/=2,argument=argument*argument)
-        {
-            if(power%2==1) result=(result*argument);
-        }
-        return result;
-    }
-}
-public class EqualsNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)==(int)right.Evaluate(context, card);
-    }
-}
-public class AtMostNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)<=(int)right.Evaluate(context, card);
-    }
-}
-public class AtLeastNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)>=(int)right.Evaluate(context, card);
-    }
-}
-public class LessNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)<(int)right.Evaluate(context, card);
-    }
-}
-public class GreatNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (int)left.Evaluate(context, card)>(int)right.Evaluate(context, card);
-    }
-}
-public class OrNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (bool)left.Evaluate(context, card)||(bool)right.Evaluate(context, card);
-    }
-}
-public class AndNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (bool)left.Evaluate(context, card)&&(bool)right.Evaluate(context, card);
-    }
-}
-public class JoinNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (string)left.Evaluate(context, card)+(string)right.Evaluate(context, card);
-    }
-}
-public class SpaceJoinNode: BinaryOperator
-{
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return (string)left.Evaluate(context, card)+" "+(string)right.Evaluate(context, card);
-    }
-}
-public class Atom: Expression
-{
-    protected object atom;
-    public override object Evaluate(GlobalContext context, Card card)
-    {
-        return atom;
-    }
-}
