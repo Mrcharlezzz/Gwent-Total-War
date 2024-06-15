@@ -8,46 +8,60 @@ using UnityEngine;
 
 #region ExpressionNodes
     
-public abstract class Expression
+public interface IExpression
 {
-    public abstract object Evaluate(Context context, List<Card> targets);
+    public object Evaluate(Context context, List<Card> targets);
 }
-public abstract class BinaryOperator : Expression
+public abstract class BinaryOperator :IExpression
 {
-    protected Expression left;
-    protected Expression right;
+    protected IExpression left;
+    protected IExpression right;
+
+    protected BinaryOperator(IExpression left,IExpression right)
+    {
+        this.left = left;
+        this.right = right;
+    }
+    public abstract object Evaluate(Context context, List<Card> targets);
 }
 public class Plus: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Plus(IExpression left, IExpression right) : base(left, right){}
+
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)+(int)right.Evaluate(context, targets);
     }
 }
 public class Minus: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Minus(IExpression left, IExpression right) : base(left, right){}
+
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)-(int)right.Evaluate(context, targets);
     }
 }
 public class Multiplication: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Multiplication(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)*(int)right.Evaluate(context, targets);
     }
 }
 public class Division: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Division(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)/(int)right.Evaluate(context, targets);
     }
 }
 public class Power: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Power(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return OptimizedPower((int)left.Evaluate(context, targets),(int)right.Evaluate(context, targets));
     }
@@ -63,69 +77,88 @@ public class Power: BinaryOperator
 }
 public class Equals: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Equals(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)==(int)right.Evaluate(context, targets);
     }
 }
+public class Differ: BinaryOperator
+{
+    public Differ(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
+    {
+        return (int)left.Evaluate(context, targets)!=(int)right.Evaluate(context, targets);
+    }
+}
 public class AtMost: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public AtMost(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)<=(int)right.Evaluate(context, targets);
     }
 }
 public class AtLeast: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public AtLeast(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)>=(int)right.Evaluate(context, targets);
     }
 }
 public class Less: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Less(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)<(int)right.Evaluate(context, targets);
     }
 }
 public class Great: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Great(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (int)left.Evaluate(context, targets)>(int)right.Evaluate(context, targets);
     }
 }
 public class Or: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Or(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (bool)left.Evaluate(context, targets)||(bool)right.Evaluate(context, targets);
     }
 }
 public class And: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public And(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (bool)left.Evaluate(context, targets)&&(bool)right.Evaluate(context, targets);
     }
 }
 public class Join: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public Join(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (string)left.Evaluate(context, targets)+(string)right.Evaluate(context, targets);
     }
 }
 public class SpaceJoin: BinaryOperator
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public SpaceJoin(IExpression left, IExpression right) : base(left, right){}
+    public override object  Evaluate(Context context, List<Card> targets)
     {
         return (string)left.Evaluate(context, targets)+" "+(string)right.Evaluate(context, targets);
     }
 }
 
-public abstract class Atom: Expression{}
+public abstract class Atom:IExpression{
+    public abstract object Evaluate(Context context, List<Card> targets);
+}
 
 public abstract class List:Atom{}
 
@@ -206,25 +239,38 @@ public class ListFind: List
     }
 public class Predicate
 {
-    Expression predicate;
+    IExpression predicate;
     public bool Evaluate(Context context, List<Card> targets)
     {
         return (bool)predicate.Evaluate(context, targets);
     }
 }
 }
-public class Constant: Atom
-{
-    public object literal;
+public class Literal: Atom{
+    object value;
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return literal;
+        return value;
+    }
+}
+public class Negation: Atom{
+    public Literal literal;
+    public override object Evaluate(Context context, List<Card> targets)
+    {
+        return !(bool)literal.Evaluate(context, targets);
+    }
+}
+public class Negative: Atom{
+    public Literal literal;
+    public override object Evaluate(Context context, List<Card> targets)
+    {
+        return -(int)literal.Evaluate(context, targets);
     }
 }
 
 public interface ICardAtom
 {
-    public object Evaluate(Context context, List<Card> targets);
+    public object IEvaluate(Context context, List<Card> targets);
     public void Set(Context context, Card card);
 }
 public class Variable: Atom
@@ -236,6 +282,10 @@ public class Variable: Atom
     }
 }
 public class CardVariable: Variable,ICardAtom{
+    public object IEvaluate(Context context, List<Card> targets)
+    {
+        return Evaluate(context, targets);
+    }
     public void Set(Context context,Card card)
     {
         context.context[name]=card;
@@ -246,9 +296,13 @@ public class IndexedCard: Atom, ICardAtom
 {
     public int index{get => Math.Max(list.Count,index); set{}}
     public List<Card> list;
-    public override object Evaluate(Context context, List<Card> targets)
+    public  object IEvaluate(Context context, List<Card> targets)
     {
         return list[index];
+    }
+    public override object Evaluate(Context context, List<Card> targets)
+    {
+        return IEvaluate(context, targets);
     }
     public void Set(Context context,Card card)
     {
@@ -259,72 +313,72 @@ public class IndexedCard: Atom, ICardAtom
 public abstract class PropertyAccess: Atom
 {
     public ICardAtom card;
-    public abstract void Set(Context context,List<Card> targets, Expression expression);
+    public abstract void Set(Context context,List<Card> targets, IExpression Iexpression);
 }
 
 public class PowerAccess: PropertyAccess
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public  override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux1=(Card)card.Evaluate(context,targets);
+        Card aux1=(Card)card.IEvaluate(context,targets);
         if(aux1.IsUnit())
         {
-            return (card.Evaluate(context,targets) as Unit).powers[4];
+            return (card.IEvaluate(context,targets) as Unit).powers[3];
         }
         else return 0;
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Unit).powers[4]=(int)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Unit).powers[3]=(int)Iexpression.Evaluate(context,targets);
     }
 }
 public class NameAccess: PropertyAccess
 {
     public override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux=(Card)card.Evaluate(context,targets);
+        Card aux=(Card)card.IEvaluate(context,targets);
         return aux.name;    
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Card).name=(string)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Card).name=(string)Iexpression.Evaluate(context,targets);
     }
 }
 
 public class FactionAccess: PropertyAccess
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public  override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux=(Card)card.Evaluate(context,targets);
+        Card aux=(Card)card.IEvaluate(context,targets);
         return aux.faction;    
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Card).faction=(Card.Faction)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Card).faction=(Card.Faction)Iexpression.Evaluate(context,targets);
     }
 }
 public class OwnerAccess: PropertyAccess
 {
-    public override object Evaluate(Context context, List<Card> targets)
+    public  override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux=(Card)card.Evaluate(context,targets);
+        Card aux=(Card)card.IEvaluate(context,targets);
         return aux.owner;    
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Card).owner=(Player)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Card).owner=(Player)Iexpression.Evaluate(context,targets);
     }
 }
 public class TypeAccess: PropertyAccess
 {
     public override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux=(Card)card.Evaluate(context,targets);
+        Card aux=(Card)card.IEvaluate(context,targets);
         return aux.type;    
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Card).type=(Card.Type)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Card).type=(Card.Type)Iexpression.Evaluate(context,targets);
     }
 } 
 
@@ -332,12 +386,12 @@ public class PositionAccess: PropertyAccess
 {
     public override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux=(Card)card.Evaluate(context,targets);
+        Card aux=(Card)card.IEvaluate(context,targets);
         return aux.position;    
     }
-    public override void Set(Context context,List<Card> targets, Expression expression)
+    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
     {
-        (card.Evaluate(context,targets) as Card).position=(Card.Position)expression.Evaluate(context,targets);
+        (card.IEvaluate(context,targets) as Card).position=(Card.Position)Iexpression.Evaluate(context,targets);
     }
 }
 
@@ -346,19 +400,19 @@ public class PositionAccess: PropertyAccess
 
 #region StatementNodes
 
-public abstract class Statement
+public interface IStatement
 {
-    public abstract void Execute(Context context, List<Card> targets);
+    public void Execute(Context context, List<Card> targets);
 }
-public class Action: Statement
+public class Action: IStatement
 {
     
     public Context context;
     public List<Card> targets;
-    public List<Statement> statements;
-    public override void Execute(Context context, List<Card> targets)
+    public List<IStatement> statements;
+    public virtual void Execute(Context context, List<Card> targets)
     {
-        foreach(Statement statement in statements)
+        foreach(IStatement statement in statements)
         {
             statement.Execute(context,targets);
         }
@@ -372,9 +426,10 @@ public class Context
 
 
 
-public abstract class Assignation: Statement
+public abstract class Assignation: IStatement
 {
-    public Expression assignation;
+    public IExpression assignation;
+    public abstract void Execute(Context context, List<Card> targets);
 }
 
 public class CardAssignation:Assignation
@@ -440,7 +495,7 @@ public class Foreach: Action
 
 public class While: Action
 {
-    Expression predicate;
+    IExpression predicate;
     public override void Execute(Context context,List<Card> targets)
     {
         foreach(string key in context.context.Keys)
@@ -454,8 +509,9 @@ public class While: Action
     }
 }
 
-public abstract class Methods: Statement
+public abstract class Methods: IStatement
 {
+    public abstract void Execute(Context context,List<Card> targets);
     public List list; 
 }
 public class Push: Methods
@@ -463,7 +519,7 @@ public class Push: Methods
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context,targets) as List<Card>).Add(card.Evaluate(context,targets) as Card);
+        (list.Evaluate(context,targets) as List<Card>).Add(card.IEvaluate(context,targets) as Card);
     }
 }
 public class SendBottom: Methods
@@ -471,7 +527,7 @@ public class SendBottom: Methods
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context,targets) as List<Card>).Insert(0,card.Evaluate(context,targets) as Card);
+        (list.Evaluate(context,targets) as List<Card>).Insert(0,card.IEvaluate(context,targets) as Card);
     }
 }
 public class Remove: Methods
@@ -479,7 +535,7 @@ public class Remove: Methods
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context,targets) as List<Card>).Remove(card.Evaluate(context,targets) as Card);
+        (list.Evaluate(context,targets) as List<Card>).Remove(card.IEvaluate(context,targets) as Card);
     }
 }
 public class Pop: Methods

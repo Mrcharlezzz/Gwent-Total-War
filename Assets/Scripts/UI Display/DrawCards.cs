@@ -18,7 +18,7 @@ public class AddCards : MonoBehaviour
         Carddisplay carddisplay= playercard.GetComponent<Carddisplay>();
         carddisplay.displayId=n;
         carddisplay.update=true;
-        carddisplay.initialdisplay=true;
+        //carddisplay.initialdisplay=true;
         if(gameObject.GetComponent<Hand>().player1)
         {
             carddisplay.player1=true;

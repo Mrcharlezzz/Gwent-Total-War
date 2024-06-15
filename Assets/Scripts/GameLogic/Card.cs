@@ -8,7 +8,7 @@ using UnityEngine.SocialPlatforms.Impl;
 [CreateAssetMenu (fileName = "CardSO", menuName = "Create Card")]
 
 
-public class Card: ScriptableObject
+public abstract class Card: ScriptableObject
 {
     public int id;
     public Player owner;
@@ -66,13 +66,12 @@ public class Unit: Card{
     /*
     It is necessary to save the values of different power layers 
     powers[0]: holds de basepower value
-    powers[1]: holds the multiplicated power for units with powerxNtimes effect
-    powers[2]: holds the climate affected power
-    powers[3]: holds the boostaffected power
-    powers[4]: holds any extra modifications resulting power (user-created effects)
+    powers[1]: holds the climate affected power
+    powers[2]: holds the boostaffected power
+    powers[3]: holds any extra modifications resulting power (user-created effects)
     */
 
-    public int[] powers=new int[5]; 
+    public int[] powers=new int[4]; 
     public Position effectposition;
     
     public enum IntEffect
