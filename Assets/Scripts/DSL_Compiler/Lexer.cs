@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using JetBrains.Annotations;
 using Unity.VisualScripting.FullSerializer;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 public class Lexer{
     string source;
@@ -63,6 +64,7 @@ public class Lexer{
             ScanToken();
         }
         tokens.Add(new Token(TokenType.EOF,"",null!,line,column));
+        SyntaxSugar();
         return tokens;
     }
 
@@ -145,6 +147,44 @@ public class Lexer{
                 break; 
         }
     }
+
+    public void SyntaxSugar(){
+        for(int i=0;i<tokens.Count;i++){
+            Token aux=tokens[i];
+            if(aux.type == TokenType.Hand||aux.type == TokenType.Deck||aux.type == TokenType.Graveyard||aux.type == TokenType.Field)
+            {
+                tokens.Insert(i, new Token(TokenType.RightParen,")",null,aux.line, aux.column));
+                tokens.Insert(i, new Token(TokenType.TriggerPlayer,"TriggerPlayer",null,aux.line, aux.column));
+                tokens.Insert(i, new Token(TokenType.Dot,".",null,aux.line, aux.column));
+                tokens.Insert(i, new Token(TokenType.Context,"context",null,aux.line, aux.column));
+                tokens.Insert(i, new Token(TokenType.LeftParen,"(",null,aux.line, aux.column));
+                tokens.Insert(i, new Token(TokenType.Context,"context",null,aux.line, aux.column));
+                TokenType type= TokenType.EOF;
+                string lexeme="";
+                switch(aux.type){
+                    case TokenType.Hand:
+                        type=TokenType.HandOfPlayer;
+                        lexeme="HandOfPlayer";
+                        break;
+                    case TokenType.Deck:
+                        type=TokenType.DeckOfPlayer;
+                        lexeme="DeckOfPlayer";
+                        break;
+                    case TokenType.Graveyard:
+                        type=TokenType.GraveyardOfPlayer;
+                        lexeme="GraveyardOfPlayer";
+                        break;
+                    case TokenType.Field:
+                        type=TokenType.FieldOfPlayer;
+                        lexeme="FieldOfPlayer";
+                        break;
+                    default: break;
+                }
+                tokens.Insert(i, new Token(type,lexeme,null,aux.line, aux.column));
+            }
+        }
+    }
+
     //Move to the next charcater while returning current
     char Advance(){
         column++;
@@ -237,23 +277,23 @@ public enum TokenType{
     Or, And,
 
     //Literals
-    Identifier, StringLiteral, NumberLiteral, BoolLiteral,
+    Identifier,StringLiteral, NumberLiteral, True, False,
 
     //////ReservedWords
 
     //Main
     Card,effect,
     //Effect
-    Name, Params, Action, Targets, Context,
+    Name, Params, Action, Targets, Context, card,
     //Loops
     While, For, In, 
     //ContextProperties
     TriggerPlayer, HandOfPlayer, FieldOfPlayer, GraveyardOfPlayer,
-    DeckOfPlayer, Hand, Field, Graveyard, Deck,
+    DeckOfPlayer, Hand, Field, Graveyard, Deck, Board,
     //Methods
     Push, SendBottom, Pop, Remove, Shuffle, Find,
     //Card
-    Type, Faction, Power, Range, OnActivation,
+    Type, Faction, Power, Range , Owner, OnActivation,
     //OnActivation
     Effect, Selector, Source, Single, Predicate, PostAction,
 
