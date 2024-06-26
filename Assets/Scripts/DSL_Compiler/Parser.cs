@@ -183,14 +183,14 @@ public class Parser
         }
             
         types=new List<TokenType>(){ TokenType.Targets,TokenType.Context};
-        if(Peek().type==TokenType.Dot) throw Error(Peek(), "Invalid property access");
+        if(Check(TokenType.Dot)) throw Error(Peek(), "Invalid property access");
         throw Error(Peek(), "Expect expression");
     }
 
     public IExpression Access(){
         IExpression left= new Variable(Peek());
         Advance();
-        if(Peek().type==TokenType.LeftBracket) left=Indexer(left);
+        if(Check(TokenType.LeftBracket)) left=Indexer(left);
         while(Match(TokenType.Dot)){
             List<TokenType>types=new List<TokenType>(){ 
                 TokenType.HandOfPlayer,TokenType.DeckOfPlayer,TokenType.GraveyardOfPlayer,
@@ -252,7 +252,7 @@ public class Parser
 
     
     public IStatement Statement(){
-        if(Peek().type==TokenType.Identifier){
+        if(Check(TokenType.Identifier)){
             Token identifier=Peek();
             IExpression expr=Expression();
            
@@ -301,8 +301,26 @@ public class Parser
             }
             if(expr is IStatement) return (IStatement) expr;
             else throw Error(Peek(), "Invalid statement");
+            
+
+            
         }
-        if(Token )
+        if(Check(TokenType.While)){
+            Consume(TokenType.LeftParen, "Expect '(' after 'while'");
+            IExpression condition = Expression();
+            Consume(TokenType.RightParen, "Expect ')' after condition.");
+            List<IStatement> body = Block();
+            //INSTANCIAR WHILE CORRECTAMENTE
+        }
+    }
+
+    public List<IStatement> Block(){
+        List<IStatement> statements=new List<IStatement>();
+        while(!Check(TokenType.RightBrace)&&!IsAtEnd()){
+            statements.Add(Statement());
+        }
+        Consume(TokenType.RightBrace, "Expected '}' after block");
+        return statements;
     }
 }
     

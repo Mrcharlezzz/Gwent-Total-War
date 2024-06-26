@@ -483,12 +483,14 @@ public class Action: IStatement
 public class Context
 {
     public Player triggerplayer;
+    public Context enclosing;
     public  Dictionary <string, object> context;
 
     public object Get(Token key){
         if(context.ContainsKey(key.lexeme)){
             return context[key.lexeme];
         }
+        if(enclosing!=null) return enclosing.Get(key);
         throw Parser.Error(key,"Undifined variable");
     }
     public void Set(Token key,object value){
