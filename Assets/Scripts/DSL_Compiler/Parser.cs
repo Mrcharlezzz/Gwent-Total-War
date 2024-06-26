@@ -3,20 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 
 public class Parser
 {
     List<Token> tokens;
     int current=0;
-    public Parser(List<Token> tokens)
-    {
+    public Parser(List<Token> tokens){
         this.tokens = tokens;
     }
 
     //All classes in this region has similar logic to their counterparts in Lexer class
     #region Tools
-    public static Exception Error(Token token, string message)
-    {
+    public static Exception Error(Token token, string message){
         DSL.Error(token, message);
         return new Exception();
     }
@@ -37,13 +36,11 @@ public class Parser
         }
         return false;
     }
-    bool Check(TokenType type)
-    {
+    bool Check(TokenType type){
         if(IsAtEnd()) return false;
         return Peek().type==type;
     }
-    Token Advance()
-    {
+    Token Advance(){
         if(!IsAtEnd()) current++;
         return Previous();
     }
@@ -60,8 +57,7 @@ public class Parser
     Token Previous(){
         return tokens[current-1];
     }
-    Token Consume(TokenType type, string message)
-    {
+    Token Consume(TokenType type, string message){
         if(Check(type)) return Advance();
         throw Error(Peek(),message);
     }
@@ -181,110 +177,139 @@ public class Parser
             return expr;
         }
         if(Match(TokenType.Identifier)){
-            if(Peek().type==TokenType.Dot) return Access(new CardVariable((string)Previous().literal));
-            return new Variable ((string)Previous().literal);
+            IExpression left=new Variable (Previous());
+            if(Peek().type==TokenType.Dot) return Access();
+            return left;
         }
             
-        if(Match(TokenType.Context)) return Context();
-        if(Match(TokenType.Targets)) return ParseCard(new TargetList());
         types=new List<TokenType>(){ TokenType.Targets,TokenType.Context};
-
+        if(Peek().type==TokenType.Dot) throw Error(Peek(), "Invalid property access");
         throw Error(Peek(), "Expect expression");
     }
 
-    public IExpression Context(){
-        Consume(TokenType.Dot,"Expected context access");
-        if(Match(TokenType.TriggerPlayer)) return new TriggerPlayer();
-        List<TokenType>types=new List<TokenType>(){ 
-            TokenType.HandOfPlayer,TokenType.DeckOfPlayer,TokenType.GraveyardOfPlayer,
-            TokenType.FieldOfPlayer,TokenType.Board,
-        };
-        if(Match(types)){
-            IExpression list=null!;
-            if(Previous().type!=TokenType.Board)
-            {
-                TokenType aux=Previous().type;
-                Consume(TokenType.LeftParen,"Expected List Argument");
-                IExpression arg= Expression();
-                Consume(TokenType.RightParen,"Expected ')' after List Argument");
-                switch(aux){
-                    case TokenType.HandOfPlayer: list=new HandList((Player) arg); break;
-                    case TokenType.DeckOfPlayer: list=new DeckList((Player) arg); break;
-                    case TokenType.GraveyardOfPlayer: list=new GraveyardList((Player) arg); break;
-                    case TokenType.FieldOfPlayer: list=new FieldList((Player) arg); break;
+    public IExpression Access(){
+        IExpression left= new Variable(Peek());
+        Advance();
+        if(Peek().type==TokenType.LeftBracket) left=Indexer(left);
+        while(Match(TokenType.Dot)){
+            List<TokenType>types=new List<TokenType>(){ 
+                TokenType.HandOfPlayer,TokenType.DeckOfPlayer,TokenType.GraveyardOfPlayer,
+                TokenType.FieldOfPlayer,TokenType.Board,
+            };
+            if(Match(types)){
+                if(Previous().type!=TokenType.Board)
+                {
+                    TokenType aux=Previous().type;
+                    Consume(TokenType.LeftParen,"Expected TriggerPlayer Argument");
+                    IExpression arg= Expression();
+                    Consume(TokenType.RightParen,"Expected ')' after TriggerPlayer Argument");
+                    switch(aux){
+                        case TokenType.HandOfPlayer: left=Indexer(new HandList(arg)); break;
+                        case TokenType.DeckOfPlayer: left=Indexer(new DeckList(arg)); break;
+                        case TokenType.GraveyardOfPlayer: left=Indexer(new GraveyardList(arg)); break;
+                        case TokenType.FieldOfPlayer: left=Indexer(new FieldList(arg)); break;
+                    }
                 }
+                else left=Indexer(new BoardList());
             }
-            else list=new BoardList();
-            return ParseCard(list);
-        }
-
-        throw Error(Peek(), "Invalid context access");
-    }
-
-    public IExpression ParseCard(IExpression list){
-        if(Match(TokenType.LeftBracket)){
-            IExpression index= Expression();
-            Consume(TokenType.RightBracket, "Expected ']' after List Indexing");
-            return Access(new IndexedCard( index, (List)list));
-        }
-        if(Match(TokenType.Dot)){
-            if(Match(TokenType.Find)){
+            else if(Match(TokenType.Find)){
                 Consume(TokenType.LeftParen,"Expected '(' after method");
                 Consume (TokenType.card, "Invalid Predicate");
                 Consume (TokenType.RightParen,"Expeted ')' after predicate argument");
                 Consume (TokenType.Arrow, "Expected predicate function call");
                 IExpression predicate= Expression();
                 Consume(TokenType.RightParen, "Expected ')' after predicate");
-                return ParseCard(new ListFind((List)list,predicate));
+                left= Indexer(new ListFind(left,predicate));
             }
-            if(Match(TokenType.Pop)){
+            else if(Match(TokenType.Pop)){
                 Consume(TokenType.LeftParen, "Expected '(' after method");
                 Consume(TokenType.RightParen, "Expected ')' after method");
-                return Access(new Pop((List)list));
+                left=new Pop(left);
             }
-            throw Error(Peek(), "Expected list access");
+            else if(Match(TokenType.TriggerPlayer)) return new TriggerPlayer();
+            else if(Match(TokenType.Name)) return new NameAccess(left);
+            else if(Match(TokenType.Power)) return new PowerAccess(left);
+            else if(Match(TokenType.Faction)) return new FactionAccess(left);
+            else if(Match(TokenType.Type)) return new TypeAccess(left);
+            else if(Match(TokenType.Owner)) return new OwnerAccess(left);
+            TokenType type =Peek().type;
+            if(type== TokenType.Push||type== TokenType.Remove||type== TokenType.SendBottom||type== TokenType.Shuffle) return left;
+            throw Error(Peek(), "Invalid property access");
         }
-        throw Error(Peek(), "Invalid list operand");
+        return left;
     }
-
-    public IExpression Access(ICardAtom card){
-        if(Match(TokenType.Dot)){
-            if(Match(TokenType.Name)) return new NameAccess(card);
-            if(Match(TokenType.Power)) return new PowerAccess(card);
-            if(Match(TokenType.Faction)) return new FactionAccess(card);
-            if(Match(TokenType.Type)) return new TypeAccess(card);
-            if(Match(TokenType.Owner)) return new OwnerAccess(card);
-            throw Error(Peek(), "Expected Card property access");
+    public IExpression Indexer(IExpression list){
+        if(Match(TokenType.LeftBracket)){
+            IExpression index= Expression();
+            Consume(TokenType.RightBracket, "Expected ']' after List Indexing");
+            return new IndexedCard(index,list);
         }
-        return card;
+        else return list;
     }
     #endregion
 
-    #region Statement Parsing
+    #region Statement Parsing   
+
     
     public IStatement Statement(){
-        if(Match(TokenType.Identifier)){
-            if(Peek().type==TokenType.Dot){
-                var access=(PropertyAccess)Access(new CardVariable((string)Previous().literal));
-                Consume(TokenType.Equal, "Expected assignation");
+        if(Peek().type==TokenType.Identifier){
+            Token identifier=Peek();
+            IExpression expr=Expression();
+           
+            if(Match(TokenType.Equal)){
                 IExpression assignation=Expression();
-                Consume(TokenType.Semicolon, "Expected ';' after statement");
-                return new CardPropertyAssignation(access,assignation);
+                Consume(TokenType.Semicolon, "Expected ';' after assignation");
+                if(expr is ICardAtom) return new CardAssignation((ICardAtom)expr,assignation);
+                if(expr is PropertyAccess) return new CardPropertyAssignation((PropertyAccess) expr, assignation);
+                return new VarAssignation(identifier,assignation);
             }
-            if(Peek().type==TokenType.Equal){
-                Token variable=Previous();
-                Advance();
+            if(Match(new List<TokenType>(){TokenType.PlusPlus,TokenType.MinusMinus})){
+                Consume(TokenType.Semicolon, "Expected ';' after assignation");
+                if(expr is Variable){
+                    if(Previous().type==TokenType.PlusPlus) return new PlusPlus(identifier);
+                    else return new MinusMinus(identifier);
+                }
+                throw Error(Previous(), "Invalid operand to '++' operation");
+            }
+            if(Match(new List<TokenType>(){TokenType.MinusEqual,TokenType.PlusEqual})){
                 IExpression assignation=Expression();
-                Consume(TokenType.Semicolon, "Expected ';' after statement");
-                return new VarAssignation(variable,assignation);
+                if(expr is Variable){   
+                    if(Previous().type==TokenType.MinusEqual) return new MinusEqual(identifier,assignation);
+                    else return new PlusEqual(identifier,assignation);
+                }
             }
-            //plusplus, minusminus
+            if(Match(TokenType.Dot)){
+                if(expr is List){
+                    if(Match(new List<TokenType>(){TokenType.Push,TokenType.SendBottom, TokenType.Remove})){
+                        Consume(TokenType.LeftParen,"Expeted '(' after method");
+                        IExpression card=Expression();
+                        Consume(TokenType.RightParen,"Expected ')' after method");
+                        Consume(TokenType.Semicolon, "Expected ';' after method");
+                        if(Previous().type==TokenType.Push)return new Push((List)expr,(ICardAtom)card);
+                        if(Previous().type==TokenType.SendBottom) return new SendBottom((List)expr,(ICardAtom)card);
+                        return new Remove((List)expr,(ICardAtom)card);
+                    }
+                    if(Match(TokenType.Shuffle)){
+                        Consume(TokenType.LeftParen, "Expected '(' after method");
+                        Consume(TokenType.LeftParen, "Expected ')' after method");
+                        Consume(TokenType.Semicolon, "Expected ';' after method");
+                        return new Shuffle((List)expr);
+                    }
+                    throw Error(Peek(), "Expected list method");
+                }
+                else throw Error(Peek(), "Invalid method call");
+            }
+            if(expr is IStatement) return (IStatement) expr;
+            else throw Error(Peek(), "Invalid statement");
         }
+        if(Token )
     }
-    
-
-
-
-    #endregion
-
 }
+    
+    #endregion
+    
+  /////////////////////////////////////////////////////////////////////
+    //  PENDIENTES:
+    //  IMPLEMENTAR PARSEO DE += Y -= PARA PORPERTYACCESS 
+    //  PIN DE IDEA IMPORTANTE:
+    //  AGRUPAR MEDIANTE INTERFACES A LAS CLASES DEL AST PARA SABER QUE TIPO DEBERIAN DEVOLVER, PARA EL CHECK

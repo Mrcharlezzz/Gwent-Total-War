@@ -183,52 +183,52 @@ public class BoardList:List{
 }
 public abstract class IndividualList: List
 {
-    public Player player;
-    public IndividualList(Player player){
-        this.player = player;
+    public IExpression expr;
+    public IndividualList(IExpression expr){
+        this.expr = expr;
     }
 }
 
 public class HandList: IndividualList
 {
-    public HandList(Player player):base(player){}
+    public HandList(IExpression expr):base(expr){}
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Hand(player);
+        return GlobalContext.Hand((Player)expr.Evaluate(context, targets));
     }
 }
 public class DeckList: IndividualList
 {
-    public DeckList(Player player):base(player){}
+    public DeckList(IExpression expr):base(expr){}
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Deck(player);
+        return GlobalContext.Deck((Player)expr.Evaluate(context, targets));
     }
 }
 public class GraveyardList: IndividualList
 {
-    public GraveyardList(Player player):base(player){}
+    public GraveyardList(IExpression expr):base(expr){}
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Graveyard(player);
+        return GlobalContext.Graveyard((Player)expr.Evaluate(context, targets));
     }
 }
 public class FieldList: IndividualList
 {
-    public FieldList(Player player):base(player){}
+    public FieldList(IExpression expr):base(expr){}
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Field(player);
+        return GlobalContext.Field((Player)expr.Evaluate(context, targets));
     }
 }
 
 
 public class ListFind: List{
-    public ListFind(List list, IExpression predicate){
+    public ListFind(IExpression list, IExpression predicate){
         this.list = list;
         this.predicate = predicate;
     }
-    public List list;
+    public IExpression list;
     IExpression predicate;
     public override object Evaluate(Context context,List<Card> targets){
         /*
@@ -295,33 +295,33 @@ public interface ICardAtom:IExpression
 }
 public class Variable: Atom
 {
-    public Variable(string name)
+    public Variable(Token name)
     {
         this.name=name;
     }
-    public string name;
+    public Token name;
     public override object Evaluate(Context context,List<Card> targets)
     {
-        return context.context[name];
+        return context.context[name.lexeme];
     }
 }
 public class CardVariable: Variable,ICardAtom{
-    public CardVariable(string name) : base(name) {}
+    public CardVariable(Token name) : base(name) {}
     
     public void Set(Context context,List<Card> targets, Card card)
     {
-        context.context[name]=card;
+        context.context[name.lexeme]=card;
     }
 }
 
 public class IndexedCard:  ICardAtom
 {
-    public IndexedCard(IExpression index, List list){
+    public IndexedCard(IExpression index, IExpression list){
         this.index=index;
-        this.list=list;
+        this.list=list;     
     }
     public IExpression index;
-    public List list;
+    public IExpression list;
     public  object Evaluate(Context context, List<Card> targets)
     {
         var evaluation=list.Evaluate(context,targets) as List<Card>;
@@ -336,10 +336,10 @@ public class IndexedCard:  ICardAtom
 }
 
 public class Pop: ICardAtom,IStatement{
-    public Pop( List list){
+    public Pop( IExpression list){
         this.list = list;
     }
-    public List list;
+    public IExpression list;
 
     public object Evaluate( Context context, List<Card> targets){
         List<Card> evaluation = list.Evaluate(context,targets) as List<Card>;
@@ -359,16 +359,16 @@ public class Pop: ICardAtom,IStatement{
 
 public abstract class PropertyAccess: Atom
 {
-    public PropertyAccess(ICardAtom card){
+    public PropertyAccess(IExpression card){
         this.card = card;
     }
-    public ICardAtom card;
+    public IExpression card;
     public abstract void Set(Context context,List<Card> targets, IExpression Iexpression);
 }
 
 public class PowerAccess: PropertyAccess
 {
-    public PowerAccess(ICardAtom card):base(card){}
+    public PowerAccess(IExpression card):base(card){}
     public  override object Evaluate(Context context, List<Card> targets)
     {
         Card aux1=(Card)card.Evaluate(context,targets);
@@ -385,7 +385,7 @@ public class PowerAccess: PropertyAccess
 }
 public class NameAccess: PropertyAccess
 {
-    public NameAccess(ICardAtom card):base(card){}
+    public NameAccess(IExpression card):base(card){}
     public override object Evaluate(Context context, List<Card> targets)
     {
         Card aux=(Card)card.Evaluate(context,targets);
@@ -399,7 +399,7 @@ public class NameAccess: PropertyAccess
 
 public class FactionAccess: PropertyAccess
 {
-    public FactionAccess(ICardAtom card):base(card){}
+    public FactionAccess(IExpression card):base(card){}
     public  override object Evaluate(Context context, List<Card> targets)
     {
         Card aux=(Card)card.Evaluate(context,targets);
@@ -412,7 +412,7 @@ public class FactionAccess: PropertyAccess
 }
 public class OwnerAccess: PropertyAccess
 {
-    public OwnerAccess(ICardAtom card):base(card){}
+    public OwnerAccess(IExpression card):base(card){}
     public  override object Evaluate(Context context, List<Card> targets)
     {
         Card aux=(Card)card.Evaluate(context,targets);
@@ -425,7 +425,7 @@ public class OwnerAccess: PropertyAccess
 }
 public class TypeAccess: PropertyAccess
 {
-    public TypeAccess(ICardAtom card):base(card){}
+    public TypeAccess(IExpression card):base(card){}
     public override object Evaluate(Context context, List<Card> targets)
     {
         Card aux=(Card)card.Evaluate(context,targets);
@@ -439,7 +439,7 @@ public class TypeAccess: PropertyAccess
 
 public class PositionAccess: PropertyAccess
 {
-    public PositionAccess(ICardAtom card):base(card){}
+    public PositionAccess(IExpression card):base(card){}
     public override object Evaluate(Context context, List<Card> targets)
     {
         Card aux=(Card)card.Evaluate(context,targets);
@@ -485,11 +485,17 @@ public class Context
     public Player triggerplayer;
     public  Dictionary <string, object> context;
 
-    public object Get(Token identifier){
-        if(context.ContainsKey(identifier.lexeme)){
-            return context[identifier.lexeme];
+    public object Get(Token key){
+        if(context.ContainsKey(key.lexeme)){
+            return context[key.lexeme];
         }
-        throw Parser.Error(identifier,"Undifined variable");
+        throw Parser.Error(key,"Undifined variable");
+    }
+    public void Set(Token key,object value){
+        if(context.ContainsKey(key.lexeme)){
+            if(context[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
+        }
+        context[key.lexeme]=value;
     }
 }
 
@@ -544,6 +550,49 @@ public class VarAssignation: Assignation
 
     }
 }
+public class PlusPlus: Variable,IStatement{
+    public PlusPlus(Token name):base(name) {}
+    public override object Evaluate(Context context, List<Card> targets)
+    {
+        Execute(context, targets);
+        return (int)base.Evaluate(context, targets)-1;
+    }
+    public void Execute(Context context, List<Card> targets){
+        context.context[(string)name.literal]=(int)context.context[(string)name.literal]+1;
+    }
+}
+public class MinusMinus: Variable,IStatement{
+    public MinusMinus(Token name):base(name) {}
+    public override object Evaluate(Context context, List<Card> targets)
+    {
+        Execute(context, targets);
+        return (int)base.Evaluate(context, targets)+1;
+    }
+    public void Execute(Context context, List<Card> targets){
+        context.Set(name,(int)context.context[(string)name.literal]-1);
+    }
+}
+
+public class PlusEqual: VarAssignation{
+    public PlusEqual(Token variable, IExpression assignation):base(variable, assignation){}
+
+    public override void Execute(Context context, List<Card> targets)
+    {
+        var value = context.Get(variable);
+        if(value is int) context.Set(variable,(int)value+(int)assignation.Evaluate(context, targets));
+        //else throw Parser.Error(variable,"");
+    }
+}
+public class MinusEqual: VarAssignation{
+    public MinusEqual(Token variable, IExpression assignation):base(variable, assignation){}
+
+    public override void Execute(Context context, List<Card> targets)
+    {
+        var value = context.Get(variable);
+        if(value is int) context.Set(variable,(int)value+(int)assignation.Evaluate(context, targets));
+        //else throw Parser.Error(variable,"");
+    }
+}
 
 
 
@@ -584,29 +633,41 @@ public class While: Action
     }
 }
 
-public abstract class Methods: IStatement
+public abstract class Method: IStatement
 {
-    public abstract void Execute(Context context,List<Card> targets);
+    public Method(List list){
+        this.list=list;
+    }
     public List list; 
+    public abstract void Execute(Context context,List<Card> targets);
 }
-public class Push: Methods
+public class Push: Method
 {
+    public Push(List list, ICardAtom card):base(list){
+        this.card=card;
+    }
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
         (list.Evaluate(context,targets) as List<Card>).Add(card.Evaluate(context,targets) as Card);
     }
 }
-public class SendBottom: Methods
+public class SendBottom: Method
 {
+    public SendBottom(List list, ICardAtom card):base(list){
+        this.card=card;
+    }
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
         (list.Evaluate(context,targets) as List<Card>).Insert(0,card.Evaluate(context,targets) as Card);
     }
 }
-public class Remove: Methods
+public class Remove: Method
 {
+    public Remove(List list, ICardAtom card):base(list){
+        this.card=card;
+    }
     ICardAtom card;
     public override void Execute(Context context, List<Card> targets)
     {
@@ -614,8 +675,9 @@ public class Remove: Methods
     }
 }
 
-public class Shuffle: Methods
+public class Shuffle: Method
 {
+    public Shuffle(List list):base(list){}
     public override void Execute(Context context, List<Card> targets)
     {
         List<Card> temp=list.Evaluate(context,targets) as List<Card>;
