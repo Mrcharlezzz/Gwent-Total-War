@@ -363,7 +363,7 @@ public abstract class PropertyAccess: Atom
         this.card = card;
     }
     public IExpression card;
-    public abstract void Set(Context context,List<Card> targets, IExpression Iexpression);
+    public abstract void Set(Context context,List<Card> targets, object value);
 }
 
 public class PowerAccess: PropertyAccess
@@ -378,9 +378,9 @@ public class PowerAccess: PropertyAccess
         }
         else return 0;
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Unit).powers[3]=(int)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Unit).powers[3]=(int)value;
     }
 }
 public class NameAccess: PropertyAccess
@@ -391,9 +391,9 @@ public class NameAccess: PropertyAccess
         Card aux=(Card)card.Evaluate(context,targets);
         return aux.name;    
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).name=(string)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Card).name=(string)value;
     }
 }
 
@@ -405,9 +405,9 @@ public class FactionAccess: PropertyAccess
         Card aux=(Card)card.Evaluate(context,targets);
         return aux.faction;    
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).faction=(Card.Faction)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Card).faction=(Card.Faction)value;
     }
 }
 public class OwnerAccess: PropertyAccess
@@ -418,9 +418,9 @@ public class OwnerAccess: PropertyAccess
         Card aux=(Card)card.Evaluate(context,targets);
         return aux.owner;    
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).owner=(Player)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Card).owner=(Player)value;
     }
 }
 public class TypeAccess: PropertyAccess
@@ -431,9 +431,9 @@ public class TypeAccess: PropertyAccess
         Card aux=(Card)card.Evaluate(context,targets);
         return aux.type;    
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).type=(Card.Type)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Card).type=(Card.Type)value;
     }
 } 
 
@@ -445,9 +445,9 @@ public class PositionAccess: PropertyAccess
         Card aux=(Card)card.Evaluate(context,targets);
         return aux.position;    
     }
-    public override void Set(Context context,List<Card> targets, IExpression Iexpression)
+    public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).position=(Card.Position)Iexpression.Evaluate(context,targets);
+        (card.Evaluate(context,targets) as Card).position=(Card.Position)value;
     }
 }
 
@@ -501,103 +501,62 @@ public class Context
     }
 }
 
-
-
-
-public abstract class Assignation: IStatement
+public  class Assignation: IStatement
 {
-    public Assignation(IExpression assignation){
+    public Assignation(IExpression assignation,IExpression container){
+        this.container=container;
         this.assignation = assignation;
     }
+    public IExpression container;
     public IExpression assignation;
-    public abstract void Execute(Context context, List<Card> targets);
-}
-
-public class CardAssignation:Assignation
-{
-    public CardAssignation(ICardAtom card, IExpression assignation): base(assignation){    
-        this.card = card;
-    }
-    public ICardAtom card;
-    public override void Execute(Context context, List<Card> targets)
-    {
-        card.Set(context,targets, assignation.Evaluate(context, targets) as Card);
+    public virtual void Execute(Context context, List<Card> targets){
+        if(container is ICardAtom) (container as ICardAtom).Set(context,targets, assignation.Evaluate(context, targets) as Card);
+        else if(container is PropertyAccess)  (container as PropertyAccess).Set(context,targets,assignation);
+        else if(container is Variable)  context.Set((container as Variable).name,assignation.Evaluate(context,targets));
     }
 }
 
-public class CardPropertyAssignation: Assignation
-{
-    public CardPropertyAssignation(PropertyAccess access, IExpression assignation): base(assignation){    
-        this.access = access;
+public class Increment_Decrement: Assignation,IExpression{
+    public Increment_Decrement( IExpression assignation, Token operation):base(assignation,null) {
+        this.operation = operation;
     }
-    PropertyAccess access;
-    public override void Execute(Context context, List<Card> targets)
-    {
-        access.Set(context,targets,assignation);
-    }
-}
-
-public class VarAssignation: Assignation
-{
-    public VarAssignation(Token variable, IExpression assignation): base(assignation){    
-        this.variable = variable;
-    }
-    public Token variable;
-    public override void Execute(Context context, List<Card> targets)
-    {
-        context.context[variable.lexeme]=assignation.Evaluate(context,targets);
-    }
-    public virtual void Check()
-    {
-
-    }
-}
-public class PlusPlus: Variable,IStatement{
-    public PlusPlus(Token name):base(name) {}
-    public override object Evaluate(Context context, List<Card> targets)
+    public Token operation;
+    
+    public object Evaluate(Context context, List<Card> targets)
     {
         Execute(context, targets);
-        return (int)base.Evaluate(context, targets)-1;
+        if(operation.type==TokenType.Increment)return (int)container.Evaluate(context, targets)+1;
+        else return (int) container.Evaluate(context, targets)-1;
     }
-    public void Execute(Context context, List<Card> targets){
-        context.context[(string)name.literal]=(int)context.context[(string)name.literal]+1;
-    }
-}
-public class MinusMinus: Variable,IStatement{
-    public MinusMinus(Token name):base(name) {}
-    public override object Evaluate(Context context, List<Card> targets)
-    {
-        Execute(context, targets);
-        return (int)base.Evaluate(context, targets)+1;
-    }
-    public void Execute(Context context, List<Card> targets){
-        context.Set(name,(int)context.context[(string)name.literal]-1);
+    public override void Execute(Context context, List<Card> targets){
+        int result=0;
+        if(operation.type==TokenType.Increment) result=(int)container.Evaluate(context, targets)+1;
+        else result=(int)container.Evaluate(context, targets)-1;
+        if(container is PowerAccess)  (container as PowerAccess).Set(context,targets,result);
+        else if(container is Variable)  context.Set((container as Variable).name,result);
     }
 }
 
-public class PlusEqual: VarAssignation{
-    public PlusEqual(Token variable, IExpression assignation):base(variable, assignation){}
-
+public class NumericModification:Assignation{
+    public NumericModification(IExpression container, IExpression assignation,Token operation):base(container,assignation){
+        this.operation=operation;
+    }
+    public Token operation;
     public override void Execute(Context context, List<Card> targets)
     {
-        var value = context.Get(variable);
-        if(value is int) context.Set(variable,(int)value+(int)assignation.Evaluate(context, targets));
-        //else throw Parser.Error(variable,"");
+        object result=null;
+        switch(operation.type){
+            case TokenType.PlusEqual: result=(int) container.Evaluate(context,targets)+(int)assignation.Evaluate(context,targets); break;
+            case TokenType.MinusEqual: result=(int) container.Evaluate(context,targets)-(int)assignation.Evaluate(context,targets); break;
+            case TokenType.SlashEqual: result=(int) container.Evaluate(context,targets)*(int)assignation.Evaluate(context,targets); break;
+            case TokenType.StarEqual: result=(int) container.Evaluate(context,targets)/(int)assignation.Evaluate(context,targets); break;
+            case TokenType.AtSymbolEqual: result=(string) container.Evaluate(context,targets)+(string)assignation.Evaluate(context,targets); break;
+        }
+        if(container is PowerAccess)  (container as PowerAccess).Set(context,targets,result);
+        else if(container is Variable)  context.Set((container as Variable).name,result);
     }
+    
 }
-public class MinusEqual: VarAssignation{
-    public MinusEqual(Token variable, IExpression assignation):base(variable, assignation){}
-
-    public override void Execute(Context context, List<Card> targets)
-    {
-        var value = context.Get(variable);
-        if(value is int) context.Set(variable,(int)value+(int)assignation.Evaluate(context, targets));
-        //else throw Parser.Error(variable,"");
-    }
-}
-
-
-
 
 public class Foreach: Action
 {

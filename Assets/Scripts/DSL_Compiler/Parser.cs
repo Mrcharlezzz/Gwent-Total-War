@@ -181,7 +181,7 @@ public class Parser
             if(Peek().type==TokenType.Dot) return Access();
             return left;
         }
-            
+
         types=new List<TokenType>(){ TokenType.Targets,TokenType.Context};
         if(Check(TokenType.Dot)) throw Error(Peek(), "Invalid property access");
         throw Error(Peek(), "Expect expression");
@@ -259,24 +259,17 @@ public class Parser
             if(Match(TokenType.Equal)){
                 IExpression assignation=Expression();
                 Consume(TokenType.Semicolon, "Expected ';' after assignation");
-                if(expr is ICardAtom) return new CardAssignation((ICardAtom)expr,assignation);
-                if(expr is PropertyAccess) return new CardPropertyAssignation((PropertyAccess) expr, assignation);
-                return new VarAssignation(identifier,assignation);
+                return new Assignation(expr,assignation);
             }
-            if(Match(new List<TokenType>(){TokenType.PlusPlus,TokenType.MinusMinus})){
+            if(Match(new List<TokenType>(){TokenType.Increment,TokenType.Decrement})){
+                Token operation=Previous();
                 Consume(TokenType.Semicolon, "Expected ';' after assignation");
-                if(expr is Variable){
-                    if(Previous().type==TokenType.PlusPlus) return new PlusPlus(identifier);
-                    else return new MinusMinus(identifier);
+                    return new Increment_Decrement(expr,operation);
                 }
-                throw Error(Previous(), "Invalid operand to '++' operation");
-            }
-            if(Match(new List<TokenType>(){TokenType.MinusEqual,TokenType.PlusEqual})){
+            if(Match(new List<TokenType>(){TokenType.MinusEqual,TokenType.PlusEqual,TokenType.StarEqual,TokenType.SlashEqual,TokenType.AtSymbolEqual})){
+                Token operation=Previous();
                 IExpression assignation=Expression();
-                if(expr is Variable){   
-                    if(Previous().type==TokenType.MinusEqual) return new MinusEqual(identifier,assignation);
-                    else return new PlusEqual(identifier,assignation);
-                }
+                return new NumericModification(expr,assignation,operation);
             }
             if(Match(TokenType.Dot)){
                 if(expr is List){
@@ -324,7 +317,7 @@ public class Parser
     }
 }
     
-    #endregion
+#endregion
     
   /////////////////////////////////////////////////////////////////////
     //  PENDIENTES:

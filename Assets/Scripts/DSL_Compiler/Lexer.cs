@@ -84,7 +84,6 @@ public class Lexer{
             case '.': AddToken(TokenType.Dot); break;
             case ';': AddToken(TokenType.Semicolon); break;
             case ':': AddToken(TokenType.Colon); break;
-            case '*': AddToken(TokenType.Star); break;
             case '^': AddToken(TokenType.Pow); break;
             case '%': AddToken(TokenType.Mod); break;
             case '!':
@@ -100,13 +99,15 @@ public class Lexer{
                 AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater);
                 break;
             case '+': 
-                AddToken(Match('=') ? TokenType.PlusEqual : Match('+')? TokenType.PlusPlus: TokenType.Plus);
+                AddToken(Match('=') ? TokenType.PlusEqual : Match('+')? TokenType.Increment: TokenType.Plus);
                 break;
             case '-': 
-                AddToken(Match('=') ? TokenType.MinusEqual : Match('+')? TokenType.MinusMinus: TokenType.Minus);
+                AddToken(Match('=') ? TokenType.MinusEqual : Match('+')? TokenType.Decrement: TokenType.Minus);
+                break;
+            case '*': AddToken(Match('=') ? TokenType.StarEqual : Match('+')? TokenType.Star: TokenType.Minus);
                 break;
             case '@':
-                AddToken(Match('@') ? TokenType.AtSymbolAtSymbol : TokenType.AtSymbol);
+                AddToken(Match('=')? TokenType.AtSymbolEqual :Match('@') ? TokenType.AtSymbolAtSymbol : TokenType.AtSymbol);
                 break;
             case '&':
                 if(Match('&')) AddToken(TokenType.And);
@@ -122,7 +123,7 @@ public class Lexer{
                     while (Peek() != '\n' && !IsAtEnd()) Advance();
                 }
                 else {
-                    AddToken(TokenType.Slash);
+                    AddToken(Match('=') ? TokenType.SlashEqual : TokenType.Slash);
                 }
                 break;  
             case '"': String(); break;
@@ -264,16 +265,18 @@ public class Lexer{
 public enum TokenType{
     //Single caracter tokens
     LeftParen, RightParen, LeftBracket, RightBracket, LeftBrace, RightBrace,
-    Comma, Dot, Colon,Semicolon, Slash, Star, Mod, Pow, AtSymbol,
+    Comma, Dot, Colon,Semicolon, Mod, Pow,
 
     //OneOrTwoCaracterTokens
     Bang, BangEqual,
-    Plus, PlusEqual, PlusPlus,
-    Minus, MinusEqual, MinusMinus,
+    Plus, PlusEqual, Increment,
+    Minus, MinusEqual, Decrement,
+    Star, StarEqual,
+    Slash, SlashEqual,
     Equal, EqualEqual, Arrow,
     Greater, GreaterEqual,
     Less, LessEqual,
-    AtSymbolAtSymbol,
+    AtSymbol, AtSymbolAtSymbol, AtSymbolEqual,
     Or, And,
 
     //Literals
