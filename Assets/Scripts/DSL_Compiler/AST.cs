@@ -239,18 +239,18 @@ public class ListFind: List{
         object card=0;
         List<Card> result= new List<Card>();
         bool usedvariable = false;
-        if(context.context.ContainsKey("card"))
+        if(context.variables.ContainsKey("card"))
         {
-           card=context.context["card"];
+           card=context.variables["card"];
            usedvariable=true;
         }
         foreach (Card listcard in (List<Card>)list.Evaluate(context, targets))
         {
-            context.context["card"]=listcard;
+            context.variables["card"]=listcard;
             if((bool)predicate.Evaluate(context,targets)) result.Add(listcard);
         }
-        if(usedvariable) context.context["card"]=card;
-        else context.context.Remove("card");
+        if(usedvariable) context.variables["card"]=card;
+        else context.variables.Remove("card");
         return result;
     }
 }
@@ -302,7 +302,7 @@ public class Variable: Atom
     public Token name;
     public override object Evaluate(Context context,List<Card> targets)
     {
-        return context.context[name.lexeme];
+        return context.Get(name);
     }
 }
 public class CardVariable: Variable,ICardAtom{
@@ -310,7 +310,7 @@ public class CardVariable: Variable,ICardAtom{
     
     public void Set(Context context,List<Card> targets, Card card)
     {
-        context.context[name.lexeme]=card;
+        context.Set(name,card);
     }
 }
 
@@ -468,7 +468,9 @@ public interface IStatement
 }
 public class Action: IStatement
 {
-    
+    public Action(List<IStatement> statements){
+        this.statements = statements;
+    }
     public Context context;
     public List<Card> targets;
     public List<IStatement> statements;
@@ -482,22 +484,27 @@ public class Action: IStatement
 }
 public class Context
 {
+    public Context(Player triggerplayer, Context enclosing, Dictionary<string, object> variables){
+        this.triggerplayer = triggerplayer;
+        this.enclosing = enclosing;
+        this.variables = variables;
+    }
     public Player triggerplayer;
     public Context enclosing;
-    public  Dictionary <string, object> context;
+    public  Dictionary <string, object> variables;
 
     public object Get(Token key){
-        if(context.ContainsKey(key.lexeme)){
-            return context[key.lexeme];
+        if(variables.ContainsKey(key.lexeme)){
+            return variables[key.lexeme];
         }
         if(enclosing!=null) return enclosing.Get(key);
         throw Parser.Error(key,"Undifined variable");
     }
     public void Set(Token key,object value){
-        if(context.ContainsKey(key.lexeme)){
-            if(context[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
+        if(variables.ContainsKey(key.lexeme)){
+            if(variables[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
         }
-        context[key.lexeme]=value;
+        variables[key.lexeme]=value;
     }
 }
 
@@ -555,24 +562,24 @@ public class NumericModification:Assignation{
         if(container is PowerAccess)  (container as PowerAccess).Set(context,targets,result);
         else if(container is Variable)  context.Set((container as Variable).name,result);
     }
-    
 }
 
 public class Foreach: Action
 {
-    string variable;
-    List<Card> collection;
+    public Foreach(List<IStatement> statements, IExpression collection, Token variable): base(statements){
+        this.collection = collection;
+        this.variable = variable;
+    }
+    Token variable;
+    IExpression collection;
 
     public override void Execute(Context context, List<Card> targets)
     {
-        foreach(string key in context.context.Keys)
-        {
-            this.context.context[key]=context.context[key];
-        }
+        this.context=new Context(context.triggerplayer,context,new Dictionary<string, object>());
 
-        foreach (Card card in collection)
+        foreach (Card card in (List<Card>)collection)
         {
-            this.context.context[variable]=card;
+            this.context.Set(variable,card);
             base.Execute(this.context,targets);
         }
     }
@@ -580,13 +587,13 @@ public class Foreach: Action
 
 public class While: Action
 {
+    public While(List<IStatement> statements,IExpression predicate):base(statements){
+        this.predicate=predicate;
+    }
     IExpression predicate;
     public override void Execute(Context context,List<Card> targets)
     {
-        foreach(string key in context.context.Keys)
-        {
-            this.context.context[key]=context.context[key];
-        }
+        this.context=new Context(context.triggerplayer,context,new Dictionary<string, object>());
         while((bool)predicate.Evaluate(context,targets))
         {
             base.Execute(this.context,targets);

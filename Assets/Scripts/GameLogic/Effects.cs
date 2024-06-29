@@ -8,14 +8,10 @@ public static class Effects
 }
 public class EffectDefinition
 {
-    public Dictionary<string,object> parameters;
+    public Dictionary<string,string> parameters;
     public Action action;
     public void Execute()
     {
-        foreach(string key in parameters.Keys)
-        {
-            action.context.context[key]=parameters[key];
-        }
         action.Execute(action.context,action.targets);
     }
 }

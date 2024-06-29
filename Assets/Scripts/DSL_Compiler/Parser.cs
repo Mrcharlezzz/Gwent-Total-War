@@ -294,17 +294,27 @@ public class Parser
             }
             if(expr is IStatement) return (IStatement) expr;
             else throw Error(Peek(), "Invalid statement");
-            
-
-            
         }
         if(Check(TokenType.While)){
             Consume(TokenType.LeftParen, "Expect '(' after 'while'");
-            IExpression condition = Expression();
+            IExpression predicate = Expression();
             Consume(TokenType.RightParen, "Expect ')' after condition.");
-            List<IStatement> body = Block();
-            //INSTANCIAR WHILE CORRECTAMENTE
+            List<IStatement> body = null;
+            if(Match(TokenType.LeftBrace)) body=Block();
+            else body=new List<IStatement>(){Statement()};
+            return new While(body,predicate);
         }
+        if(Check(TokenType.For)){
+            Consume(TokenType.Identifier,"Expected identifier in for statement");
+            Token variable = Previous();
+            Consume(TokenType.In, "Expected 'in' in for statement");
+            IExpression collection= Expression();
+            List<IStatement> body = null;
+            if(Match(TokenType.LeftBrace)) body=Block();
+            else body=new List<IStatement>(){Statement()};
+            return new Foreach(body,collection,variable);
+        }
+        throw Error(Peek(),"Invalid statement");
     }
 
     public List<IStatement> Block(){
@@ -316,11 +326,14 @@ public class Parser
         return statements;
     }
 }
+
+
+
+
     
 #endregion
     
   /////////////////////////////////////////////////////////////////////
-    //  PENDIENTES:
-    //  IMPLEMENTAR PARSEO DE += Y -= PARA PORPERTYACCESS 
+ 
     //  PIN DE IDEA IMPORTANTE:
     //  AGRUPAR MEDIANTE INTERFACES A LAS CLASES DEL AST PARA SABER QUE TIPO DEBERIAN DEVOLVER, PARA EL CHECK

@@ -96,7 +96,7 @@ public class Onactivation{
         foreach(EffectActivation activation in activations)
         {
             activation.effect.definition.action.context.triggerplayer = triggerplayer;
-            activation.Execute();
+            activation.Execute(triggerplayer);
         }
     }
 }
@@ -106,18 +106,17 @@ public class EffectActivation
     public Effect effect;
     public Selector selector;
     public EffectActivation postAction;
-    public void Execute()
+    public void Execute(Player triggerplayer)
     {
         var temp=selector.Select();
         if(selector.single&&temp.Count>0)
         {
-            List<Card> singlecard=new List<Card>();
-            singlecard.Add(temp[0]); 
+            List<Card> singlecard=new List<Card>(){temp[0]}; 
             effect.definition.action.targets=singlecard;
         }
         else effect.definition.action.targets=temp;
-        effect.Execute();
-        postAction.Execute();
+        effect.Execute(triggerplayer);
+        postAction.Execute(triggerplayer);
     }
 }
 
@@ -125,12 +124,10 @@ public class Effect
 {
     public EffectDefinition definition;
     public Dictionary<string,object> parameters;
-    public void Execute()
+    public void Execute(Player triggerplayer)
     {
-        foreach(string key in parameters.Keys)
-        {
-            definition.parameters[key]=parameters[key];
-        }
+        Dictionary<string, object> contextParameters=new Dictionary<string, object>(parameters);
+        definition.action.context=new Context(triggerplayer,null,contextParameters);
         definition.Execute();
     }
 }
@@ -142,7 +139,7 @@ public class Selector
     public ListFind filtre;
     public List<Card> Select()
     {
-        return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
+        return (List<Card>)filtre.Evaluate(new Context(null,null,null), new List<Card>());
     }
 }
 
