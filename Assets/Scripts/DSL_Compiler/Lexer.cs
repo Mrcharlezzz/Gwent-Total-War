@@ -17,8 +17,6 @@ public class Lexer{
         {"Name", TokenType.Name},
         {"Params", TokenType.Params},
         {"Action", TokenType.Action},
-        {"targets", TokenType.Targets},
-        {"context", TokenType.Context},
         {"while", TokenType.While},
         {"for", TokenType.For},
         {"in", TokenType.In},
@@ -31,6 +29,7 @@ public class Lexer{
         {"Field", TokenType.Field},
         {"Graveyard", TokenType.Graveyard},
         {"Deck", TokenType.Deck},
+        {"Board", TokenType.Board},
         {"Push", TokenType.Push},
         {"SendBottom", TokenType.SendBottom},
         {"Pop", TokenType.Pop},
@@ -41,6 +40,7 @@ public class Lexer{
         {"Faction", TokenType.Faction},
         {"Power", TokenType.Power},
         {"Range", TokenType.Range},
+        {"Owner", TokenType.Owner},
         {"OnActivation", TokenType.OnActivation},
         {"Effect", TokenType.Effect},
         {"Selector", TokenType.Selector},
@@ -48,6 +48,9 @@ public class Lexer{
         {"Single", TokenType.Single},
         {"Predicate", TokenType.Predicate},
         {"PostAction", TokenType.PostAction},
+        {"Number", TokenType.Number},
+        {"String", TokenType.String},
+        {"Bool", TokenType.Bool},
 
     };
     List<Token> tokens=new List<Token>();
@@ -64,7 +67,6 @@ public class Lexer{
             ScanToken();
         }
         tokens.Add(new Token(TokenType.EOF,"",null!,line,column));
-        SyntaxSugar();
         return tokens;
     }
 
@@ -146,43 +148,6 @@ public class Lexer{
                     DSL.Report(line, column,"","Unexpected character: "+c);
                 }
                 break; 
-        }
-    }
-
-    public void SyntaxSugar(){
-        for(int i=0;i<tokens.Count;i++){
-            Token aux=tokens[i];
-            if(aux.type == TokenType.Hand||aux.type == TokenType.Deck||aux.type == TokenType.Graveyard||aux.type == TokenType.Field)
-            {
-                tokens.Insert(i, new Token(TokenType.RightParen,")",null,aux.line, aux.column));
-                tokens.Insert(i, new Token(TokenType.TriggerPlayer,"TriggerPlayer",null,aux.line, aux.column));
-                tokens.Insert(i, new Token(TokenType.Dot,".",null,aux.line, aux.column));
-                tokens.Insert(i, new Token(TokenType.Context,"context",null,aux.line, aux.column));
-                tokens.Insert(i, new Token(TokenType.LeftParen,"(",null,aux.line, aux.column));
-                tokens.Insert(i, new Token(TokenType.Context,"context",null,aux.line, aux.column));
-                TokenType type= TokenType.EOF;
-                string lexeme="";
-                switch(aux.type){
-                    case TokenType.Hand:
-                        type=TokenType.HandOfPlayer;
-                        lexeme="HandOfPlayer";
-                        break;
-                    case TokenType.Deck:
-                        type=TokenType.DeckOfPlayer;
-                        lexeme="DeckOfPlayer";
-                        break;
-                    case TokenType.Graveyard:
-                        type=TokenType.GraveyardOfPlayer;
-                        lexeme="GraveyardOfPlayer";
-                        break;
-                    case TokenType.Field:
-                        type=TokenType.FieldOfPlayer;
-                        lexeme="FieldOfPlayer";
-                        break;
-                    default: break;
-                }
-                tokens.Insert(i, new Token(type,lexeme,null,aux.line, aux.column));
-            }
         }
     }
 
@@ -287,7 +252,7 @@ public enum TokenType{
     //Main
     Card,effect,
     //Effect
-    Name, Params, Action, Targets, Context, card,
+    Name, Params, Action,
     //Loops
     While, For, In, 
     //ContextProperties
@@ -299,15 +264,17 @@ public enum TokenType{
     Type, Faction, Power, Range , Owner, OnActivation,
     //OnActivation
     Effect, Selector, Source, Single, Predicate, PostAction,
+    //Types
+    Number, String, Bool,
 
     EOF
 }
 public class Token{
-    public TokenType type {get;}
-    public string lexeme {get;}
-    public object literal {get;}
-    public int line{get;}
-    public int column{get;}
+    public TokenType type ;
+    public string lexeme ;
+    public object literal ;
+    public int line;
+    public int column;
 
     public Token(TokenType type, string lexeme, object literal, int line, int column )
     {

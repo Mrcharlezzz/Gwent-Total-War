@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 
@@ -182,7 +183,6 @@ public class Parser
             return left;
         }
 
-        types=new List<TokenType>(){ TokenType.Targets,TokenType.Context};
         if(Check(TokenType.Dot)) throw Error(Peek(), "Invalid property access");
         throw Error(Peek(), "Expect expression");
     }
@@ -214,12 +214,13 @@ public class Parser
             }
             else if(Match(TokenType.Find)){
                 Consume(TokenType.LeftParen,"Expected '(' after method");
-                Consume (TokenType.card, "Invalid Predicate");
+                Consume (TokenType.Identifier, "Invalid predicate argument");
+                Token parameter=Previous();
                 Consume (TokenType.RightParen,"Expeted ')' after predicate argument");
                 Consume (TokenType.Arrow, "Expected predicate function call");
                 IExpression predicate= Expression();
                 Consume(TokenType.RightParen, "Expected ')' after predicate");
-                left= Indexer(new ListFind(left,predicate));
+                left= Indexer(new ListFind(left,predicate,parameter));
             }
             else if(Match(TokenType.Pop)){
                 Consume(TokenType.LeftParen, "Expected '(' after method");
@@ -264,8 +265,8 @@ public class Parser
             if(Match(new List<TokenType>(){TokenType.Increment,TokenType.Decrement})){
                 Token operation=Previous();
                 Consume(TokenType.Semicolon, "Expected ';' after assignation");
-                    return new Increment_Decrement(expr,operation);
-                }
+                return new Increment_Decrement(expr,operation);
+            }
             if(Match(new List<TokenType>(){TokenType.MinusEqual,TokenType.PlusEqual,TokenType.StarEqual,TokenType.SlashEqual,TokenType.AtSymbolEqual})){
                 Token operation=Previous();
                 IExpression assignation=Expression();
@@ -274,12 +275,13 @@ public class Parser
             if(Match(TokenType.Dot)){
                 if(expr is List){
                     if(Match(new List<TokenType>(){TokenType.Push,TokenType.SendBottom, TokenType.Remove})){
+                        Token method=Previous();
                         Consume(TokenType.LeftParen,"Expeted '(' after method");
                         IExpression card=Expression();
                         Consume(TokenType.RightParen,"Expected ')' after method");
                         Consume(TokenType.Semicolon, "Expected ';' after method");
-                        if(Previous().type==TokenType.Push)return new Push((List)expr,(ICardAtom)card);
-                        if(Previous().type==TokenType.SendBottom) return new SendBottom((List)expr,(ICardAtom)card);
+                        if(method.type==TokenType.Push)return new Push((List)expr,(ICardAtom)card);
+                        if(method.type==TokenType.SendBottom) return new SendBottom((List)expr,(ICardAtom)card);
                         return new Remove((List)expr,(ICardAtom)card);
                     }
                     if(Match(TokenType.Shuffle)){
@@ -305,8 +307,7 @@ public class Parser
             return new While(body,predicate);
         }
         if(Check(TokenType.For)){
-            Consume(TokenType.Identifier,"Expected identifier in for statement");
-            Token variable = Previous();
+            Token variable =Consume(TokenType.Identifier,"Expected identifier in for statement");
             Consume(TokenType.In, "Expected 'in' in for statement");
             IExpression collection= Expression();
             List<IStatement> body = null;
@@ -325,15 +326,77 @@ public class Parser
         Consume(TokenType.RightBrace, "Expected '}' after block");
         return statements;
     }
-}
+    #endregion
+    public Action Action(){
+        Consume(TokenType.Colon, "Expected ':' after 'Action' in Action construction");
+        Consume(TokenType.RightParen, "Invalid Action construction, expected '('");
+        Token targetsID=Consume(TokenType.Identifier,"Expected targets argument identifier");
+        Consume(TokenType.Comma,"Expected ',' between arguments");
+        Token contextID= Consume(TokenType.Identifier,"Expected context argument identifier");
+        Consume(TokenType.RightParen, "Invalid Action construction, expected ')'");
+        Consume(TokenType.Arrow,"Invalid Action construction, expected '=>'"); 
+        List<IStatement> body = null;
+        if(Match(TokenType.LeftBrace)) body=Block();
+        else body=new List<IStatement>(){Statement()};
+        return new Action(body,contextID,targetsID);
+    }
+    public DefParameters Parameters(){
+        Dictionary<string,string> parameters=new Dictionary<string,string>();
+        Consume(TokenType.Colon,"Expected ':' after Params construction");
+        Consume(TokenType.RightBrace,"Params definition must declare a body");
+        while(!Match(TokenType.RightBrace)){
+            Token name=Consume(TokenType.Identifier,"Invalid parameter name");
+            if(parameters.ContainsKey(name.lexeme)) throw Error(Previous(),$"The effect already contains {name.lexeme} parameter");
+            Consume(TokenType.Colon, "Expected ':' after parameter name");
+            if(Match(new List<TokenType>(){TokenType.Number,TokenType.Bool,TokenType.String})) parameters[name.lexeme]=Previous().lexeme;
+            else throw Error(Peek(), "Invalid parameter type");
+        }
+        return new DefParameters(parameters);
+    }
 
+    public string EffectName(){
+        Consume(TokenType.Colon,"Expected ':' after name declaration");
+        Token name= Consume(TokenType.StringLiteral,"Expected string in name declaration");
+        Consume(TokenType.Comma,"Expected ',' after name declaration");
+        return name.lexeme;
+    }
 
-
+    public EffectDefinition EffectDefinition(){
+        Token reserved =Previous();
+        Consume(TokenType.LeftBrace,"EffectDefinition must declare a body");
+        EffectDefinition definition=new EffectDefinition();
+        while(!Match(TokenType.LeftBrace)){
+            if(Match(TokenType.Name)){
+                if(definition.name!=null) throw Error(Previous(),"Name was already declared in this effect");
+                definition.name=EffectName();
+                continue;
+            }
+            if(Match(TokenType.Params)){
+                if(definition.parameters!=null) throw Error(Previous(),"Params was already declared in this effect");
+                definition.parameters=Parameters();
+                continue;
+            }
+            if(Match(TokenType.Action)){
+                if(definition.action!=null) throw Error(Previous(),"Action was already declared in this effect");
+                definition.action=Action();
+                continue;
+            }
+            throw Error(Peek(), "Expected effect definition field");
+        }
+        if(definition.name==null||definition.action==null) throw Error(reserved,"There are missing effect arguments in the ocnstruction");
+        return definition;
+    }
 
     
-#endregion
+}
+    
+
+
+
     
   /////////////////////////////////////////////////////////////////////
- 
+  
+    //  PENDIENTE: HACER COMPOUND PARSING EMPEZANDO POR EFFECT DEFINITON Y VER LO DE HACER LOS CAMPOS NULLABLES PARA TRABAJAR COMODO
+    //             IMPLEMENTAR AZUCAR SINTACTICA DE LISTAS DEL CONTEXT
     //  PIN DE IDEA IMPORTANTE:
     //  AGRUPAR MEDIANTE INTERFACES A LAS CLASES DEL AST PARA SABER QUE TIPO DEBERIAN DEVOLVER, PARA EL CHECK

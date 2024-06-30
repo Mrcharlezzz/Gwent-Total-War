@@ -9,10 +9,12 @@ using UnityEngine.UIElements;
 
 // Abstract Sintax Tree for card and effect compiler
 
+public interface IASTNode{}
+
 
 #region ExpressionNodes
 
-public interface IExpression
+public interface IExpression:IASTNode
 {
     public object Evaluate(Context context, List<Card> targets);
 }
@@ -224,33 +226,35 @@ public class FieldList: IndividualList
 
 
 public class ListFind: List{
-    public ListFind(IExpression list, IExpression predicate){
+    public ListFind(IExpression list, IExpression predicate, Token parameter){
         this.list = list;
         this.predicate = predicate;
+        this.parameter = parameter;
     }
     public IExpression list;
-    IExpression predicate;
+    public IExpression predicate;
+    public Token parameter;
     public override object Evaluate(Context context,List<Card> targets){
         /*
-            If "card" is already used as a variable in this scope context this piece of code will save the variable value
+        If argument identifier is already used as a variable in this scope context this piece of code will save the variable value
         in order to use it for the predicate based selection of cards from the list, and after the find method has executed
         the variable is assigned its original value 
         */
         object card=0;
         List<Card> result= new List<Card>();
         bool usedvariable = false;
-        if(context.variables.ContainsKey("card"))
+        if(context.variables.ContainsKey(parameter.lexeme))
         {
-           card=context.variables["card"];
+           card=context.variables[parameter.lexeme];
            usedvariable=true;
         }
         foreach (Card listcard in (List<Card>)list.Evaluate(context, targets))
         {
-            context.variables["card"]=listcard;
+            context.Set(parameter,listcard);
             if((bool)predicate.Evaluate(context,targets)) result.Add(listcard);
         }
-        if(usedvariable) context.variables["card"]=card;
-        else context.variables.Remove("card");
+        if(usedvariable) context.Set(parameter,card);
+        else context.variables.Remove(parameter.lexeme);
         return result;
     }
 }
@@ -462,53 +466,42 @@ public class TriggerPlayer: Atom{
 
 #region StatementNodes
 
-public interface IStatement
+public interface IStatement:IASTNode
 {
     public void Execute(Context context, List<Card> targets);
 }
-public class Action: IStatement
-{
-    public Action(List<IStatement> statements){
+
+
+public abstract class Block:IStatement{
+    public Block(List<IStatement> statements){
         this.statements = statements;
     }
     public Context context;
-    public List<Card> targets;
     public List<IStatement> statements;
-    public virtual void Execute(Context context, List<Card> targets)
+    public abstract void Execute(Context context, List<Card> targets);
+}
+public class Action: Block
+{
+    public Action(List<IStatement> statements,Token contextID, Token targetsID):base(statements){
+        this.statements = statements;
+        this.contextID = contextID;
+        this.targetsID = targetsID;
+    }
+    public List<Card> targets;
+    public Token contextID;
+    public Token targetsID;
+    public override void Execute(Context context, List<Card> targets)
     {
+        this.context.variables[contextID.lexeme]=new ID(contextID,"context");
+        this.context.variables[targetsID.lexeme]=new ID(targetsID, "targets");
         foreach(IStatement statement in statements)
         {
             statement.Execute(context,targets);
         }
     }
 }
-public class Context
-{
-    public Context(Player triggerplayer, Context enclosing, Dictionary<string, object> variables){
-        this.triggerplayer = triggerplayer;
-        this.enclosing = enclosing;
-        this.variables = variables;
-    }
-    public Player triggerplayer;
-    public Context enclosing;
-    public  Dictionary <string, object> variables;
 
-    public object Get(Token key){
-        if(variables.ContainsKey(key.lexeme)){
-            return variables[key.lexeme];
-        }
-        if(enclosing!=null) return enclosing.Get(key);
-        throw Parser.Error(key,"Undifined variable");
-    }
-    public void Set(Token key,object value){
-        if(variables.ContainsKey(key.lexeme)){
-            if(variables[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
-        }
-        variables[key.lexeme]=value;
-    }
-}
-
-public  class Assignation: IStatement
+public  class Assignation: IStatement   
 {
     public Assignation(IExpression assignation,IExpression container){
         this.container=container;
@@ -564,7 +557,7 @@ public class NumericModification:Assignation{
     }
 }
 
-public class Foreach: Action
+public class Foreach: Block
 {
     public Foreach(List<IStatement> statements, IExpression collection, Token variable): base(statements){
         this.collection = collection;
@@ -575,17 +568,20 @@ public class Foreach: Action
 
     public override void Execute(Context context, List<Card> targets)
     {
-        this.context=new Context(context.triggerplayer,context,new Dictionary<string, object>());
+        this.context=new Context(context.triggerplayer,context,new Dictionary<string, ID>());
 
         foreach (Card card in (List<Card>)collection)
         {
             this.context.Set(variable,card);
-            base.Execute(this.context,targets);
+            foreach(IStatement statement in statements)
+            {
+                statement.Execute(this.context,targets);
+            }
         }
     }
 }
 
-public class While: Action
+public class While: Block
 {
     public While(List<IStatement> statements,IExpression predicate):base(statements){
         this.predicate=predicate;
@@ -593,10 +589,13 @@ public class While: Action
     IExpression predicate;
     public override void Execute(Context context,List<Card> targets)
     {
-        this.context=new Context(context.triggerplayer,context,new Dictionary<string, object>());
+        this.context=new Context(context.triggerplayer,context,new Dictionary<string, ID>());
         while((bool)predicate.Evaluate(context,targets))
         {
-            base.Execute(this.context,targets);
+            foreach(IStatement statement in statements)
+            {
+                statement.Execute(this.context,targets);
+            }
         }
     }
 }
@@ -665,9 +664,60 @@ public class Shuffle: Method
 
 
 
+public class Context: IASTNode
+{
+    public Context(Player triggerplayer, Context enclosing, Dictionary<string, ID> variables){
+        this.triggerplayer = triggerplayer;
+        this.enclosing = enclosing;
+        this.variables = variables;
+    }
+    public Player triggerplayer;
+    public Context enclosing;
+    public  Dictionary <string, ID> variables;
 
+    public object Get(Token key){
+        if(variables.ContainsKey(key.lexeme)){
+            return variables[key.lexeme].token.literal;
+        }
+        if(enclosing!=null) return enclosing.Get(key);
+        throw Parser.Error(key,"Undefined variable");
+    }
+    public void Set(Token key,object value){
+        key.literal=value;
+        if(variables.ContainsKey(key.lexeme)){
+            if(!variables[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
+            variables[key.lexeme].token=key;
+        }
+        if(enclosing.variables.ContainsKey(key.lexeme)){
+            if(!enclosing.variables[key.lexeme].GetType().Equals(value.GetType())) throw Parser.Error(key,"Assignation type differs from variable type");
+            enclosing.variables[key.lexeme].token= key;
+        }
+        variables[key.lexeme]=new ID(key,SemanticTools.GetValueType(value));
+    }
+}
 
+public class ID{
+    public ID(Token token,string type){
+        this.token = token;
+        this.type = type;
+    }
+    public Token token;
+    public string type;
+}
 
+#region Semantics Check Tools
+public static class SemanticTools 
+{
+    public static string GetValueType(object value){
+        if(value is int) return "Number";
+        if(value is string) return "String";
+        if(value is bool) return "Bool";
+        if(value is Card) return "Card";
+        if(value is List<Card>) return "List";
+        return "invalid";
+    }
+}
+#endregion
 
 
 

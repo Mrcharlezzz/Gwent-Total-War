@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.SocialPlatforms.Impl;
 [CreateAssetMenu (fileName = "CardSO", menuName = "Create Card")]
 
 
-public abstract class Card: ScriptableObject
+public abstract class Card: ScriptableObject,IASTNode
 {
     public int id;
     public Player owner;
@@ -88,7 +89,7 @@ public class Unit: Card{
     }
 }
 
-public class Onactivation{
+public class Onactivation:IASTNode{
     public Player triggerplayer;
     List<EffectActivation> activations;
     public void Execute()
@@ -101,7 +102,7 @@ public class Onactivation{
     }
 }
 
-public class EffectActivation
+public class EffectActivation:IASTNode
 {
     public Effect effect;
     public Selector selector;
@@ -120,20 +121,23 @@ public class EffectActivation
     }
 }
 
-public class Effect
+public class Effect:IASTNode
 {
     public EffectDefinition definition;
     public Dictionary<string,object> parameters;
     public void Execute(Player triggerplayer)
     {
-        Dictionary<string, object> contextParameters=new Dictionary<string, object>(parameters);
+        Dictionary<string, ID> contextParameters=parameters.ToDictionary(
+            p => p.Key,
+            p => new ID(null, definition.parameters.parameterTypes[p.Key])
+        );
         definition.action.context=new Context(triggerplayer,null,contextParameters);
         definition.Execute();
     }
 }
 
 //Used ListFind object with predicate based selection Evaluate method
-public class Selector
+public class Selector:IASTNode
 {
     public bool single;
     public ListFind filtre;
