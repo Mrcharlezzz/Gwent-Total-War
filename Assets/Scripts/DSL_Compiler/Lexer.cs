@@ -206,7 +206,11 @@ public class Lexer{
         while(IsAlphaNumeric(Peek())) Advance();
         string lexeme=source.Substring(start, current-start);
         //If it is a reserved word save it as its respective type, else save it as identifier
-        if(keywords.ContainsKey(lexeme)) AddToken(keywords[lexeme]);
+        if(keywords.ContainsKey(lexeme)){
+            if(lexeme=="false") AddToken(keywords[lexeme],false);
+            else if(lexeme=="true") AddToken(keywords[lexeme],true);
+            else AddToken(keywords[lexeme]);
+        }
         else AddToken(TokenType.Identifier);
     }
     

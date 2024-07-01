@@ -170,7 +170,6 @@ public abstract class Atom:IExpression{
 
 public abstract class List:Atom{}
 
-
 public class TargetList:List{
     public override object Evaluate(Context context, List<Card> targets)
     {
@@ -226,6 +225,7 @@ public class FieldList: IndividualList
 
 
 public class ListFind: List{
+    public ListFind(){}
     public ListFind(IExpression list, IExpression predicate, Token parameter){
         this.list = list;
         this.predicate = predicate;
@@ -451,7 +451,7 @@ public class PositionAccess: PropertyAccess
     }
     public override void Set(Context context,List<Card> targets, object value)
     {
-        (card.Evaluate(context,targets) as Card).position=(Card.Position)value;
+        (card.Evaluate(context,targets) as Card).position=(List<Card.Position>)value;
     }
 }
 
@@ -666,6 +666,8 @@ public class Shuffle: Method
 
 public class Context: IASTNode
 {
+    public Context(){
+    }
     public Context(Player triggerplayer, Context enclosing, Dictionary<string, ID> variables){
         this.triggerplayer = triggerplayer;
         this.enclosing = enclosing;

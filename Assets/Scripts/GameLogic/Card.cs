@@ -18,7 +18,7 @@ public abstract class Card: ScriptableObject,IASTNode
     public Type type;
     public string carddescription;
     public Faction faction;
-    public Position position;
+    public List<Position> position;
 
     public Onactivation activation;
 
@@ -53,12 +53,11 @@ public abstract class Card: ScriptableObject,IASTNode
     }
     public bool IsUnit()
     {
-        if(!(type==Card.Type.Leader||type==Card.Type.Clear||type==Card.Type.Weather))return true;
+        if((type==Card.Type.Leader||type==Card.Type.Clear||type==Card.Type.Weather))return true;
         return false;
     }
 
 }
-
 
 public class Unit: Card{
     //Due to similarities between decoy card and unit cards decoy will also be instantiated as a Unit object with its respective effect
@@ -96,7 +95,7 @@ public class Onactivation:IASTNode{
     {
         foreach(EffectActivation activation in activations)
         {
-            activation.effect.definition.action.context.triggerplayer = triggerplayer;
+            Effects.effects[activation.effect.definition].action.context.triggerplayer = triggerplayer;
             activation.Execute(triggerplayer);
         }
     }
@@ -110,12 +109,12 @@ public class EffectActivation:IASTNode
     public void Execute(Player triggerplayer)
     {
         var temp=selector.Select();
-        if(selector.single&&temp.Count>0)
+        if((bool)selector.single&&temp.Count>0)
         {
             List<Card> singlecard=new List<Card>(){temp[0]}; 
-            effect.definition.action.targets=singlecard;
+            Effects.effects[effect.definition].action.targets=singlecard;
         }
-        else effect.definition.action.targets=temp;
+        else Effects.effects[effect.definition].action.targets=temp;
         effect.Execute(triggerplayer);
         postAction.Execute(triggerplayer);
     }
@@ -123,27 +122,28 @@ public class EffectActivation:IASTNode
 
 public class Effect:IASTNode
 {
-    public EffectDefinition definition;
+    public string definition;
     public Dictionary<string,object> parameters;
     public void Execute(Player triggerplayer)
     {
         Dictionary<string, ID> contextParameters=parameters.ToDictionary(
             p => p.Key,
-            p => new ID(null, definition.parameters.parameterTypes[p.Key])
+            p => new ID(null, Effects.effects[definition].parameters[p.Key])
         );
-        definition.action.context=new Context(triggerplayer,null,contextParameters);
-        definition.Execute();
+        Effects.effects[definition].action.context=new Context(triggerplayer,null,contextParameters);
+        Effects.effects[definition].Execute();
     }
 }
 
 //Used ListFind object with predicate based selection Evaluate method
 public class Selector:IASTNode
 {
-    public bool single;
+    public Selector(){}
+    public bool? single;
     public ListFind filtre;
     public List<Card> Select()
     {
-        return (List<Card>)filtre.Evaluate(new Context(null,null,null), new List<Card>());
+        return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
     }
 }
 

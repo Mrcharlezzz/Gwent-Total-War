@@ -81,7 +81,7 @@ public class Parser
 
     #endregion
 
-    #region Expression Parsing Hierarchy
+    #region Expression Parsing
     public IExpression Expression(){
         return Logic();
     }
@@ -214,8 +214,7 @@ public class Parser
             }
             else if(Match(TokenType.Find)){
                 Consume(TokenType.LeftParen,"Expected '(' after method");
-                Consume (TokenType.Identifier, "Invalid predicate argument");
-                Token parameter=Previous();
+                Token parameter=Consume (TokenType.Identifier, "Invalid predicate argument");
                 Consume (TokenType.RightParen,"Expeted ')' after predicate argument");
                 Consume (TokenType.Arrow, "Expected predicate function call");
                 IExpression predicate= Expression();
@@ -327,6 +326,27 @@ public class Parser
         return statements;
     }
     #endregion
+
+    #region Compounds Parsing
+    public string EffectName(){
+        Consume(TokenType.Colon,"Expected ':' after name declaration");
+        Token name= Consume(TokenType.StringLiteral,"Expected string in name declaration");
+        Consume(TokenType.Comma,"Expected ',' after name declaration");
+        return (string)name.literal;
+    }
+    public Dictionary<string,string> ParameterTypes(){
+        Dictionary<string,string> parameters=new Dictionary<string,string>();
+        Consume(TokenType.Colon,"Expected ':' after Params construction");
+        Consume(TokenType.RightBrace,"Params definition must declare a body");
+        while(!Match(TokenType.RightBrace)){
+            Token name=Consume(TokenType.Identifier,"Invalid parameter name");
+            if(parameters.ContainsKey(name.lexeme)) throw Error(Previous(),$"The effect already contains {name.lexeme} parameter");
+            Consume(TokenType.Colon, "Expected ':' after parameter name");
+            if(Match(new List<TokenType>(){TokenType.Number,TokenType.Bool,TokenType.String})) parameters[name.lexeme]=Previous().lexeme;
+            else throw Error(Peek(), "Invalid parameter type");
+        }
+        return parameters;
+    }
     public Action Action(){
         Consume(TokenType.Colon, "Expected ':' after 'Action' in Action construction");
         Consume(TokenType.RightParen, "Invalid Action construction, expected '('");
@@ -339,26 +359,6 @@ public class Parser
         if(Match(TokenType.LeftBrace)) body=Block();
         else body=new List<IStatement>(){Statement()};
         return new Action(body,contextID,targetsID);
-    }
-    public DefParameters Parameters(){
-        Dictionary<string,string> parameters=new Dictionary<string,string>();
-        Consume(TokenType.Colon,"Expected ':' after Params construction");
-        Consume(TokenType.RightBrace,"Params definition must declare a body");
-        while(!Match(TokenType.RightBrace)){
-            Token name=Consume(TokenType.Identifier,"Invalid parameter name");
-            if(parameters.ContainsKey(name.lexeme)) throw Error(Previous(),$"The effect already contains {name.lexeme} parameter");
-            Consume(TokenType.Colon, "Expected ':' after parameter name");
-            if(Match(new List<TokenType>(){TokenType.Number,TokenType.Bool,TokenType.String})) parameters[name.lexeme]=Previous().lexeme;
-            else throw Error(Peek(), "Invalid parameter type");
-        }
-        return new DefParameters(parameters);
-    }
-
-    public string EffectName(){
-        Consume(TokenType.Colon,"Expected ':' after name declaration");
-        Token name= Consume(TokenType.StringLiteral,"Expected string in name declaration");
-        Consume(TokenType.Comma,"Expected ',' after name declaration");
-        return name.lexeme;
     }
 
     public EffectDefinition EffectDefinition(){
@@ -373,7 +373,7 @@ public class Parser
             }
             if(Match(TokenType.Params)){
                 if(definition.parameters!=null) throw Error(Previous(),"Params was already declared in this effect");
-                definition.parameters=Parameters();
+                definition.parameters=ParameterTypes();
                 continue;
             }
             if(Match(TokenType.Action)){
@@ -387,7 +387,140 @@ public class Parser
         return definition;
     }
 
-    
+    public Dictionary<string,object> Parameters(){
+        Dictionary<string,object> parameters=new Dictionary<string,object>();
+        while(!Match(TokenType.RightBrace)||!Match(TokenType.Name)){
+            Token name=Consume(TokenType.Identifier,"Invalid parameter name");
+            if(parameters.ContainsKey(name.lexeme)) throw Error(Previous(),$"The effect already contains {name.lexeme} parameter");
+            Consume(TokenType.Colon, "Expected ':' after parameter name");
+            if(Match(new List<TokenType>(){TokenType.NumberLiteral,TokenType.True,TokenType.False,TokenType.StringLiteral})) parameters[name.lexeme]=Previous().literal;
+            else throw Error(Peek(), "Invalid parameter type");
+        }
+        return parameters;
+    }
+
+    public Effect Effect(){
+        Token reserved =Previous();
+        Effect effect=new Effect();
+        Consume(TokenType.Colon,"Expected ':' after Effect declaration");
+        if(Match(TokenType.StringLiteral)){
+            effect.definition=(string)Previous().literal;
+            return effect;
+        }
+        Consume(TokenType.LeftBrace,"Effect must declare a body");
+        while(!Match(TokenType.RightBrace)){
+            if(Match(TokenType.Name)){
+                if(effect.definition!=null) throw Error(Previous(),"Params was already declared in this effect");
+                effect.definition=EffectName();
+                continue;
+            }
+            if(Match(TokenType.Identifier)){
+                if(effect.parameters!=null) throw Error(Previous(),"Params was already declared in this effect");
+                effect.parameters=Parameters();
+                continue;
+            }
+            throw Error(Peek(), "Expected effect field");
+        }
+        if(effect.definition==null) throw Error(reserved,"There are missing effect arguments in the ocnstruction");
+        return effect;
+    }
+    public List Source(Player triggerplayer){
+        Token reserved=Previous();
+        Consume(TokenType.Colon,"Expected ';' after Source declaration");
+        Token literal=Consume(TokenType.StringLiteral,"Expected string in Source declaration");
+        Consume(TokenType.Comma,"Expected ',' after Source declaration");
+        switch(literal.literal){
+            case "board": return new BoardList();
+            case "hand": return new HandList(new Literal(triggerplayer));
+            case "otherHand": return new HandList(new Literal(triggerplayer.Other()));
+            case "deck": return new DeckList(new Literal(triggerplayer));
+            case "otherDeck": return new DeckList(new Literal(triggerplayer.Other()));
+            case "graveyard": return new GraveyardList(new Literal(triggerplayer));
+            case "otherGraveyard": return new GraveyardList(new Literal(triggerplayer.Other()));
+            case "field": return new FieldList(new Literal(triggerplayer));
+            case "otherField": return new FieldList(new Literal(triggerplayer.Other()));
+            case "parent":
+                return null;
+            default: throw Error(literal,"Invalid source");
+        }
+    }
+    public bool Single(){
+        Consume(TokenType.Colon,"Expected ':' after Single declaration");
+        if(!Match(new List<TokenType>(){TokenType.True,TokenType.False})) throw Error(Peek(),"Expected Bool in Single declaration");
+        Token boolean=Previous();
+        Consume(TokenType.Comma,"Expected ',' after Single declaration");
+        return (bool)boolean.literal;    
+    }
+
+    public (IExpression,Token) Predicate(){
+        Consume(TokenType.Colon,"Expected ':' after Predicate definition");
+        Consume(TokenType.LeftParen,"Expected '('");
+        Token argument=Consume(TokenType.Identifier,"Expected Predicate argument");
+        Consume(TokenType.RightParen,"Expected ')'");
+        Consume(TokenType.Arrow,"Invalid Predicate construction, expected '=>'");   
+        IExpression predicate=Expression();
+        Consume(TokenType.RightBrace,"Expected '}'");
+        return (predicate,argument);
+
+    }//IMPLEMENTAR PREDICTATE PARSING
+
+    public Selector Selector( Player triggerplayer){
+        Token reserved=Previous();
+        Consume(TokenType.Colon, "Expected ':' after Selector declaration");
+        Consume(TokenType.LeftBrace, "Selector must declare a body");
+        Selector selector=new Selector();
+        selector.filtre=new ListFind();
+        while(!Match(TokenType.RightBrace)){
+            if(Match(TokenType.Source)){
+                if(selector.filtre.list!=null) throw Error(Previous(),"Source was already declared in this Selector");
+                selector.filtre.list=Source( triggerplayer);
+                continue; 
+            }
+            if(Match(TokenType.Single)){
+                if(selector.single!=null) throw Error(Previous(),"Single was already declared in this Selector");
+                selector.single=Single();
+                continue;
+            }
+            if(Match(TokenType.Predicate)){
+                if(selector.filtre.predicate!=null) throw Error(Previous(),"Predicate was already declared in this Selector");
+                var aux=Predicate();
+                selector.filtre.predicate=aux.Item1;
+                selector.filtre.parameter=aux.Item2;
+            }
+            throw Error(Peek(), "Expected effect field");
+        }
+        if(selector.single==null) selector.single=false;
+        if(selector.filtre.predicate==null||selector.filtre.parameter==null) throw Error(reserved,"There are missing fields in Selector construction");
+        return selector;
+    }
+
+    public EffectActivation EffectActivation(Player triggerplayer){
+        Consume(TokenType.LeftBrace, "Expected '{'");
+        EffectActivation activation=new EffectActivation();
+        while(!Match(TokenType.RightBrace)){
+            if(Match(TokenType.Effect)){
+                if(activation.effect!=null) throw Error(Previous(), "Effect was already declared in this EffectActivation");
+                activation.effect=Effect();
+                continue;
+            }
+            if(Match(TokenType.Selector)){
+                if(activation.selector!=null) throw Error(Previous(), "Selector was already declared in this EffectActivation");
+                activation.selector=Selector(triggerplayer);
+                continue;
+            }
+            if(Match(TokenType.PostAction)){
+                if(activation.postAction!=null) throw Error(Previous(), "PostAction was already declared in this EffectActivation");
+                activation.postAction=EffectActivation(triggerplayer);
+                continue; 
+            }
+        }
+        if(activation.effect==null) throw Error(Previous(),"There are missing fields in EffectActivation");
+        
+    }
+
+    #endregion
+
+
 }
     
 
@@ -396,7 +529,7 @@ public class Parser
     
   /////////////////////////////////////////////////////////////////////
   
-    //  PENDIENTE: HACER COMPOUND PARSING EMPEZANDO POR EFFECT DEFINITON Y VER LO DE HACER LOS CAMPOS NULLABLES PARA TRABAJAR COMODO
+    //  PENDIENTE: CONTINUAR VIENDO LO DEL PARSEO DE POSTACTION ANIDADOS
     //             IMPLEMENTAR AZUCAR SINTACTICA DE LISTAS DEL CONTEXT
     //  PIN DE IDEA IMPORTANTE:
     //  AGRUPAR MEDIANTE INTERFACES A LAS CLASES DEL AST PARA SABER QUE TIPO DEBERIAN DEVOLVER, PARA EL CHECK
