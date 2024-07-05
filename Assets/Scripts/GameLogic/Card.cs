@@ -6,35 +6,33 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
-[CreateAssetMenu (fileName = "CardSO", menuName = "Create Card")]
 
 
-public abstract class Card: ScriptableObject,IASTNode
+public class Card
 {
-    public int id;
+    public Card() { }
+    public int? id;
     public Player owner;
-    new public string name;
+    public string name;
     public Sprite image;
     public Type type;
     public string carddescription;
-    public Faction faction;
+    public string faction;
     public List<Position> position;
 
     public Onactivation activation;
 
-    public void ActivateEffect()
+    public void ActivateEffect(Player triggerplayer)
     {
-        activation.triggerplayer=owner;
-        activation.Execute();
+        activation.Execute(triggerplayer);
     }
-    
 
     public enum Position
     {
-        L,C,M,R,S,MR,MS,RS,MRS //For units,boosters,weather,decoy: Rows where the unit can be played M(Melee) R(Range) S(Siege) L(Leader) C(Clear)
+        Melee, Ranged, siege,
     }
- 
-    
+
+
     public enum Type
     {
         Leader,
@@ -45,21 +43,17 @@ public abstract class Card: ScriptableObject,IASTNode
         Decoy,
         Clear,
     }
-    public enum Faction
-    {
-        Rome,
-        Greece,
-        Neutral,
-    }
+
     public bool IsUnit()
     {
-        if((type==Card.Type.Leader||type==Card.Type.Clear||type==Card.Type.Weather))return true;
+        if (type == Type.Leader || type == Type.Clear || type == Type.Weather) return true;
         return false;
     }
 
 }
 
-public class Unit: Card{
+public class Unit : Card
+{
     //Due to similarities between decoy card and unit cards decoy will also be instantiated as a Unit object with its respective effect
     public IntEffect effect;
 
@@ -71,9 +65,9 @@ public class Unit: Card{
     powers[3]: holds any extra modifications resulting power (user-created effects)
     */
 
-    public int[] powers=new int[4]; 
+    public int[] powers = new int[4];
     public Position effectposition;
-    
+
     public enum IntEffect
     {
         None,
@@ -85,65 +79,6 @@ public class Unit: Card{
         PowerXntimes,
         RowCleanup,
         Average,
-    }
-}
-
-public class Onactivation:IASTNode{
-    public Player triggerplayer;
-    List<EffectActivation> activations;
-    public void Execute()
-    {
-        foreach(EffectActivation activation in activations)
-        {
-            Effects.effects[activation.effect.definition].action.context.triggerplayer = triggerplayer;
-            activation.Execute(triggerplayer);
-        }
-    }
-}
-
-public class EffectActivation:IASTNode
-{
-    public Effect effect;
-    public Selector selector;
-    public EffectActivation postAction;
-    public void Execute(Player triggerplayer)
-    {
-        var temp=selector.Select();
-        if((bool)selector.single&&temp.Count>0)
-        {
-            List<Card> singlecard=new List<Card>(){temp[0]}; 
-            Effects.effects[effect.definition].action.targets=singlecard;
-        }
-        else Effects.effects[effect.definition].action.targets=temp;
-        effect.Execute(triggerplayer);
-        postAction.Execute(triggerplayer);
-    }
-}
-
-public class Effect:IASTNode
-{
-    public string definition;
-    public Dictionary<string,object> parameters;
-    public void Execute(Player triggerplayer)
-    {
-        Dictionary<string, ID> contextParameters=parameters.ToDictionary(
-            p => p.Key,
-            p => new ID(null, Effects.effects[definition].parameters[p.Key])
-        );
-        Effects.effects[definition].action.context=new Context(triggerplayer,null,contextParameters);
-        Effects.effects[definition].Execute();
-    }
-}
-
-//Used ListFind object with predicate based selection Evaluate method
-public class Selector:IASTNode
-{
-    public Selector(){}
-    public bool? single;
-    public ListFind filtre;
-    public List<Card> Select()
-    {
-        return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
     }
 }
 
