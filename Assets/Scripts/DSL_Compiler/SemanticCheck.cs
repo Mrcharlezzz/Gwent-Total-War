@@ -13,6 +13,7 @@ public class SemanticCheck
     public SemanticCheck(ProgramNode node)
     {
         AST = node;
+        expressiontypes = new Dictionary<IExpression, ExpressionType>();
     }
     public static void SemanticError(Token token, string message)
     {

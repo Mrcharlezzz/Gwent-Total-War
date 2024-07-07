@@ -7,6 +7,8 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime;
+using UnityEditor.U2D.Aseprite;
 
 // Abstract Syntax Tree (AST) for card and effect compiler
 
@@ -588,9 +590,10 @@ public class TypeAccess : PropertyAccess
 }
 
 // Access card position property
-public class PositionAccess : PropertyAccess
+public class RangeAccess : PropertyAccess
 {
-    public PositionAccess(IExpression card, Token accesstoken) : base(card, accesstoken) { }
+    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.Comma, TokenType.RightBracket};
+    public RangeAccess(IExpression card, Token accesstoken) : base(card, accesstoken) { }
 
     public override object Evaluate(Context context, List<Card> targets)
     {
@@ -601,6 +604,21 @@ public class PositionAccess : PropertyAccess
     public override void Set(Context context, List<Card> targets, object value)
     {
         (card.Evaluate(context, targets) as Card).position = (List<Card.Position>)value;
+    }
+}
+
+public class IndexedRange: IExpression{
+    public IExpression range;
+    public IExpression index;
+    public Token accessToken;
+    public IndexedRange(IExpression range, IExpression index, Token accessToken){
+        this.range = range;
+        this.index = index;
+        this.accessToken = accessToken;
+    }
+
+    public object Evaluate(Context context, List<Card> targets){
+        return (range.Evaluate(context,targets) as List<Card.Position>)[(int)index.Evaluate(context,targets)];
     }
 }
 
@@ -626,6 +644,7 @@ public interface IStatement : IASTNode
 // Abstract class for blocks of statements
 public abstract class Block : IStatement
 {
+    public readonly static List<TokenType> synchroTypes = new List<TokenType>() {TokenType.For, TokenType.While, TokenType.RightBrace};
     public Block(List<IStatement> statements)
     {
         this.statements = statements;
@@ -743,8 +762,8 @@ public class Foreach : Block
         this.variable = variable;
     }
 
-    Token variable;
-    IExpression collection;
+    public Token variable;
+    public IExpression collection;
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -769,7 +788,7 @@ public class While : Block
         this.predicate = predicate;
     }
 
-    IExpression predicate;
+    public IExpression predicate;
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -787,24 +806,24 @@ public class While : Block
 // Abstract class for list methods
 public abstract class Method : IStatement
 {
-    public Method(List list)
+    public Method(IExpression list)
     {
         this.list = list;
     }
 
-    public List list;
+    public IExpression list;
     public abstract void Execute(Context context, List<Card> targets);
 }
 
 // Push method (adds card to list)
 public class Push : Method
 {
-    public Push(List list, ICardAtom card) : base(list)
+    public Push(IExpression list, IExpression card) : base(list)
     {
         this.card = card;
     }
 
-    ICardAtom card;
+    IExpression card;
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -815,12 +834,12 @@ public class Push : Method
 // SendBottom method (adds card to the bottom of the list)
 public class SendBottom : Method
 {
-    public SendBottom(List list, ICardAtom card) : base(list)
+    public SendBottom(IExpression list, IExpression card) : base(list)
     {
         this.card = card;
     }
 
-    ICardAtom card;
+    IExpression card;
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -831,12 +850,12 @@ public class SendBottom : Method
 // Remove method (removes card from list)
 public class Remove : Method
 {
-    public Remove(List list, ICardAtom card) : base(list)
+    public Remove(IExpression list, IExpression card) : base(list)
     {
         this.card = card;
     }
 
-    ICardAtom card;
+    IExpression card;
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -870,6 +889,11 @@ public class Shuffle : Method
 // Represents a card in the AST
 public class CardNode : IASTNode
 {
+    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {
+        TokenType.Name, TokenType.Type , TokenType.Faction, TokenType.Power,
+        TokenType.Range, TokenType.OnActivation, TokenType.RightBrace
+    };
+
     public string name;
     public string faction;
     public Card.Type? type;
@@ -881,12 +905,13 @@ public class CardNode : IASTNode
 // Represents the onactivation field of a card
 public class Onactivation : IASTNode
 {
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.LeftBrace, TokenType.RightBracket};
     public Onactivation(List<EffectActivation> activations)
     {
         this.activations = activations;
     }
 
-    List<EffectActivation> activations;
+    public List<EffectActivation> activations;
 
     public void Execute(Player triggerplayer)
     {
@@ -901,6 +926,7 @@ public class Onactivation : IASTNode
 // Represents an effect activation in the AST
 public class EffectActivation : IASTNode
 {
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Effect, TokenType.Selector, TokenType.PostAction, TokenType.RightBrace};
     public Effect effect;
     public Selector selector;
     public EffectActivation postAction;
@@ -936,37 +962,60 @@ public class EffectActivation : IASTNode
 // Represents an effect definition in the AST
 public class EffectDefinition : IASTNode
 {
-    public EffectDefinition() { }
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {
+        TokenType.Name, TokenType.Params,
+        TokenType.Action, TokenType.RightBrace
+    };
     public string name;
-    public Dictionary<string, ExpressionType> parameters;
+    public ParameterDef parameterdefs;
     public Action action;
 
+    public EffectDefinition() { }
     public void Execute()
     {
         action.Execute(action.context, action.targets);
     }
 }
 
+public class ParameterDef{
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
+    public Dictionary<string, ExpressionType> parameters;
+    public ParameterDef(Dictionary<string, ExpressionType> parameters){
+        this.parameters=parameters;
+    }
+
+}
+
 // Represents an effect in the AST
 public class Effect : IASTNode
 {
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.Name, TokenType.RightBrace};
     public string definition;
-    public Dictionary<string, object> parameters;
+    public Parameters parameters;
 
     public void Execute(Player triggerplayer)
     {
-        Dictionary<string, ID> contextParameters = parameters.ToDictionary(
+        Dictionary<string, ID> contextParameters = parameters.parameters.ToDictionary(
             p => p.Key,
-            p => new ID(null, Effects.effects[definition].parameters[p.Key])
+            p => new ID(null, Effects.effects[definition].parameterdefs.parameters[p.Key])
         );
         Effects.effects[definition].action.context = new Context(triggerplayer, null, contextParameters);
         Effects.effects[definition].Execute();
     }
 }
 
+public class Parameters{
+    public static readonly List<TokenType> synchroTypes;
+    public Dictionary<string, object> parameters;
+    public Parameters(Dictionary<string,object> parameters){
+        this.parameters=parameters;
+    }
+}
+
 // Used ListFind object with predicate based selection Evaluate method
 public class Selector : IASTNode
 {
+    public static readonly List<TokenType> synchroTypes = new List<TokenType> {TokenType.Source, TokenType.Single, TokenType.Predicate, TokenType.RightBrace,};
     public Selector() { }
     public Token source;
     public bool? single;
@@ -975,6 +1024,18 @@ public class Selector : IASTNode
     public List<Card> Select(Player triggerplayer)
     {
         return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
+    }
+}
+
+#endregion
+
+public class ProgramNode
+{
+    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.effect, TokenType.Card , TokenType.EOF};
+    public List<IASTNode> nodes;
+    public ProgramNode(List<IASTNode> nodes)
+    {
+        this.nodes = nodes;
     }
 }
 
@@ -1036,15 +1097,7 @@ public class ID
     public ExpressionType type;
 }
 
-public class ProgramNode
-{
-    List<IASTNode> nodes;
-    public ProgramNode(List<IASTNode> nodes)
-    {
-        this.nodes = nodes;
-    }
-}
 
-#endregion
+
 
 

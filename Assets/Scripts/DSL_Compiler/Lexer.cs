@@ -52,6 +52,8 @@ public class Lexer
         {"Number", TokenType.Number},
         {"String", TokenType.String},
         {"Bool", TokenType.Bool},
+        {"false", TokenType.False},
+        {"true", TokenType.True},
     };
 
     List<Token> tokens = new List<Token>();
@@ -121,7 +123,7 @@ public class Lexer
                 AddToken(Match('=') ? TokenType.MinusEqual : Match('+') ? TokenType.Decrement : TokenType.Minus);
                 break;
             case '*':
-                AddToken(Match('=') ? TokenType.StarEqual : Match('+') ? TokenType.Star : TokenType.Minus);
+                AddToken(Match('=') ? TokenType.StarEqual :  TokenType.Star);
                 break;
             case '@':
                 AddToken(Match('=') ? TokenType.AtSymbolEqual : Match('@') ? TokenType.AtSymbolAtSymbol : TokenType.AtSymbol);
