@@ -15,7 +15,7 @@ public class Card
     public Player owner;
     public string name;
     public Sprite image;
-    public Type type;
+    public Type? type;
     public string carddescription;
     public string faction;
     public List<Position> position;

@@ -52,8 +52,6 @@ public class Lexer
         {"Number", TokenType.Number},
         {"String", TokenType.String},
         {"Bool", TokenType.Bool},
-        {"false", TokenType.False},
-        {"true", TokenType.True},
     };
 
     List<Token> tokens = new List<Token>();
@@ -120,7 +118,7 @@ public class Lexer
                 AddToken(Match('=') ? TokenType.PlusEqual : Match('+') ? TokenType.Increment : TokenType.Plus);
                 break;
             case '-':
-                AddToken(Match('=') ? TokenType.MinusEqual : Match('+') ? TokenType.Decrement : TokenType.Minus);
+                AddToken(Match('=') ? TokenType.MinusEqual : Match('-') ? TokenType.Decrement : TokenType.Minus);
                 break;
             case '*':
                 AddToken(Match('=') ? TokenType.StarEqual :  TokenType.Star);
@@ -183,7 +181,7 @@ public class Lexer
     // Adds a token without a literal value
     void AddToken(TokenType type)
     {
-        AddToken(type, null!);
+        AddToken(type, null);
     }
 
     // Adds a token with a literal value
@@ -251,10 +249,9 @@ public class Lexer
         while (IsAlphaNumeric(Peek())) Advance();
         string lexeme = source.Substring(start, current - start);
         // If it is a reserved word save it as its respective type, else save it as identifier
-        if (keywords.ContainsKey(lexeme))
-        {
-            if (lexeme == "false") AddToken(keywords[lexeme], false);
-            else if (lexeme == "true") AddToken(keywords[lexeme], true);
+        if (keywords.ContainsKey(lexeme)){
+            if(lexeme == "false") AddToken(TokenType.False, false);
+            else if(lexeme=="true") AddToken(TokenType.True, true);
             else AddToken(keywords[lexeme]);
         }
         else AddToken(TokenType.Identifier);

@@ -18,7 +18,7 @@ public class Parser
 {
     List<Token> tokens;
     int current = 0;
-    string CurrentTokenName{ get{ return tokens[current].lexeme;}}
+    string CurrentTokenName { get { return tokens[current].lexeme; } }
     public Parser(List<Token> tokens)
     {
         this.tokens = tokens;
@@ -65,6 +65,8 @@ public class Parser
         if (IsAtEnd()) return false;
         return Peek().type == type;
     }
+
+    //TChecks if the current token matches an element from a list of types 
 
     bool Check(List<TokenType> types)
     {
@@ -115,16 +117,16 @@ public class Parser
         return null;
     }
 
-    //Sinchronizes the parser state after an error
+    //Sinchronizes the parser state after an error based on a given list
+    //of tokens that determine where to stop synchronization
     void Synchronize(List<TokenType> synchroTypes)
     {
         if (synchroTypes == null) return;
-        Advance();
         while (!IsAtEnd())
         {
-            if (synchroTypes.Equals(Block.synchroTypes) && Previous().type == TokenType.Semicolon) return;
             if (Check(synchroTypes)) return;
             Advance();
+            if (synchroTypes.Equals(Block.synchroTypes) && Previous().type == TokenType.Semicolon) return;
         }
     }
 
@@ -171,10 +173,11 @@ public class Parser
         return expr;
     }
 
-    //Parses string expressionss
-    public IExpression Stringy(){
+    //Parses string expressions
+    public IExpression Stringy()
+    {
         IExpression expr = Comparison();
-        List<TokenType> types = new List<TokenType>() { TokenType.AtSymbol, TokenType.AtSymbolAtSymbol};
+        List<TokenType> types = new List<TokenType>() { TokenType.AtSymbol, TokenType.AtSymbolAtSymbol };
         while (Match(types))
         {
             Token operation = Previous();
@@ -288,8 +291,8 @@ public class Parser
             //they dont match a left bracket or dot respectively
 
             if (Check(TokenType.Dot)) left = Access(left);
-            types= new List<TokenType>(){TokenType.Increment, TokenType.Decrement};
-            if(Match(types)) left= new Increment_Decrement(left , Previous());
+            types = new List<TokenType>() { TokenType.Increment, TokenType.Decrement };
+            if (Match(types)) left = new Increment_Decrement(left, Previous());
             return left;
         }
 
@@ -298,11 +301,11 @@ public class Parser
         return null;
     }
 
-    //Parses access expressions (property and method access)
+    //Parses access expressions (property and pop method access)
     public IExpression Access(IExpression left)
     {
         Token check;
-        //Storage dot token in order to report posible semantic errors later in the Access
+        //Store dot token in order to report posible semantic errors later in the Access
         Token dot = Peek();
 
         while (Match(TokenType.Dot))
@@ -315,42 +318,48 @@ public class Parser
             };
             if (Match(types))
             {
-                types= new List<TokenType>(){
+                types = new List<TokenType>(){
                     TokenType.HandOfPlayer, TokenType.DeckOfPlayer,
                     TokenType.GraveyardOfPlayer, TokenType.FieldOfPlayer,
                 };
+                //store list token
                 Token aux = Previous();
-                if(Check(types))
+                if (Check(types))
                 {
-                
+
                     Token player = Consume(TokenType.LeftParen, "Expected Player Argument", null);
                     if (player == null) return null;
 
+                    //store player argument
                     IExpression arg = Expression();
                     check = Consume(TokenType.RightParen, "Expected ')' after Player Argument", null);
                     if (check == null) return null;
 
                     switch (aux.type)
                     {
-                        case TokenType.HandOfPlayer: left = Indexer(new HandList(arg, player)); break;
-                        case TokenType.DeckOfPlayer: left = Indexer(new DeckList(arg, player)); break;
-                        case TokenType.GraveyardOfPlayer: left = Indexer(new GraveyardList(arg, player)); break;
-                        case TokenType.FieldOfPlayer: left = Indexer(new FieldList(arg, player)); break;
+                        case TokenType.HandOfPlayer: left = Indexer(new HandList(left,arg, dot, player)); break;
+                        case TokenType.DeckOfPlayer: left = Indexer(new DeckList(left,arg, dot, player)); break;
+                        case TokenType.GraveyardOfPlayer: left = Indexer(new GraveyardList(left, arg, dot, player)); break;
+                        case TokenType.FieldOfPlayer: left = Indexer(new FieldList(left, arg, dot, player)); break;
                     }
                 }
-                else{
-                    switch (aux.type){
-                        case TokenType.Hand: left=Indexer(new HandList(new TriggerPlayer(), aux)); break;
-                        case TokenType.Deck: left=Indexer(new DeckList(new TriggerPlayer(), aux)); break;
-                        case TokenType.Field: left=Indexer(new FieldList(new TriggerPlayer(), aux)); break;
-                        case TokenType.Graveyard: left=Indexer(new GraveyardList(new TriggerPlayer(), aux)); break;
+                else
+                {
+                    //Syntax sugar for player lists
+                    switch (aux.type)
+                    {
+                        case TokenType.Hand: left = Indexer(new HandList(left, new TriggerPlayer(), dot, aux)); break;
+                        case TokenType.Deck: left = Indexer(new DeckList(left, new TriggerPlayer(), dot, aux)); break;
+                        case TokenType.Field: left = Indexer(new FieldList(left, new TriggerPlayer(), dot, aux)); break;
+                        case TokenType.Graveyard: left = Indexer(new GraveyardList(left, new TriggerPlayer(), dot, aux)); break;
                     }
                 }
             }
-            else if(Match(TokenType.Board)) left= Indexer(new BoardList());
+            else if (Match(TokenType.Board)) left = Indexer(new BoardList(left, dot));
 
             else if (Match(TokenType.Find))
             {
+                //Consume all expected tokens in a Find method
                 Token argument = Consume(TokenType.LeftParen, "Expected '(' after method", null);
                 if (argument == null) return null;
 
@@ -363,6 +372,7 @@ public class Parser
                 check = Consume(TokenType.Arrow, "Expected predicate function call", null);
                 if (check == null) return null;
 
+                //store predicate 
                 IExpression predicate = Expression();
                 check = Consume(TokenType.RightParen, "Expected ')' after predicate", null);
                 if (check == null) return null;
@@ -379,25 +389,29 @@ public class Parser
 
                 left = new Pop(left, dot);
             }
-            else if (Match(TokenType.TriggerPlayer)) left = new TriggerPlayer();
-            else if (Match(TokenType.Name)) left = new NameAccess(left, dot);
-            else if (Match(TokenType.Power)) left = new PowerAccess(left, dot);
-            else if (Match(TokenType.Faction)) left = new FactionAccess(left, dot);
-            else if (Match(TokenType.Type)) left = new TypeAccess(left, dot);
-            else if (Match(TokenType.Owner)) left = new OwnerAccess(left, dot);
+            else if (Match(TokenType.TriggerPlayer)) left = Indexer(new TriggerPlayer());
+            //Card roperty access
+            else if (Match(TokenType.Name)) left = Indexer(new NameAccess(left, dot));
+            else if (Match(TokenType.Power)) left = Indexer(new PowerAccess(left, dot));
+            else if (Match(TokenType.Faction)) left = Indexer(new FactionAccess(left, dot));
+            else if (Match(TokenType.Type)) left = Indexer(new TypeAccess(left, dot));
+            else if (Match(TokenType.Owner)) left = Indexer(new OwnerAccess(left, dot));
             else if (Match(TokenType.Range)) left = Indexer(new RangeAccess(left, dot));
-            if(Check(TokenType.Dot)) continue;
-            types= new List<TokenType>(){TokenType.Push,TokenType.Remove, TokenType.SendBottom, TokenType.Shuffle};
-            if(Previous().type==TokenType.Dot){
-                if (Check(types)){
+            if (Check(TokenType.Dot)) continue;
+            types = new List<TokenType>() { TokenType.Push, TokenType.Remove, TokenType.SendBottom, TokenType.Shuffle };
+            if (Previous().type == TokenType.Dot)
+            {
+                if (Check(types))
+                {
                     current--;
                     return left;
                 }
-                else{
+                else
+                {
                     Error(Peek(), "Invalid property access", null);
                     return null;
                 }
-            } 
+            }
         }
         return left;
     }
@@ -426,7 +440,11 @@ public class Parser
     //Parses a statement
     public IStatement Statement()
     {
+        Token statementHead=Peek();
+        //This token is for checking if Consume method had a non-null return, in order
+        //to check if an error was found to reset the parser to a good state
         Token check;
+        //Handle assignations, increments, decrements, numeric modifications and methods
         if (Check(TokenType.Identifier))
         {
             Token identifier = Peek();
@@ -434,11 +452,12 @@ public class Parser
 
             if (Match(TokenType.Equal))
             {
+                Token equal = Previous();
                 IExpression assignation = Expression();
                 check = Consume(TokenType.Semicolon, "Expected ';' after assignation", Block.synchroTypes);
                 if (check == null) return null;
 
-                return new Assignation(expr, assignation);
+                return new Assignation(expr, assignation, equal);
             }
             if (Match(new List<TokenType>() { TokenType.Increment, TokenType.Decrement }))
             {
@@ -458,6 +477,7 @@ public class Parser
             }
             if (Match(TokenType.Dot))
             {
+                Token dot = Previous();
 
                 if (Match(new List<TokenType>() { TokenType.Push, TokenType.SendBottom, TokenType.Remove }))
                 {
@@ -472,9 +492,9 @@ public class Parser
                     check = Consume(TokenType.Semicolon, "Expected ';' after method", Block.synchroTypes);
                     if (check == null) return null;
 
-                    if (method.type == TokenType.Push) return new Push(expr, card);
-                    if (method.type == TokenType.SendBottom) return new SendBottom(expr, card);
-                    return new Remove(expr, card);
+                    if (method.type == TokenType.Push) return new Push(expr, card, dot);
+                    if (method.type == TokenType.SendBottom) return new SendBottom(expr, card, dot);
+                    return new Remove(expr, card, dot);
                 }
                 if (Match(TokenType.Shuffle))
                 {
@@ -487,7 +507,7 @@ public class Parser
                     check = Consume(TokenType.Semicolon, "Expected ';' after method", Block.synchroTypes);
                     if (check == null) return null;
 
-                    return new Shuffle((List)expr);
+                    return new Shuffle(expr, dot);
                 }
 
 
@@ -501,39 +521,41 @@ public class Parser
                 return null;
             }
         }
+        //Parses while loop
         if (Match(TokenType.While))
         {
             check = Consume(TokenType.LeftParen, "Expect '(' after 'while'", Block.synchroTypes);
             IExpression predicate = Expression();
             check = Consume(TokenType.RightParen, "Expect ')' after condition.", Block.synchroTypes);
             List<IStatement> body = null;
-            if (Match(TokenType.LeftBrace)) {
+            if (Match(TokenType.LeftBrace))
+            {
                 body = ParseBlock(Block.synchroTypes);
-                check= Consume(TokenType.Semicolon, "Expected ';' after while block", Block.synchroTypes);
-                if(check==null) return null;
             }
+            //One-liner handling
             else body = new List<IStatement>() { Statement() };
-            return new While(body, predicate);
+            return new While(body, predicate, statementHead);
         }
+        //Parses for loop
         if (Match(TokenType.For))
         {
-            check= Consume(TokenType.LeftParen, "Expected '('", Block.synchroTypes);
-            if(check==null) return null;
+            check = Consume(TokenType.LeftParen, "Expected '('", Block.synchroTypes);
+            if (check == null) return null;
             Token variable = Consume(TokenType.Identifier, "Expected identifier in for statement", Block.synchroTypes);
             if (variable == null) return null;
             check = Consume(TokenType.In, "Expected 'in' in for statement", Block.synchroTypes);
             if (check == null) return null;
             IExpression collection = Expression();
-            check= Consume(TokenType.RightParen, "Expected ')'", Block.synchroTypes);
-            if(check==null) return null;
+            check = Consume(TokenType.RightParen, "Expected ')'", Block.synchroTypes);
+            if (check == null) return null;
             List<IStatement> body = null;
-            if (Match(TokenType.LeftBrace)){ 
+            if (Match(TokenType.LeftBrace))
+            {
                 body = ParseBlock(Block.synchroTypes);
-                check= Consume(TokenType.Semicolon, "Expected ';' after for block", Block.synchroTypes);
-                if(check==null) return null;
             }
+            //One-liner handling
             else body = new List<IStatement>() { Statement() };
-            return new Foreach(body, collection, variable);
+            return new Foreach(body, collection, variable, statementHead);
         }
         Error(Peek(), "Invalid statement", Block.synchroTypes);
         return null;
@@ -593,7 +615,7 @@ public class Parser
             check = Consume(TokenType.Colon, "Expected ':' after parameter name", ParameterDef.synchroTypes);
             if (check == null) continue;
             if (Match(new List<TokenType>() { TokenType.Number, TokenType.Bool, TokenType.String }))
-                parameters[name.lexeme] = SemanticTools.GetStringType(Previous().lexeme);
+                parameters[name.lexeme] = Tools.GetStringType(Previous().lexeme);
             else Error(Peek(), "Invalid parameter type", ParameterDef.synchroTypes);
         }
         return new ParameterDef(parameters);
@@ -602,6 +624,7 @@ public class Parser
     //Parses an Action of an Effect Definition
     public Action Action()
     {
+        Token action= Previous();
         Token check = Consume(TokenType.Colon, "Expected ':' after 'Action' in Action construction", EffectDefinition.synchroTypes);
         if (check == null) return null;
 
@@ -626,7 +649,7 @@ public class Parser
         List<IStatement> body = null;
         if (Match(TokenType.LeftBrace)) body = ParseBlock(EffectDefinition.synchroTypes);
         else body = new List<IStatement>() { Statement() };
-        return new Action(body, contextID, targetsID);
+        return new Action(body, contextID, targetsID, action);
     }
 
     //EffectDefinition Parsing
@@ -634,10 +657,11 @@ public class Parser
     //Parses an Effect Definition    
     public EffectDefinition ParseEffect()
     {
-        Token reserved = Previous();
+        Token keyword = Previous();
         Token check = Consume(TokenType.LeftBrace, "EffectDefinition must declare a body", ProgramNode.synchroTypes);
         if (check == null) return null;
         EffectDefinition definition = new EffectDefinition();
+        definition.keyword= keyword;
         while (!Match(TokenType.RightBrace))
         {
             if (Match(TokenType.Name))
@@ -671,11 +695,10 @@ public class Parser
                 continue;
             }
             Error(Peek(), "Expected effect definition field", EffectDefinition.synchroTypes);
-
         }
         if (definition.name == null || definition.action == null)
         {
-            Error(reserved, "There are missing effect arguments in the ocnstruction", ProgramNode.synchroTypes);
+            Error(keyword, "There are missing effect arguments in the ocnstruction", ProgramNode.synchroTypes);
             return null;
         }
         return definition;
@@ -698,9 +721,10 @@ public class Parser
             }
             Token check = Consume(TokenType.Colon, "Expected ':' after parameter name", Parameters.synchroTypes);
             if (check == null) continue;
-            if (Match(new List<TokenType>() { TokenType.NumberLiteral, TokenType.True, TokenType.False, TokenType.StringLiteral })) 
+            if (Match(new List<TokenType>() { TokenType.NumberLiteral, TokenType.True, TokenType.False, TokenType.StringLiteral }))
                 parameters[name.lexeme] = Previous().literal;
-            else {
+            else
+            {
                 Error(Peek(), "Invalid parameter type", Parameters.synchroTypes);
                 continue;
             }
@@ -768,8 +792,9 @@ public class Parser
     //Parses an effect
     public Effect ParseActivationEffect()
     {
-        Token reserved = Previous();
+        Token keyword = Previous();
         Effect effect = new Effect();
+        effect.keyword=keyword;
         Token check = Consume(TokenType.Colon, "Expected ':' after Effect declaration", EffectActivation.synchroTypes);
         if (check == null) return null;
         if (Match(TokenType.StringLiteral))
@@ -807,7 +832,7 @@ public class Parser
         }
         if (effect.definition == null)
         {
-            Error(reserved, "There are missing effect arguments in the ocnstruction", EffectActivation.synchroTypes);
+            Error(keyword, "There are missing effect arguments in the ocnstruction", EffectActivation.synchroTypes);
             return null;
         }
         return effect;
@@ -816,7 +841,7 @@ public class Parser
     //Parses a Selector
     public Selector ParseSelector()
     {
-        Token reserved = Previous();
+        Token keyword = Previous();
         Token check = Consume(TokenType.Colon, "Expected ':' after Selector declaration", EffectActivation.synchroTypes);
         if (check == null) return null;
         check = Consume(TokenType.LeftBrace, "Selector must declare a body", EffectActivation.synchroTypes);
@@ -862,7 +887,7 @@ public class Parser
         if (selector.single == null) selector.single = false;
         if (selector.source == null || selector.filtre.parameter == null || selector.filtre.predicate == null)
         {
-            Error(reserved, "There are missing fields in Selector construction", EffectActivation.synchroTypes);
+            Error(keyword, "There are missing fields in Selector construction", EffectActivation.synchroTypes);
             return null;
         }
         return selector;
@@ -893,11 +918,11 @@ public class Parser
             {
                 if (activation.postAction != null) Error(Previous(), "PostAction was already declared in this EffectActivation", EffectActivation.synchroTypes);
                 check = Consume(TokenType.Colon, "Expected ':' after PostAction declaration", EffectActivation.synchroTypes);
-                if(check==null) continue;
+                if (check == null) continue;
                 activation.postAction = ParseEffectActivation();
                 continue;
             }
-            Error(Peek(), "Expected EffectActivation field" , EffectActivation.synchroTypes);
+            Error(Peek(), "Expected EffectActivation field", EffectActivation.synchroTypes);
         }
         if (activation.effect == null)
         {
@@ -929,7 +954,7 @@ public class Parser
     }
 
     // Parses the range field of a card
-    public List<Card.Position> ParseRange()
+    public List<string> ParseRange()
     {
 
         Token check = Consume(TokenType.Colon, "Expected ':' after Range definition", CardNode.synchroTypes);
@@ -937,7 +962,7 @@ public class Parser
         check = Consume(TokenType.LeftBracket, "Expected Range list", CardNode.synchroTypes);
         if (check == null) return null;
 
-        List<Card.Position> positions = new List<Card.Position>();
+        List<string> positions = new List<string>();
         bool melee = false, ranged = false, siege = false;
         while (!Match(TokenType.RightBracket))
         {
@@ -951,39 +976,42 @@ public class Parser
                         Error(Previous(), "Melee Range is already in this Range List", RangeAccess.synchroTypes);
                         break;
                     }
-                    melee = true; positions.Add(Card.Position.Melee); break;
+                    melee = true; positions.Add((string)pos.literal); break;
                 case "Ranged":
                     if (ranged)
                     {
                         Error(Previous(), "Ranged Range is already in this Range List", RangeAccess.synchroTypes);
                         break;
                     }
-                    ranged = true; positions.Add(Card.Position.Ranged); break;
+                    ranged = true; positions.Add((string)pos.literal); break;
                 case "Siege":
                     if (siege)
                     {
                         Error(Previous(), "Siege Range is already in this Range List", RangeAccess.synchroTypes);
                         break;
                     }
-                    siege = true; positions.Add(Card.Position.siege); break;
+                    siege = true; positions.Add((string)pos.literal); break;
                 default: Error(Previous(), "Invalid Range", RangeAccess.synchroTypes); break;
             }
-            if(!Check(TokenType.RightBracket)){
+            if (!Check(TokenType.RightBracket))
+            {
                 check = Consume(TokenType.Comma, "Expected ',' between ranges", RangeAccess.synchroTypes);
-                if(check == null) continue;
+                if (check == null) continue;
             }
         }
         check = Consume(TokenType.Comma, "Expected ',' after Range declaration", CardNode.synchroTypes);
-        if(check==null) return null;
+        if (check == null) return null;
         return positions;
     }
 
     //Parses a card
     public CardNode ParseCard()
     {
+        Token keyword=Previous();
         Token check = Consume(TokenType.LeftBrace, "Card must declare a body", ProgramNode.synchroTypes);
         if (check is null) return null;
         CardNode card = new CardNode();
+        card.keyword=keyword;
 
         while (!Match(TokenType.RightBrace))
         {
@@ -999,25 +1027,18 @@ public class Parser
             }
             if (Match(TokenType.Type))
             {
-                Token reserved = Previous();
                 if (card.type != null)
                 {
                     Error(Peek(), "Type was already declared in this Card", CardNode.synchroTypes);
                     continue;
                 }
                 string aux = StringField(CardNode.synchroTypes);
-                switch (aux)
+                card.type = Tools.GetCardType(aux);
+                if (card.type == null)
                 {
-                    case "Oro": card.type = Card.Type.Golden; break;
-                    case "Plata": card.type = Card.Type.Silver; break;
-                    case "Clima": card.type = Card.Type.Weather; break;
-                    case "Aumento": card.type = Card.Type.Boost; break;
-                    case "Líder": card.type = Card.Type.Leader; break;
-                    case "Señuelo": card.type = Card.Type.Decoy; break;
-                    case "Despeje": card.type = Card.Type.Clear; break;
-                    default: Error(reserved, "Invalid Type", CardNode.synchroTypes); break;
+                    Error(keyword, "Invalid Type", CardNode.synchroTypes);
+                    continue;
                 }
-                continue;
             }
             if (Match(TokenType.Faction))
             {
@@ -1066,7 +1087,7 @@ public class Parser
             }
             Error(Peek(), "Invalid Card field", CardNode.synchroTypes);
         }
-        if (card.name == null || card.type == null || card.faction == null || card.activation == null)
+        if (card.name == null || card.type == null || card.faction == null || card.activation == null|| card.position==null)
         {
             Error(Peek(), "There are missing fields in Card construction", ProgramNode.synchroTypes);
             return null;
@@ -1102,7 +1123,7 @@ public class Parser
 
 
 /// <summary>
-/// PENDIENTE PARA MEJOREAR EL SEMANTICO
+/// PENDIENTE PARA MEJORAR EL SEMANTICO
 /// </summary>
 public class ErrorBlock
 {
@@ -1120,6 +1141,3 @@ public class ErrorBlock
         return $"{message}: {String.Join(" ", tokens.Select(t => t.literal))}";
     }
 }
-
-
-
