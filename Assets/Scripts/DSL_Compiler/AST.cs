@@ -1,14 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime;
-using UnityEditor.U2D.Aseprite;
 
 // Abstract Syntax Tree (AST) for card and effect compiler
 
@@ -657,65 +651,65 @@ public class Action : Block
 // Assignment statement
 public class Assignation : IStatement
 {
-    public Assignation(IExpression assignation, IExpression container, Token operation)
+    public Assignation(IExpression operand, IExpression assignation, Token operation)
     {
-        this.container = container;
+        this.operand = operand;
         this.assignation = assignation;
         this.operation = operation;
     }
 
-    public IExpression container;
+    public IExpression operand;
     public IExpression assignation;
     public Token operation;
 
     public virtual void Execute(Context context, List<Card> targets)
     {
-        if (container is ICardAtom) (container as ICardAtom).Set(context, targets, assignation.Evaluate(context, targets) as Card);
-        else if (container is PropertyAccess) (container as PropertyAccess).Set(context, targets, assignation.Evaluate(context,targets));
-        else if (container is Variable) context.Set((container as Variable).name, assignation.Evaluate(context, targets));
+        if (operand is ICardAtom) (operand as ICardAtom).Set(context, targets, assignation.Evaluate(context, targets) as Card);
+        else if (operand is PropertyAccess) (operand as PropertyAccess).Set(context, targets, assignation.Evaluate(context,targets));
+        else if (operand is Variable) context.Set((operand as Variable).name, assignation.Evaluate(context, targets));
     }
 }
 
 // Increment and decrement operations
 public class Increment_Decrement : Assignation, IExpression
 {
-    public Increment_Decrement(IExpression assignation, Token operation) : base(assignation, null, operation){}
+    public Increment_Decrement(IExpression operand, Token operation) : base(operand, null, operation){}
     
     public object Evaluate(Context context, List<Card> targets)
     {
         Execute(context, targets);
-        if (operation.type == TokenType.Increment) return (int)container.Evaluate(context, targets) + 1;
-        else return (int)container.Evaluate(context, targets) - 1;
+        if (operation.type == TokenType.Increment) return (int)operand.Evaluate(context, targets) + 1;
+        else return (int)operand.Evaluate(context, targets) - 1;
     }
 
     public override void Execute(Context context, List<Card> targets)
     {
         int result = 0;
-        if (operation.type == TokenType.Increment) result = (int)container.Evaluate(context, targets) + 1;
-        else result = (int)container.Evaluate(context, targets) - 1;
-        if (container is PowerAccess) (container as PowerAccess).Set(context, targets, result);
-        else if (container is Variable) context.Set((container as Variable).name, result);
+        if (operation.type == TokenType.Increment) result = (int)operand.Evaluate(context, targets) + 1;
+        else result = (int)operand.Evaluate(context, targets) - 1;
+        if (operand is PowerAccess) (operand as PowerAccess).Set(context, targets, result);
+        else if (operand is Variable) context.Set((operand as Variable).name, result);
     }
 }
 
 // Numeric modification operations (e.g., +=, -=, etc.)
 public class NumericModification : Assignation
 {
-    public NumericModification(IExpression container, IExpression assignation, Token operation) : base(container, assignation ,operation){}
+    public NumericModification(IExpression operand, IExpression assignation, Token operation) : base(operand, assignation ,operation){}
 
     public override void Execute(Context context, List<Card> targets)
     {
         object result = null;
         switch (operation.type)
         {
-            case TokenType.PlusEqual: result = (int)container.Evaluate(context, targets) + (int)assignation.Evaluate(context, targets); break;
-            case TokenType.MinusEqual: result = (int)container.Evaluate(context, targets) - (int)assignation.Evaluate(context, targets); break;
-            case TokenType.SlashEqual: result = (int)container.Evaluate(context, targets) * (int)assignation.Evaluate(context, targets); break;
-            case TokenType.StarEqual: result = (int)container.Evaluate(context, targets) / (int)assignation.Evaluate(context, targets); break;
-            case TokenType.AtSymbolEqual: result = (string)container.Evaluate(context, targets) + (string)assignation.Evaluate(context, targets); break;
+            case TokenType.PlusEqual: result = (int)operand.Evaluate(context, targets) + (int)assignation.Evaluate(context, targets); break;
+            case TokenType.MinusEqual: result = (int)operand.Evaluate(context, targets) - (int)assignation.Evaluate(context, targets); break;
+            case TokenType.SlashEqual: result = (int)operand.Evaluate(context, targets) * (int)assignation.Evaluate(context, targets); break;
+            case TokenType.StarEqual: result = (int)operand.Evaluate(context, targets) / (int)assignation.Evaluate(context, targets); break;
+            case TokenType.AtSymbolEqual: result = (string)operand.Evaluate(context, targets) + (string)assignation.Evaluate(context, targets); break;
         }
-        if (container is PowerAccess) (container as PowerAccess).Set(context, targets, result);
-        else if (container is Variable) context.Set((container as Variable).name, result);
+        if (operand is PowerAccess) (operand as PowerAccess).Set(context, targets, result);
+        else if (operand is Variable) context.Set((operand as Variable).name, result);
     }
 }
 
@@ -818,9 +812,9 @@ public class Shuffle : Method
         for (int i = temp.Count - 1; i > 0; i--)
         {
             int randomIndex = UnityEngine.Random.Range(0, i + 1);
-            Card container = temp[i];
+            Card operand = temp[i];
             temp[i] = temp[randomIndex];
-            temp[randomIndex] = container;
+            temp[randomIndex] = operand;
         }
     }
 }
@@ -892,7 +886,7 @@ public class CardNode : IASTNode
 // Represents the onactivation field of a card
 public class Onactivation : IASTNode
 {
-    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.LeftBrace, TokenType.RightBracket};
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.LeftBrace, TokenType.RightBracket, TokenType.Comma};
     public Onactivation(List<EffectActivation> activations)
     {
         this.activations = activations;
@@ -965,7 +959,7 @@ public class EffectDefinition : IASTNode
     }
 }
 
-public class ParameterDef{
+public class ParameterDef : IASTNode{
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
     public Dictionary<string, ExpressionType> parameters;
     public ParameterDef(Dictionary<string, ExpressionType> parameters){
@@ -1009,13 +1003,15 @@ public class Selector : IASTNode
 
     public List<Card> Select(Player triggerplayer)
     {
+        Context context= new Context(triggerplayer, null, new Dictionary<string, object>());
+        context
         return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
     }
 }
 
 #endregion
 
-public class ProgramNode
+public class ProgramNode : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.effect, TokenType.Card , TokenType.EOF};
     public List<IASTNode> nodes;

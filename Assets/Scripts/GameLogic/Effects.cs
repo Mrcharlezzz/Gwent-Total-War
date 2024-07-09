@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 public static class GlobalEffects
 {
-    public static Dictionary<string, EffectDefinition> effects;
+    public static Dictionary<string, EffectDefinition> effects= new Dictionary<string, EffectDefinition>();
 }
 
 

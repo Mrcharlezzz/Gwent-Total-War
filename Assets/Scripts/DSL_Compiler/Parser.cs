@@ -514,7 +514,11 @@ public class Parser
                 else Error(Peek(), "Invalid method call", Block.synchroTypes);
                 return null;
             }
-            if (expr is IStatement) return (IStatement)expr;
+            if (expr is IStatement){
+                check=Consume(TokenType.Semicolon, "Expected ';' after statement", Block.synchroTypes);
+                if(check==null) return null;
+                return (IStatement)expr;
+            } 
             else
             {
                 Error(Peek(), "Invalid statement", Block.synchroTypes);
@@ -1034,11 +1038,8 @@ public class Parser
                 }
                 string aux = StringField(CardNode.synchroTypes);
                 card.type = Tools.GetCardType(aux);
-                if (card.type == null)
-                {
-                    Error(keyword, "Invalid Type", CardNode.synchroTypes);
-                    continue;
-                }
+                if (card.type == null) Error(keyword, "Invalid Type", CardNode.synchroTypes);
+                continue;
             }
             if (Match(TokenType.Faction))
             {

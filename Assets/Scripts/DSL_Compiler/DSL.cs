@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public static class DSL
 {
@@ -19,6 +20,10 @@ public static class DSL
         else Report(token.line, token.column, $"at'{token.lexeme}'", message);
     }
 
+    public static void CancelCompilation(){
+        throw new NotImplementedException();
+    }
+
     public static void Compile(string source)
     {
         hadError=false;
@@ -26,12 +31,27 @@ public static class DSL
         Lexer lexer= new Lexer(source);
         // Tokenize the input source code
         var tokens = lexer.ScanTokens();
-        if(hadError) return;
+        if(hadError){
+            CancelCompilation();
+            return;
+        }
         // Create an instance of the Parser with the tokens
         Parser parser = new Parser(tokens);
         // Parse the tokens to generate the AST
-        var Nodes= parser.Program();
-        if(hadError) return;
+        var nodes= parser.Program();
+        if(hadError){
+            CancelCompilation();
+            return;
+        }
+        SemanticCheck check = new SemanticCheck(nodes);
+        check.CheckProgram(check.AST);
+        if(hadError){
+            CancelCompilation();
+            return;
+        }
+
+
+        
 
         // Optional: Semantic checking
         // SemanticChecker semanticChecker = new SemanticChecker(programNode);

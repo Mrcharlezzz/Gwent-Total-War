@@ -52,6 +52,8 @@ public class Lexer
         {"Number", TokenType.Number},
         {"String", TokenType.String},
         {"Bool", TokenType.Bool},
+        {"false", TokenType.False},
+        {"true", TokenType.True},
     };
 
     List<Token> tokens = new List<Token>();

@@ -1,21 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using System;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
-using System.Reflection.Emit;
-using UnityEditor;
-using Unity.Properties;
-using UnityEngine.UIElements;
 using System.Linq;
+using System;
 
 // Class responsible for performing semantic checks on the abstract syntax tree (AST)
 public class SemanticCheck
 {
     // Stores the root of the abstract syntax tree (AST)
-    ProgramNode AST;
+    public ProgramNode AST;
     
     // Constructor for the SemanticCheck class, initializing the AST and expression types dictionary
     public SemanticCheck(ProgramNode node)
@@ -46,7 +38,7 @@ public class SemanticCheck
             case Division:
             case Power: CheckBinaryOperator((BinaryOperator)expression, ExpressionType.Number, ExpressionType.Number,scope); break;
             case Equal:
-            case Differ:
+            case Differ: CheckEqualityOperator((BinaryOperator)expression, scope); break;
             case AtMost:
             case AtLeast:
             case Less:
@@ -63,7 +55,10 @@ public class SemanticCheck
             case ICardAtom card: CheckCardAtom(card,scope); break;
             case IndexedRange indrange: CheckIndexedRange(indrange,scope); break;
             case TriggerPlayer player: CheckTriggerPlayer(player); break;
-            default: expressiontypes[expression]= ExpressionType.Null; break;
+            case Increment_Decrement indec: CheckIncrement_Decrement(indec, scope); break;
+            case PropertyAccess access: CheckPropertyAccess(access, scope); break;
+            case null: break;
+            default: throw new Exception("Not handled expression types");
         }
     }
 
@@ -79,6 +74,19 @@ public class SemanticCheck
         expressiontypes[binaryOp] = operatortype;
     }
 
+
+    public void CheckEqualityOperator(BinaryOperator binaryOp, Scope scope){
+        CheckExpression(binaryOp.left,scope);
+        CheckExpression(binaryOp.right,scope);
+        if (expressiontypes[binaryOp.left] != ExpressionType.Number && expressiontypes[binaryOp.left] != ExpressionType.String) 
+            SemanticError(binaryOp.operation, $"Left operand must be String or Number");
+        if (expressiontypes[binaryOp.right] != ExpressionType.Number && expressiontypes[binaryOp.right] != ExpressionType.String) 
+            SemanticError(binaryOp.operation, $"Right operand must be String or Number");
+        if(expressiontypes[binaryOp.left] != expressiontypes[binaryOp.right])
+            SemanticError(binaryOp.operation, "Invalid comparation, operands must be of the same type");
+        expressiontypes[binaryOp] = ExpressionType.Bool;
+    }
+
     // Checks lists, handling specific cases like IndividualList and ListFind
     public void CheckList(List list,Scope scope)
     {
@@ -89,7 +97,7 @@ public class SemanticCheck
             if(expressiontypes[indlist.context] != ExpressionType.Context)
                 SemanticError(indlist.accessToken, "Invalid individual list, must be called by context");
             CheckExpression(indlist.player,scope);
-            if (expressiontypes[indlist] != ExpressionType.Player) 
+            if (expressiontypes[indlist.player] != ExpressionType.Player) 
                 SemanticError(indlist.playertoken, "Individual list argument must be a player");
             return;
         }
@@ -103,6 +111,7 @@ public class SemanticCheck
                 SemanticError(find.argumentToken, "Find method predicate must be a boolean expression");
             return;
         }
+        
     }
 
     // Checks unary operations, ensuring the right operand matches the expected type
@@ -178,6 +187,13 @@ public class SemanticCheck
     public void CheckTriggerPlayer(TriggerPlayer player){
         expressiontypes[player] = ExpressionType.Player;
     }
+
+    public void CheckIncrement_Decrement(Increment_Decrement incdec, Scope scope){
+        expressiontypes[incdec]=ExpressionType.Number;
+        CheckExpression(incdec.operand, scope);
+        if(expressiontypes[incdec.operand] != ExpressionType.Number)
+            SemanticError (incdec.operation, "Increment or decrement must be aplied to Number operand");
+    }
     #endregion
 
     // Region containing methods for checking statements
@@ -195,13 +211,13 @@ public class SemanticCheck
 
     // Checks assignations, ensuring the left and right sides match in type and support the operation
     public void CheckAssignation(Assignation assignation, Scope scope){
-        CheckExpression(assignation.container,scope);
+        CheckExpression(assignation.operand,scope);
         CheckExpression(assignation.assignation,scope);
-        switch(assignation.container){
+        switch(assignation.operand){
             case Variable: CheckVariableAssignation(assignation, scope); break;
             case PropertyAccess: CheckPropertyAssignation(assignation, scope); break;
             case ICardAtom: CheckCardAssignation(assignation,scope); break;
-            default: SemanticError(assignation.operation, "Invalid assignation container"); break;
+            default: SemanticError(assignation.operation, "Invalid assignation operand"); break;
         }
     }
 
@@ -209,51 +225,72 @@ public class SemanticCheck
     public void CheckCardAssignation(Assignation assignation, Scope scope){
         if(assignation.operation.type!= TokenType.Equal) 
             SemanticError(assignation.operation, "Invalid card assignation operation");
-        if(expressiontypes[assignation.assignation]!= ExpressionType.Card)
+        if(assignation.assignation==null || expressiontypes[assignation.assignation]!= ExpressionType.Card)
             SemanticError(assignation.operation, "Invalid assignation, assignation value must be card");
     }
 
     // Checks property assignations, ensuring the operation is valid and the value matches the property type
     public void CheckPropertyAssignation(Assignation assignation,Scope scope){
-        switch (assignation.container)
+        switch (assignation.operand)
         {
             case NameAccess:
             case FactionAccess: 
                 if(assignation.operation.type!= TokenType.Equal&&assignation.operation.type!= TokenType.AtSymbolEqual)
                     SemanticError(assignation.operation, "Invalid String property assignation");
-                if(expressiontypes[assignation.assignation]!=ExpressionType.String) 
+                if(assignation.assignation == null || expressiontypes[assignation.assignation]!=ExpressionType.String) 
                     SemanticError(assignation.operation, "Invalid assignation, assignation value must be a String");
                 break;
             case TypeAccess:
                 if(assignation.operation.type!=TokenType.Equal) 
                     SemanticError(assignation.operation, "Invalid Type property assignation");
-                if(expressiontypes[assignation.assignation]!=ExpressionType.String) 
+                if(assignation.assignation == null || expressiontypes[assignation.assignation]!=ExpressionType.String) 
                     SemanticError(assignation.operation, "Invalid assignation, assignation value must be a String");
                 break;
             case PowerAccess:
                 if(assignation.operation.type==TokenType.AtSymbolEqual)
                     SemanticError(assignation.operation, "Invalid Power property assignation");
-                if(!(assignation is Increment_Decrement) &&expressiontypes[assignation.assignation]!=ExpressionType.Number) 
-                    SemanticError(assignation.operation, "Invalid assignation, assignation value must be a String");
+                if(!(assignation is Increment_Decrement) &&(assignation.assignation == null || expressiontypes[assignation.assignation]!=ExpressionType.Number)) 
+                    SemanticError(assignation.operation, "Invalid assignation, assignation value must be a Number");
                 break;
-            case RangeAccess: SemanticError(assignation.operation, "Range access cannot be an assignment container"); break;
+            case RangeAccess: SemanticError(assignation.operation, "Range access cannot be an assignment operand"); break;
             default: break;
         }
     }
     
     // Checks variable assignations, ensuring the types match and handling declarations
     public void CheckVariableAssignation(Assignation assignation, Scope scope){
-        if(expressiontypes[assignation.container] == ExpressionType.Null){
+        if(expressiontypes[assignation.operand] == ExpressionType.Null){
             if(assignation.operation.type!=TokenType.Equal){
                 SemanticError(assignation.operation, "Invalid operation in non-declared variable");
                 return;
             }
-            scope.Set((assignation.container as Variable).name, expressiontypes[assignation.assignation]);
+            scope.Set((assignation.operand as Variable).name, expressiontypes[assignation.assignation]);
         }
-        else{
-            if(expressiontypes[assignation.container] != expressiontypes[assignation.assignation]){
-                SemanticError(assignation.operation, $"Invalid assignation, types mismatch, expected {expressiontypes[assignation.container]} value");
-            }
+        else{ 
+            switch(assignation.operation.type){
+                case TokenType.Increment:
+                case TokenType.Decrement:
+                    if(expressiontypes[assignation.operand] != ExpressionType.Number)
+                        SemanticError(assignation.operation, "Increment or decrement operand must be number");
+                    break;
+                case TokenType.AtSymbol:
+                case TokenType.AtSymbolAtSymbol:
+                    if(expressiontypes[assignation.operand]!= ExpressionType.String)
+                        SemanticError(assignation.operation, "Invalid assignation, operand must be String");
+                    if(expressiontypes[assignation.assignation]!= ExpressionType.String)
+                        SemanticError(assignation.operation, "Invalid assignation, assignation value must be String");
+                    break;
+                case TokenType.Equal:
+                    if(expressiontypes[assignation.operand] != expressiontypes[assignation.assignation])
+                        SemanticError(assignation.operation, $"Invalid assignation, types mismatch, expected {expressiontypes[assignation.operand]} value");
+                    break;
+                default:
+                    if(expressiontypes[assignation.operand]!= ExpressionType.Number)
+                        SemanticError(assignation.operation, "Invalid assignation, operand must be Number");
+                    if(expressiontypes[assignation.assignation]!= ExpressionType.Number)
+                        SemanticError(assignation.operation, "Invalid assignation, assignation value must be Number");
+                break;
+            }     
         }
     }
 
@@ -270,11 +307,15 @@ public class SemanticCheck
     }
 
     public void CheckForEach(Foreach loop, Scope scope){
+        Scope newScope = new Scope(scope);
         CheckExpression(loop.collection,scope);
-        if(expressiontypes[loop.collection] != ExpressionType.List && expressiontypes[loop.collection] != ExpressionType.Targets && expressiontypes[loop.collection]!=ExpressionType.RangeList)
-            SemanticError(loop.keyword, "Invalid collection, expected card range or card list");
+        if(expressiontypes[loop.collection]==ExpressionType.List|| expressiontypes[loop.collection]==ExpressionType.Targets)
+            newScope.Set(loop.variable, ExpressionType.Card);
+        else if(expressiontypes[loop.collection]==ExpressionType.RangeList)
+            newScope.Set(loop.variable, ExpressionType.String);
+        else SemanticError(loop.keyword, "Invalid collection, expected card range or card list");
         foreach(IStatement statement in loop.statements){
-            if(statement is Foreach || statement is While) CheckStatement(statement,new Scope(scope));
+            if(statement is Foreach || statement is While) CheckStatement(statement,newScope);
             else CheckStatement(statement,scope);
         }
     }
@@ -302,11 +343,16 @@ public class SemanticCheck
     }
 
     public void CheckEffectDefinition(EffectDefinition definition){
-        CheckAction(definition.action, new Scope(null));
+        Scope scope = new Scope(null);
+        if(definition.parameterdefs != null){
+            foreach(var pair in definition.parameterdefs.parameters){
+                scope.types.Add(pair.Key, pair.Value);
+            }
+        }
+        CheckAction(definition.action, scope);
     }
 
     public void CheckCardNode(CardNode card, Dictionary<string,EffectDefinition> effects){
-
         switch(card.type){
             case Card.Type.Boost:
                 if(card.power!=null) SemanticError(card.keyword, "Invalid card, boost card cannot have power field");
@@ -372,7 +418,9 @@ public class SemanticCheck
                 break;
                 default: SemanticError(activation.selector.source, "Invalid source"); break;
             }
-            CheckExpression(activation.selector.filtre.predicate, new Scope(null));
+            Scope scope= new Scope(null);
+            scope.Set(activation.selector.filtre.parameter, ExpressionType.Card);
+            CheckExpression(activation.selector.filtre.predicate, scope);
             if(expressiontypes[activation.selector.filtre.predicate] != ExpressionType.Bool)
                 SemanticError(activation.selector.filtre.argumentToken, "Invalid predicate, predicate must be bool");
         }
@@ -491,10 +539,11 @@ public class Scope
     {
         key.literal = type;
         if (types.ContainsKey(key.lexeme) && types[key.lexeme] != type) SemanticCheck.SemanticError(key, "Assignation type differs from variable type");
-        if (enclosing.types.ContainsKey(key.lexeme))
+        if (enclosing != null && enclosing.types.ContainsKey(key.lexeme))
         {
             if (enclosing.types[key.lexeme] != type) SemanticCheck.SemanticError(key, "Assignation type differs from variable type");
-            else return;
+            else enclosing.types[key.lexeme]=type;
+            return;
         }
         types[key.lexeme] = type;
     }
@@ -507,6 +556,7 @@ public class Scope
     ///////PENDIENTE MANEJAR QUE NO SE PARSEE +-
     ///////MANEJAR DUPLICADO DE ERRORES EN EL ERROR DE ADD DEL PARSER
     ///////MANEJAR ACCESOS Y CONVERSIONES DE POSITION A STRING Y DE STRING A POSITION
+    //////RESOLVER BUCLE INFINITO DE COMAS
 
     
 
