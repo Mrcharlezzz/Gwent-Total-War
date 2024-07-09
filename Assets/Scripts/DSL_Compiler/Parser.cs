@@ -5,15 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 
 
-#pragma warning disable CS8603
-#pragma warning disable CS8625
-#pragma warning disable CS8600
-#pragma warning disable CS8619
-
-
-
-
-
 public class Parser
 {
     List<Token> tokens;
@@ -1120,25 +1111,4 @@ public class Parser
     }
     #endregion
 
-}
-
-
-/// <summary>
-/// PENDIENTE PARA MEJORAR EL SEMANTICO
-/// </summary>
-public class ErrorBlock
-{
-    public string message;
-    public List<Token> tokens;
-
-    public ErrorBlock(string message, List<Token> tokens)
-    {
-        this.message = message;
-        this.tokens = tokens;
-    }
-
-    public override string ToString()
-    {
-        return $"{message}: {String.Join(" ", tokens.Select(t => t.literal))}";
-    }
 }

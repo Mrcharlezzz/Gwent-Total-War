@@ -25,6 +25,14 @@ public class SemanticCheck
     // Dictionary to store the types of expressions encountered during parsing
     public Dictionary<IExpression, ExpressionType> expressiontypes;
 
+    public bool MatchType(ExpressionType target, List<ExpressionType> types)
+    {
+        foreach (var type in types){
+            if(target==type) return true;
+        }
+        return false;
+    }
+
     // Region containing methods for checking individual expressions
     #region Expression Check
     public void CheckExpression(IExpression expression, Scope scope)
@@ -76,12 +84,13 @@ public class SemanticCheck
 
 
     public void CheckEqualityOperator(BinaryOperator binaryOp, Scope scope){
+        List<ExpressionType> types= new List<ExpressionType>() {ExpressionType.Number, ExpressionType.String, ExpressionType.Bool};
         CheckExpression(binaryOp.left,scope);
         CheckExpression(binaryOp.right,scope);
-        if (expressiontypes[binaryOp.left] != ExpressionType.Number && expressiontypes[binaryOp.left] != ExpressionType.String) 
-            SemanticError(binaryOp.operation, $"Left operand must be String or Number");
-        if (expressiontypes[binaryOp.right] != ExpressionType.Number && expressiontypes[binaryOp.right] != ExpressionType.String) 
-            SemanticError(binaryOp.operation, $"Right operand must be String or Number");
+        if (!MatchType(expressiontypes[binaryOp.left],types))
+            SemanticError(binaryOp.operation, $"Left operand must be String, Number or Bool");
+        if (!MatchType(expressiontypes[binaryOp.right],types))            
+            SemanticError(binaryOp.operation, $"Right operand must be String, Number or Bool");
         if(expressiontypes[binaryOp.left] != expressiontypes[binaryOp.right])
             SemanticError(binaryOp.operation, "Invalid comparation, operands must be of the same type");
         expressiontypes[binaryOp] = ExpressionType.Bool;
@@ -308,6 +317,8 @@ public class SemanticCheck
 
     public void CheckForEach(Foreach loop, Scope scope){
         Scope newScope = new Scope(scope);
+        if(scope.types.ContainsKey(loop.variable.lexeme))
+            SemanticError(loop.variable,"Loop variable was already declared in the scope");
         CheckExpression(loop.collection,scope);
         if(expressiontypes[loop.collection]==ExpressionType.List|| expressiontypes[loop.collection]==ExpressionType.Targets)
             newScope.Set(loop.variable, ExpressionType.Card);
@@ -387,20 +398,24 @@ public class SemanticCheck
     }
 
     public void CheckEffectActivation(EffectActivation activation, Dictionary<string,EffectDefinition> effects, bool IsRoot=false){
-        EffectDefinition Acteffect = GetEffect(effects,activation.effect.definition,activation.effect.keyword);
-        if(Acteffect != null){
+        EffectDefinition acteffect = GetEffect(effects,activation.effect.definition,activation.effect.keyword);
+        if(acteffect != null){
             if(activation.effect.parameters!=null){
-                bool correct=true;
-                var parameters=activation.effect.parameters.parameters;
-                foreach(var pair in Acteffect.parameterdefs.parameters){
-                    if(parameters.ContainsKey(pair.Key)&& Tools.GetValueType(parameters[pair.Key])==pair.Value) continue;
-                    correct=false; break;
+                if(acteffect.parameterdefs==null)
+                    SemanticError(activation.effect.keyword, "Effect definition have no parameters, but effect activation does");
+                else{
+                    bool correct=true;
+                    var parameters=activation.effect.parameters.parameters;
+                    foreach(var pair in acteffect.parameterdefs.parameters){
+                        if(parameters.ContainsKey(pair.Key)&& Tools.GetValueType(parameters[pair.Key])==pair.Value) continue;
+                        correct=false; break;
+                    }
+                    if(!correct) SemanticError(activation.effect.keyword, "Effects parameters differ");
                 }
-                if(!correct) SemanticError(activation.effect.keyword, "Effects parameters differ");
             }
-            else SemanticError(activation.effect.keyword, "Effect definition doesn't have parameters, but effect activation does");
+            else if(acteffect.parameterdefs!=null) 
+                SemanticError(activation.effect.keyword, "Effect activation have no parameters, but effect definition does");
         }
-        else if(activation.effect.parameters!=null) SemanticError(activation.effect.keyword, "Effect activation doesn't have parameters, but effect definition does");
         if(activation.selector!=null){
             switch(activation.selector.source.literal){
                 case "board":
@@ -424,7 +439,8 @@ public class SemanticCheck
             if(expressiontypes[activation.selector.filtre.predicate] != ExpressionType.Bool)
                 SemanticError(activation.selector.filtre.argumentToken, "Invalid predicate, predicate must be bool");
         }
-
+        else if(activation.postAction!=null && activation.postAction.selector!=null && (string)activation.postAction.selector.source.literal == "parent")
+            SemanticError(activation.postAction.selector.source, "Invalid source, activation parent have no selector");
         if(activation.postAction!=null) CheckEffectActivation(activation.postAction, effects);
     }
 
@@ -455,63 +471,7 @@ public class SemanticCheck
 }
 
 
-// Static class for semantic tools and utilities
-public static class Tools
-{
-    // Determines the type of a value
-    public static ExpressionType GetValueType(object value)
-    {
-        if (value is int) return ExpressionType.Number;
-        if (value is string) return ExpressionType.String;
-        if (value is bool) return ExpressionType.Bool;
-        if (value is Card) return ExpressionType.Card;
-        if (value is List<Card>) return ExpressionType.List;
-        return ExpressionType.Null;
-    }
-    public static ExpressionType GetStringType(string s)
-    {
-        switch (s)
-        {
-            case "Number": return ExpressionType.Number;
-            case "String": return ExpressionType.String;
-            case "Bool": return ExpressionType.Bool;
-            default: return ExpressionType.Null;
-        }
-    }
-    public static Card.Type? GetCardType(string s){
-        switch (s){
-            case "Oro": return Card.Type.Golden;
-            case "Plata": return Card.Type.Silver;
-            case "Clima": return Card.Type.Weather;
-            case "Aumento": return Card.Type.Boost;
-            case "Líder": return Card.Type.Leader;
-            case "Señuelo": return Card.Type.Decoy;
-            case "Despeje": return Card.Type.Clear;
-            default: return null;
-        }
-    }
 
-    public static List<string> GetCardPositions(List<Card.Position> positions){
-        List<string> result =new List<string>();
-        foreach (Card.Position position in positions){
-            string add="";
-            switch(position){
-                case Card.Position.Melee: add="Melee"; break;
-                case Card.Position.Ranged: add="Ranged"; break;
-                case Card.Position.siege: add="Siege"; break;
-                default: throw new ArgumentException("Invalid string position");
-            }
-            result.Add(add);
-        }
-        return result;
-    }
-}
-
-// Enum representing the types of expressions that can appear in the DSL
-public enum ExpressionType
-{
-    Number, Bool, String, Card, List, RangeList, Player, Context, Targets, Null,
-}
 
 // Class representing a scope within the DSL, tracking variable types
 public class Scope
