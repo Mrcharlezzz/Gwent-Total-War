@@ -17,7 +17,7 @@ public class BeginSelection : MonoBehaviour
         Destroy(gameObject.GetComponent<ShowCard>().showCard);
         if(gameMaster.selectionCount<2) 
         {    
-            gameMaster.currentplayer.playerdeck.deck.Add(gameObject.GetComponent<Carddisplay>().card);
+            gameMaster.currentplayer.playerdeck.cards.Add(gameObject.GetComponent<Carddisplay>().card);
             
             gameMaster.currentplayer.hand.cards.Remove(gameObject.GetComponent<Carddisplay>().card);
             Destroy(gameObject);

@@ -7,19 +7,9 @@ using UnityEngine.UI;
 
 public class Carddisplay : MonoBehaviour
 {
+    //Pendiente redisennar el carddisplay con los datos solamente necesarios para su funcionamiento
     public Card card;
-    public Unit auxcard;
     public int displayId; // this will allow me to display different cards from the inspector in the same Card GameObject
-    //References to class Card
-    public int id;
-    public string cardname;
-    public Sprite image;
-    public Card.Type type;
-    public string carddescription;
-    public Unit.IntEffect effect;
-    public Card.Faction faction;
-    public int power;
-    public Card.Position position;
     public bool update=false;
     public bool player1=false;
     public bool averaged=false;
@@ -44,46 +34,46 @@ public class Carddisplay : MonoBehaviour
             update=false;
             card=Database.Search(displayId);
             
-            /*
-            When the card is drawn, the power modifications of previous games
-            (these may remain if the execution was interrupted) must be reverted
-            */ 
-
-
-            id= card.id;
-            cardname= card.cardname;
-            image= card.image;
-            type= card.type;
-            carddescription= card.carddescription;
-            faction= card.faction;
-
-            if(card.IsUnit())
-            {
-                auxcard=(Unit)card;
-                power= auxcard.powers[4];
-                position= auxcard.position;
-                effect=auxcard.effect;
-            }
-
             //Layer use for decoy collisions
-
-            if(type==Card.Type.Decoy)
+            if(card.type==Card.Type.Decoy)
             {
                 int decoyLayerIndex = LayerMask.NameToLayer("Decoy");
                 gameObject.layer=decoyLayerIndex;
                 gameObject.GetComponent<BoxCollider2D>().size=new Vector2(20.0f,30.0f);
             }
 
-            powerText.text=power.ToString();
-            posText.text=position.ToString();
-            CardImage.sprite=image;
+            /*
+            When the card is drawn, the power modifications of previous games
+            (these may remain if the execution was interrupted) must be reverted
+            */ 
 
-            //Not showing card power
-            if(card.IsUnit())
-            {
+            if(card is FieldCard fieldCard){
+                for(int i=1; i<4 ;i++) fieldCard.powers[i]=fieldCard.powers[i-1];
+                powerText.text=fieldCard.powers[3].ToString();
+            }
+            else{
+                powerText.text="null";
                 powerborder.SetActive(false);
             }
+
+            posText.text=PositionString(card.positions);
+            CardImage.sprite=card.image;
         }
+    }
+    public static string PositionString(List<Card.Position> positions){
+        bool melee=false, ranged=false, siege=false;
+        foreach(Card.Position pos in positions){
+            switch(pos){
+                case Card.Position.Melee: melee=true; break;
+                case Card.Position.Ranged: ranged=true; break;
+                case Card.Position.Siege: siege=true; break;
+            }
+        }
+        string result="";
+        if(melee) result+="Melee ";
+        if(ranged) result+=", Ranged ";
+        if(siege) result+=" Siege";
+        return result;
     }
     
 }

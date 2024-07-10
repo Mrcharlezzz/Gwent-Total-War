@@ -23,17 +23,16 @@ public class Player : MonoBehaviour
     public GameObject point1;
     public GameObject point2;
     public GameObject prefab;
-    private ModifyingConditions conditions0;
-    private ModifyingConditions conditions1;
     private Carddisplay temporaldisplay;
 
 
-    //playcard fields
+    /*//playcard fields
     bool isValidType = false;
     bool isValidPosition = false;
     bool availableSlot = false;
     bool playable = false;
     bool isValidField = false;
+    */
 
     public Player Other()
     {
@@ -67,7 +66,7 @@ public class Player : MonoBehaviour
                 {
                     foreach (Transform grandchild in child)
                     {
-                        totalpower += grandchild.gameObject.GetComponent<Carddisplay>().power;
+                        totalpower += (grandchild.gameObject.GetComponent<Carddisplay>().card as FieldCard).powers[3];
                     }
                 }
             }
@@ -104,7 +103,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void PlayCard(GameObject card, GameObject dropZone)
+    /*public void PlayCard(GameObject card, GameObject dropZone)
 
     {
         DropZone zone = dropZone.GetComponent<DropZone>();
@@ -134,6 +133,7 @@ public class Player : MonoBehaviour
             RowCleanUp(display);
         }
 
+
         //resetting playing conditions
         isValidType = false;
         isValidPosition = false;
@@ -146,11 +146,11 @@ public class Player : MonoBehaviour
 
     void Conditions(Carddisplay display, DropZone zone)
     {
-        if (display.type != Card.Type.Decoy)
+        if (display.card.type != Card.Type.Decoy)
         {
             foreach (Card.Type type in zone.typelist)
             {
-                if (display.type == type)
+                if (display.card.type == type)
                 {
                     isValidType = true;
                 }
@@ -216,8 +216,6 @@ public class Player : MonoBehaviour
                         Destroy(child.gameObject);
                     }
                 }
-            conditions0.averaged = false;
-            conditions1.averaged = false;
         }
     }
 
@@ -395,7 +393,7 @@ public class Player : MonoBehaviour
             conditions0.modified = true;
         }
     }
-
+    
     void PowerxNTimes(Carddisplay display, GameObject dropZone)
     {
         if (display.effect == Unit.IntEffect.PowerXntimes)
@@ -760,8 +758,5 @@ public class Player : MonoBehaviour
             }
         }
     }
-    static void CardPowerImageColorchange(Transform child, Color color)
-    {
-        child.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color = color;
-    }
+    */
 }

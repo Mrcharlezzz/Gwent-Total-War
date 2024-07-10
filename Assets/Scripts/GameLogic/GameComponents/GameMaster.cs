@@ -228,6 +228,15 @@ public class GameMaster : MonoBehaviour
         notcurrentplayer=aux;
     }
 
+    public void ModifyZones(){
+        foreach (Transform zone in player1.field.unitRows.transform){
+            zone.gameObject.GetComponent<FieldDropzone>().Modify();
+        }
+        foreach (Transform zone in player2.field.unitRows.transform){
+            zone.gameObject.GetComponent<FieldDropzone>().Modify();
+        }
+    }
+
     string SpanishTranslate(string a)
     {
         switch (a)

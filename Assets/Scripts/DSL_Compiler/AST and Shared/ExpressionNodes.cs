@@ -474,17 +474,17 @@ public class PowerAccess : PropertyAccess
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        Card aux1 = (Card)card.Evaluate(context, targets);
-        if (aux1.IsUnit())
+        Card aux = (Card)card.Evaluate(context, targets);
+        if (aux is FieldCard)
         {
-            return (card.Evaluate(context, targets) as Unit).powers[3];
+            return (card.Evaluate(context, targets) as FieldCard).powers[3];
         }
-        else return 0;
+        else throw new InvalidOperationException("Card doesn't contain power field");
     }
 
     public override void Set(Context context, List<Card> targets, object value)
     {
-        (card.Evaluate(context, targets) as Unit).powers[3] = (int)value;
+        (card.Evaluate(context, targets) as Unit).powers[1] = (int)value;
     }
 }
 
@@ -565,12 +565,12 @@ public class RangeAccess : PropertyAccess
     public override object Evaluate(Context context, List<Card> targets)
     {
         Card aux = (Card)card.Evaluate(context, targets);
-        return Tools.GetCardPositions(aux.position);
+        return Tools.GetCardPositions(aux.positions);
     }
 
     public override void Set(Context context, List<Card> targets, object value)
     {
-        (card.Evaluate(context, targets) as Card).position = (List<Card.Position>)value;
+        (card.Evaluate(context, targets) as Card).positions = (List<Card.Position>)value;
     }
 }
 

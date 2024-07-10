@@ -10,13 +10,11 @@ public class DragandDrop : MonoBehaviour
     public Vector2 startPosition;
     public GameObject dropZone;
     public bool alreadyplayed;
-    public Player player;
+    public Player player {get => gamemaster.GetComponent<GameMaster>().currentplayer;}
     GameObject gamemaster;
     void Awake()
     {
-        
         gamemaster=GameObject.Find("gamemaster");
-        player=gamemaster.GetComponent<GameMaster>().currentplayer;
         alreadyplayed=false;
     }
     void Update()
@@ -29,7 +27,6 @@ public class DragandDrop : MonoBehaviour
             }
             transform.position= new Vector2(Input.mousePosition.x,Input.mousePosition.y);
         }
-        player=gamemaster.GetComponent<GameMaster>().currentplayer;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -61,8 +58,6 @@ public class DragandDrop : MonoBehaviour
     public void EndDrad()
     {
         
-        
-        
         if(!alreadyplayed)
         {
         dragging=false;
@@ -71,7 +66,7 @@ public class DragandDrop : MonoBehaviour
         if(isOverDropZone)
         
         {
-            player.PlayCard(gameObject,dropZone);
+            gameObject.GetComponent<Carddisplay>().card.Play(player,gameObject,dropZone);
         }
 
         else

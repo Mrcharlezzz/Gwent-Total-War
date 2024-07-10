@@ -48,7 +48,7 @@ public static class Tools
             switch(position){
                 case Card.Position.Melee: add="Melee"; break;
                 case Card.Position.Ranged: add="Ranged"; break;
-                case Card.Position.siege: add="Siege"; break;
+                case Card.Position.Siege: add="Siege"; break;
                 default: throw new ArgumentException("Invalid string position");
             }
             result.Add(add);

@@ -41,11 +41,11 @@ public class ShowCard : MonoBehaviour
     if(!dragandDrop.dragging&&!gamemaster.GetComponent<GameMaster>().dragging)    
     {
         //show card info in info Console while mouse is on the card
-        Card.Type type=gameObject.GetComponent<Carddisplay>().type;
-        cardName.GetComponent<TextMeshProUGUI>().text="Nombre: "+ gameObject.GetComponent<Carddisplay>().cardname;
-        cardDescription.GetComponent<TextMeshProUGUI>().text="Descripción: "+ gameObject.GetComponent<Carddisplay>().carddescription;
-        cardFaction.GetComponent<TextMeshProUGUI>().text="Facción: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().faction.ToString());
-        cardType.GetComponent<TextMeshProUGUI>().text="Tipo: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().type.ToString());
+        Card.Type? type=gameObject.GetComponent<Carddisplay>().card.type;
+        cardName.GetComponent<TextMeshProUGUI>().text="Nombre: "+ gameObject.GetComponent<Carddisplay>().card.name;
+        cardDescription.GetComponent<TextMeshProUGUI>().text="Descripción: "+ gameObject.GetComponent<Carddisplay>().card.description;
+        cardFaction.GetComponent<TextMeshProUGUI>().text="Facción: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.faction.ToString());
+        cardType.GetComponent<TextMeshProUGUI>().text="Tipo: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.type.ToString());
         
 
         //Different instantiation position for leaders and graveyards particular cases
@@ -58,8 +58,7 @@ public class ShowCard : MonoBehaviour
         
         showCard.transform.SetParent(tempCanvas.transform, false);
         showCard.transform.position=position;
-        showCard.GetComponent<Carddisplay>().card.power=gameObject.GetComponent<Carddisplay>().power;
-
+        
         // Adjust the scale
         foreach(Transform child in showCard.transform)
         {
