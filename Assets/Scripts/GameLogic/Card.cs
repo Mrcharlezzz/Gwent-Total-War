@@ -10,11 +10,22 @@ using UnityEngine.UI;
 using UnityEngine.SocialPlatforms.Impl;
 
 
-public abstract class Card : ScriptableObject
+public abstract class Card 
 {
+    public Card(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation){
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.image = image;
+        this.type = type;
+        this.description = description;
+        this.faction = faction;
+        this.positions = positions;
+        this.activation = activation;
+    }
     public int id;
     public Player owner;
-    public string cardname;
+    public string name;
     public Sprite image;
     public Type? type;
     public string description;
@@ -96,6 +107,10 @@ public abstract class Card : ScriptableObject
 
 public abstract class FieldCard : Card
 {
+    public FieldCard(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+        base(id, owner, name, image, type, description, faction, positions, activation){
+            for (int i = 0; i<4; i++) powers[i] = power;
+        }
     /*
     It is necessary to save the values of different power layers 
     powers[0]: holds de basepower value
@@ -107,11 +122,16 @@ public abstract class FieldCard : Card
     public int[] powers = new int[4];
 }
 
-public class Unit : FieldCard { }
+public class Unit : FieldCard {
+    public Unit(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+        base(id,owner, name, image, type, description, faction,positions, activation, power){}
+}
 
 
 public class Decoy : FieldCard
 {
+    public Decoy(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+        base(id,owner, name, image, type, description, faction,positions, activation, power){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
         //In this case the decoy collides with a card, not a dropzone due to the layer dispositions
@@ -127,7 +147,7 @@ public class Decoy : FieldCard
 
             triggerplayer.hand.Add(card2display.card);
             parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
-            Destroy(card2);
+            MonoBehaviour.Destroy(card2);
 
             parent.GetComponent<DropZone>().cardlist.Add(this);
             body.transform.SetParent(parent.transform);
@@ -146,6 +166,8 @@ public class Decoy : FieldCard
 
 public class Weather : Card
 {
+    public Weather(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+        base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
         DropZone zone = dropzone.GetComponent<DropZone>();
@@ -165,7 +187,7 @@ public class Weather : Card
         {
             zone.cardlist[0].owner.graveyard.Add(zone.cardlist[0]);
             zone.cardlist.RemoveAt(0);
-            Destroy(zone.transform.GetChild(0).gameObject);
+            MonoBehaviour.Destroy(zone.transform.GetChild(0).gameObject);
         }
 
         triggerplayer.gameMaster.ModifyZones();
@@ -174,6 +196,8 @@ public class Weather : Card
 }
 public class Boost : Card
 {
+    public Boost(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+        base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
         base.Play(triggerplayer, body, dropzone);
@@ -188,9 +212,14 @@ public class Boost : Card
         triggerplayer.gameMaster.globalModified = true;
     }
 }
-public class Leader : Card {}
+public class Leader : Card {
+    public Leader(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+        base(id,owner, name, image, type, description, faction,positions, activation){}
+}
 public class Clear : Card
 {
+    public Clear(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+        base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
         base.Play(triggerplayer, body, dropzone);
@@ -205,15 +234,11 @@ public class Clear : Card
             {
                 var childZoneCard = child.gameObject.GetComponent<DropZone>().cardlist[0];
                 childZoneCard.owner.graveyard.Add(childZoneCard);
-                Destroy(child.GetChild(0).gameObject);
+                MonoBehaviour.Destroy(child.GetChild(0).gameObject);
             }
-            Destroy(body);
+            MonoBehaviour.Destroy(body);
             triggerplayer.graveyard.Add(this);
         }
-
-
-
-
     }
 }
 

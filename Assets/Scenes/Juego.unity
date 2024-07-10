@@ -621,7 +621,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -1225,6 +1226,10 @@ PrefabInstance:
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: player1
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
+      propertyPath: position
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: typelist.Array.size
@@ -2044,6 +2049,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057fb8e347829f945901ad7ae8aa41c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 825327443}
+  cards: []
   unitRows: {fileID: 1532467181}
   boostSlots: {fileID: 1709234567}
 --- !u!1 &352948438
@@ -2639,6 +2646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b4ba8ffb7fa444d91d70000174bf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 825327443}
   cards: []
 --- !u!114 &406051217
 MonoBehaviour:
@@ -2656,7 +2664,6 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   dropZone: {fileID: 0}
   alreadyplayed: 1
-  player: {fileID: 0}
 --- !u!1 &422594862
 GameObject:
   m_ObjectHideFlags: 0
@@ -3828,6 +3835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36be4e6239e9534aba3b0a3bf1bea29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 391260799}
   cards: []
   addCards: {fileID: 0}
   player1: 1
@@ -4037,6 +4045,7 @@ MonoBehaviour:
   currentplayer: {fileID: 391260799}
   notcurrentplayer: {fileID: 825327443}
   Winner: {fileID: 391260799}
+  board: []
   dragging: 0
   globalModified: 0
   turn: 0
@@ -5040,6 +5049,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
+      propertyPath: position
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: typelist.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -5408,6 +5421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36be4e6239e9534aba3b0a3bf1bea29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 825327443}
   cards: []
   addCards: {fileID: 0}
   player1: 0
@@ -5575,7 +5589,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -5597,17 +5612,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 359692503}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 010000000200000005000000
+  position: 2
+  cardlist: []
+  maxsize: 5
+  player1: 1
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!224 &1243063825 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 968333217846313166, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
@@ -5627,17 +5641,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1255930465}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 050000000200000001000000
+  position: 1
+  cardlist: []
+  maxsize: 5
+  player1: 1
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!1001 &1271013808
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5847,17 +5860,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1341113542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 050000000100000002000000
+  position: 0
+  cardlist: []
+  maxsize: 5
+  player1: 1
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!1 &1357967082
 GameObject:
   m_ObjectHideFlags: 0
@@ -6282,7 +6294,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -6309,17 +6322,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1422927698}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 010000000200000005000000
+  position: 2
+  cardlist: []
+  maxsize: 5
+  player1: 0
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!1 &1455321748
 GameObject:
   m_ObjectHideFlags: 0
@@ -6412,38 +6424,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016690b5dcf68e14aa46d1f48feb31fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck:
-  - {fileID: 11400000, guid: 24d3d096d3947af4eaa8dd61016e0e0f, type: 2}
-  - {fileID: 11400000, guid: 3f718f2be044d8643bfdb5dcc716d09c, type: 2}
-  - {fileID: 11400000, guid: f276fe47aedbb4e40ae6362b2001b819, type: 2}
-  - {fileID: 11400000, guid: 2cc7c8a867f17194986f317a2c522dca, type: 2}
-  - {fileID: 11400000, guid: 9ce6221ced50ee64b887a26c5f89e39b, type: 2}
-  - {fileID: 11400000, guid: 2f995fdec216ac145a11e8e392ef20d5, type: 2}
-  - {fileID: 11400000, guid: 6f0636fa08501c24fa20696830214df9, type: 2}
-  - {fileID: 11400000, guid: 58efea73ea4483643a10ad79651959c7, type: 2}
-  - {fileID: 11400000, guid: 9605d65455f45af4eae0fd26f5eb55f1, type: 2}
-  - {fileID: 11400000, guid: 7a1bb48bdd3483c42b13d5bf1a64c7cb, type: 2}
-  - {fileID: 11400000, guid: 18e265bcdfc4c1340a8193e68539a2d7, type: 2}
-  - {fileID: 11400000, guid: 2543cb423e9899e44939fdbd1d42d965, type: 2}
-  - {fileID: 11400000, guid: 6232b30d48cc17843b7af3472f612f65, type: 2}
-  - {fileID: 11400000, guid: 2ccda4a0b0486f4489dfc8610b76430b, type: 2}
-  - {fileID: 11400000, guid: 78c1c0eb53be08f4e99c972c11816a5f, type: 2}
-  - {fileID: 11400000, guid: c08f0e8cf3034b24daaad72e1b4804c2, type: 2}
-  - {fileID: 11400000, guid: 7fb48086978c7bb449459ad3d835a0a2, type: 2}
-  - {fileID: 11400000, guid: 0b6c3da7a5929de4f95fcbe139fa7b3c, type: 2}
-  - {fileID: 11400000, guid: f88a3300d8dfef340a4c791d737fdb41, type: 2}
-  - {fileID: 11400000, guid: 9f38eb2eb4a2524429cb2a21cff88220, type: 2}
-  - {fileID: 11400000, guid: eb4f8cd2a668882419d92b1a672027e0, type: 2}
-  - {fileID: 11400000, guid: d49cec7d48a01db4aa33bac92dcf2db7, type: 2}
-  - {fileID: 11400000, guid: b853cb2ac6ef02b4ea93c06ec656efbf, type: 2}
-  - {fileID: 11400000, guid: 94caa98ee4cadf045a363c638531702b, type: 2}
-  - {fileID: 11400000, guid: 796680392ffc24b498b97e812e5d3b26, type: 2}
-  - {fileID: 11400000, guid: 4eebd251f03ae144694618d53fd3d7da, type: 2}
-  - {fileID: 11400000, guid: 5a34f1bc23bff764885a933dad1c2cc1, type: 2}
-  - {fileID: 11400000, guid: 408dc54a157b18b44aacc625b483ae0f, type: 2}
-  - {fileID: 11400000, guid: 4cd55702394c0c14f8ae872ef7c56427, type: 2}
-  - {fileID: 11400000, guid: aa162bc55fce0cd4d98e11393b0106ed, type: 2}
-  decksize: 0
+  owner: {fileID: 825327443}
+  cards: []
 --- !u!1 &1458751525
 GameObject:
   m_ObjectHideFlags: 0
@@ -6648,7 +6630,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -6925,7 +6908,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -6952,17 +6936,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1534219046}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 020000000100000005000000
+  position: 1
+  cardlist: []
+  maxsize: 5
+  player1: 0
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!1 &1597603789
 GameObject:
   m_ObjectHideFlags: 0
@@ -7294,6 +7277,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057fb8e347829f945901ad7ae8aa41c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 391260799}
+  cards: []
   unitRows: {fileID: 196361519}
   boostSlots: {fileID: 363401535}
 --- !u!1 &1709234567
@@ -8267,6 +8252,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
+      propertyPath: position
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: typelist.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -8532,6 +8521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b4ba8ffb7fa444d91d70000174bf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
   cards: []
 --- !u!114 &1973682803
 MonoBehaviour:
@@ -8549,7 +8539,6 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   dropZone: {fileID: 0}
   alreadyplayed: 1
-  player: {fileID: 0}
 --- !u!114 &1973682808 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5907797715086892732, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
@@ -8717,7 +8706,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -8744,17 +8734,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1986968317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9752d33752ca4c94e9e634d6cef86fa4, type: 3}
+  m_Script: {fileID: 11500000, guid: db6174a2c78c6524ca7a3c7fea6e6afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modified: 0
+  typelist: 010000000200000005000000
+  position: 0
+  cardlist: []
+  maxsize: 5
+  player1: 0
   weatheraffected: 0
-  weatheroff: 0
   boostaffected: 0
-  powerXntimesAffected: 0
-  averaged: 0
-  nTimes: 0
-  boostamount: 0
 --- !u!1 &2029439886
 GameObject:
   m_ObjectHideFlags: 0
@@ -8929,6 +8918,10 @@ PrefabInstance:
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: maxsize
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
+      propertyPath: position
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2824044153305776855, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
       propertyPath: typelist.Array.size
@@ -9140,38 +9133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016690b5dcf68e14aa46d1f48feb31fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck:
-  - {fileID: 11400000, guid: 83f307e892f41264890109a6cb78930e, type: 2}
-  - {fileID: 11400000, guid: 2da9b9e5010c20a469efccf49834334e, type: 2}
-  - {fileID: 11400000, guid: c0fe901d5a6862b4490d6937e08e19c5, type: 2}
-  - {fileID: 11400000, guid: e62a75a9e305e994c8fd047377bff9a9, type: 2}
-  - {fileID: 11400000, guid: b304b474e0c24e844891d86b8b4b25c2, type: 2}
-  - {fileID: 11400000, guid: 04c2df9077ca37044a21bc90605371e2, type: 2}
-  - {fileID: 11400000, guid: f324f7b4b393b964680f7875af1e1930, type: 2}
-  - {fileID: 11400000, guid: a25ddcbd546d6fc4fb40ea028a520d9f, type: 2}
-  - {fileID: 11400000, guid: 91a0c66b0647c2446bf0153ec36daed2, type: 2}
-  - {fileID: 11400000, guid: f8dd78ceeea397041b782e73da1c9ba7, type: 2}
-  - {fileID: 11400000, guid: 9fc57b8f93d905649a91382728c90227, type: 2}
-  - {fileID: 11400000, guid: a0a914fa85330344ab148e938028f21f, type: 2}
-  - {fileID: 11400000, guid: 01c4f03083c340346979a27aa0ba60c4, type: 2}
-  - {fileID: 11400000, guid: 02d8947964b66e942974ba45e3c919f0, type: 2}
-  - {fileID: 11400000, guid: 850527c1c2a0622448e0cbbd3462509d, type: 2}
-  - {fileID: 11400000, guid: 0c46d2a6ec7e3624e8f2610b1ece6f25, type: 2}
-  - {fileID: 11400000, guid: ac0169afb6181124caf49fbac4af62f2, type: 2}
-  - {fileID: 11400000, guid: 1b240c44f43e37240a2b63c7037160db, type: 2}
-  - {fileID: 11400000, guid: a55a1e06db1102840ba97655e16927ee, type: 2}
-  - {fileID: 11400000, guid: 13c3ccc6a54926f4da32f8d7d41a8e7b, type: 2}
-  - {fileID: 11400000, guid: 3f718f2be044d8643bfdb5dcc716d09c, type: 2}
-  - {fileID: 11400000, guid: f276fe47aedbb4e40ae6362b2001b819, type: 2}
-  - {fileID: 11400000, guid: 2cc7c8a867f17194986f317a2c522dca, type: 2}
-  - {fileID: 11400000, guid: 9ce6221ced50ee64b887a26c5f89e39b, type: 2}
-  - {fileID: 11400000, guid: 2f995fdec216ac145a11e8e392ef20d5, type: 2}
-  - {fileID: 11400000, guid: 6f0636fa08501c24fa20696830214df9, type: 2}
-  - {fileID: 11400000, guid: 12a2010b6d5d0024485c5b409285240f, type: 2}
-  - {fileID: 11400000, guid: 58efea73ea4483643a10ad79651959c7, type: 2}
-  - {fileID: 11400000, guid: 955948604f69d7742ad525b745fe87d4, type: 2}
-  - {fileID: 11400000, guid: 424108d222cba2647bbccaae231d2739, type: 2}
-  decksize: 0
+  owner: {fileID: 391260799}
+  cards: []
 --- !u!224 &2095566816
 RectTransform:
   m_ObjectHideFlags: 0

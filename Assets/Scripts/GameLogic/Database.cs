@@ -6,8 +6,8 @@ using System;
 public static class Database
 {
     static List<Card> allcards;
-    static DeckList Deck1;
-    static DeckList Deck2;
+    static List<Card> deck1;
+    static List<Card> deck2;
 
     public static Card Search(int id)
     {
