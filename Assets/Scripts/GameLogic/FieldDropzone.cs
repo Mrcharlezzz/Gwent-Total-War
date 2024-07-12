@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FieldDropzone : DropZone{
+public class FieldDropZone : DropZone{
     public bool weatheraffected=false;
     public bool boostaffected=false;
+    public Dictionary<Card, GameObject> children;
+    public int Size{get => children.Count;}
 
     public void Modify()
     {

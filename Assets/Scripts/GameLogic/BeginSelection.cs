@@ -4,29 +4,21 @@ using UnityEngine;
 
 public class BeginSelection : MonoBehaviour
 {
-    public GameMaster gameMaster;
-
-
-
-    void Awake()
-    {
-        gameMaster=GameObject.Find("gamemaster").GetComponent<GameMaster>();
-    }
     public void Substitution()
     {
         Destroy(gameObject.GetComponent<ShowCard>().showCard);
-        if(gameMaster.selectionCount<2) 
+        if(GlobalContext.gameMaster.selectionCount<2) 
         {    
-            gameMaster.currentplayer.playerdeck.cards.Add(gameObject.GetComponent<Carddisplay>().card);
+            GlobalContext.gameMaster.currentplayer.deck.cards.Add(gameObject.GetComponent<Carddisplay>().card);
             
-            gameMaster.currentplayer.hand.cards.Remove(gameObject.GetComponent<Carddisplay>().card);
+            GlobalContext.gameMaster.currentplayer.hand.cards.Remove(gameObject.GetComponent<Carddisplay>().card);
             Destroy(gameObject);
-            gameMaster.selectionCount++;
+            GlobalContext.gameMaster.selectionCount++;
 
-            if(gameMaster.selectionCount==2)
+            if(GlobalContext.gameMaster.selectionCount==2)
             {
-                gameMaster.selectionCount=0;
-                gameMaster.EndSelection();
+                GlobalContext.gameMaster.selectionCount=0;
+                GlobalContext.gameMaster.EndSelection();
             }
         }
     }

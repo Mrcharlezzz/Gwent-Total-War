@@ -10,7 +10,6 @@ public class DropZone : MonoBehaviour
     public List<Card> cardlist;
     public int maxsize;
     public bool player1; // side of the field of the row (false means it is player2's)
-    GameMaster gameMaster;
     
 
 
@@ -24,21 +23,16 @@ public class DropZone : MonoBehaviour
                 GraveYard graveYard;
                 if (player1)
                 {
-                    graveYard = gameMaster.player1.graveyard;
+                    graveYard = GlobalContext.gameMaster.player1.graveyard;
                 }
                 else
                 {
-                    graveYard = gameMaster.player2.graveyard;
+                    graveYard = GlobalContext.gameMaster.player2.graveyard;
                 }
-                graveYard.Add(child.GetComponent<Carddisplay>().card);
+                graveYard.Push(child.GetComponent<Carddisplay>().card);
                 Destroy(child.gameObject);
             }
         }
-    }
-
-    void Awake()
-    {
-        gameMaster = GameObject.Find("gamemaster").GetComponent<GameMaster>();
     }
 }
 

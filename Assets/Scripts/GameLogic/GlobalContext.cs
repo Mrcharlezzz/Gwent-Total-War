@@ -4,21 +4,22 @@ using UnityEngine;
 
 public static class GlobalContext
 {
-    public static List<Card> board;   
-    public static List<Card> Hand(Player player)
+    public static GameMaster gameMaster;
+    public static GameComponent Board{get => gameMaster.board;}   
+    public static GameComponent Hand(Player player)
     {
-        return player.hand.cards;
+        return player.hand;
     }
-    public static List<Card> Deck(Player player)
+    public static GameComponent Deck(Player player)
     {
-        return player.playerdeck.cards;
+        return player.deck;
     }
-    public static List<Card> Field(Player player)
+    public static GameComponent Field(Player player)
     {
-        return player.field.cards;
+        return player.field;
     }
-    public static List<Card> Graveyard(Player player)
+    public static GameComponent Graveyard(Player player)
     {
-        return player.graveyard.cards;
+        return player.graveyard;
     }
 }

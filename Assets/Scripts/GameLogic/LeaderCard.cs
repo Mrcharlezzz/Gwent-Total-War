@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class LeaderCard: MonoBehaviour
 {
-    public GameMaster gameMaster;
     public bool alreadyused=false;
-    public bool Alejandro;
+    public Leader leader;
 
     
-    public void Julio()
+    public void ActivateLeaderEffect()
     {
-        if(gameMaster.currentplayer==gameMaster.player1&&!alreadyused)
+        if(!alreadyused && GlobalContext.gameMaster.currentplayer == leader.owner)
         {
             alreadyused=true;
-            gameMaster.player1.DrawCard();
-            gameMaster.NextTurn();
+            leader.ActivateEffect(leader.owner);
+            GlobalContext.gameMaster.NextTurn();
         }
     }
     

@@ -194,8 +194,8 @@ public class Pop : Method, ICardAtom
 
     public override void Execute(Context context, List<Card> targets)
     {
-        List<Card> temp = list.Evaluate(context, targets) as List<Card>;
-        if (temp.Count > 0) temp.RemoveAt(temp.Count - 1);
+        list.Evaluate(context, targets);
+        (list as List).gameComponent.Pop();
     }
 
     public void Set(Context context, List<Card> targets, Card card) {}
@@ -208,15 +208,8 @@ public class Shuffle : Method
 
     public override void Execute(Context context, List<Card> targets)
     {
-        List<Card> temp = list.Evaluate(context, targets) as List<Card>;
-
-        for (int i = temp.Count - 1; i > 0; i--)
-        {
-            int randomIndex = UnityEngine.Random.Range(0, i + 1);
-            Card operand = temp[i];
-            temp[i] = temp[randomIndex];
-            temp[randomIndex] = operand;
-        }
+        list.Evaluate(context, targets);
+        (list as List).gameComponent.Shuffle();
     }
 }
 
@@ -234,7 +227,8 @@ public class Push : ArgumentMethod
 
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context, targets) as List<Card>).Add(card.Evaluate(context, targets) as Card);
+        list.Evaluate(context, targets);
+        (list as List).gameComponent.Push((Card)card.Evaluate(context, targets));
     }
 }
 
@@ -246,7 +240,8 @@ public class SendBottom : ArgumentMethod
 
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context, targets) as List<Card>).Insert(0, card.Evaluate(context, targets) as Card);
+        list.Evaluate(context, targets);
+        (list as List).gameComponent.SendBottom((Card)card.Evaluate(context, targets));
     }
 }
 
@@ -258,6 +253,7 @@ public class Remove : ArgumentMethod
 
     public override void Execute(Context context, List<Card> targets)
     {
-        (list.Evaluate(context, targets) as List<Card>).Remove(card.Evaluate(context, targets) as Card);
+        list.Evaluate(context, targets);
+        (list as List).gameComponent.Remove((Card)card.Evaluate(context, targets));
     }
 }

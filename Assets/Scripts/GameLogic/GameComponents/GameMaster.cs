@@ -13,7 +13,7 @@ public class GameMaster : MonoBehaviour
     public Player currentplayer;
     public Player notcurrentplayer;
     public Player Winner;
-    public List<Card> board;
+    public Board board;
     public bool dragging;
     public bool globalModified=false;
     private int round=1;
@@ -27,6 +27,7 @@ public class GameMaster : MonoBehaviour
     public void StartGame()
     {
         //Initializes the Game
+        GlobalContext.gameMaster = this;
         int randomPlayer=UnityEngine.Random.Range(0, 2); //Generates a random number 0 or 1
         if (randomPlayer==0)
         {
@@ -42,8 +43,8 @@ public class GameMaster : MonoBehaviour
         currentplayer.hand.gameObject.SetActive(false);
         notcurrentplayer.hand.gameObject.SetActive(false);
 
-        player1.playerdeck.Shuffle();
-        player2.playerdeck.Shuffle();
+        player1.deck.Shuffle();
+        player2.deck.Shuffle();
 
         DrawCards(currentplayer,10);
         DrawCards(notcurrentplayer,10);
@@ -194,7 +195,7 @@ public class GameMaster : MonoBehaviour
             card.gameObject.GetComponent<DragandDrop>().enabled=true;
             card.gameObject.GetComponent<Button>().enabled=false;
         }
-        currentplayer.playerdeck.Shuffle(); 
+        currentplayer.deck.Shuffle(); 
         DrawCards(currentplayer,2);
 
         if(turn==0)
@@ -230,10 +231,10 @@ public class GameMaster : MonoBehaviour
 
     public void ModifyZones(){
         foreach (Transform zone in player1.field.unitRows.transform){
-            zone.gameObject.GetComponent<FieldDropzone>().Modify();
+            zone.gameObject.GetComponent<FieldDropZone>().Modify();
         }
         foreach (Transform zone in player2.field.unitRows.transform){
-            zone.gameObject.GetComponent<FieldDropzone>().Modify();
+            zone.gameObject.GetComponent<FieldDropZone>().Modify();
         }
     }
 
@@ -246,10 +247,11 @@ public class GameMaster : MonoBehaviour
             default: return a;
         }
     }
-
     
     void Start()
     {
+        GlobalContext.gameMaster = this;
+        Database.Poblate();
         StartGame();
     } 
     void Update()

@@ -49,9 +49,22 @@ public static class Tools
                 case Card.Position.Melee: add="Melee"; break;
                 case Card.Position.Ranged: add="Ranged"; break;
                 case Card.Position.Siege: add="Siege"; break;
-                default: throw new ArgumentException("Invalid string position");
+                default: throw new ArgumentException("Invalid  position");
             }
             result.Add(add);
+        }
+        return result;
+    }
+
+    public static List<Card.Position> GetCardPositions(List<string> positions){
+        List<Card.Position> result =new List<Card.Position>();
+        foreach (string position in positions.OrderBy(p => p)){
+            switch(position){
+                case "Melee": result.Add(Card.Position.Melee); break;
+                case "Ranged": result.Add(Card.Position.Ranged); break;;
+                case "Siege": result.Add(Card.Position.Siege); break;
+                default: throw new ArgumentException("Invalid string position");
+            }
         }
         return result;
     }

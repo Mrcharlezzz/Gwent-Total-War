@@ -39,8 +39,7 @@ public abstract class Card
         activation.Execute(triggerplayer);
     }
 
-    public virtual void Play(Player triggerplayer, GameObject body, GameObject dropzone)
-    {
+    protected bool Playable(Player triggerplayer,  GameObject dropzone){
         DropZone zone = dropzone.GetComponent<DropZone>();
         bool ValidType = false, validPosition = false, availableslot = false, validField = false;
 
@@ -64,23 +63,12 @@ public abstract class Card
         if (triggerplayer.player1 == zone.player1 || zone.typelist[0] == Type.Weather)
             validField = true;
 
-        if (ValidType && validPosition && availableslot && validField)
-        {
-
-            body.GetComponent<DragandDrop>().alreadyplayed = true;
-            Debug.Log("Played succesfully");
-
-            triggerplayer.hand.RemoveCard(this);
-            zone.cardlist.Add(this);
-
-            body.transform.SetParent(zone.gameObject.transform, false);
-            triggerplayer.gameMaster.NextTurn();
-        }
-        else
-        {
-            body.transform.position = body.GetComponent<DragandDrop>().startPosition;
-        }
+        if (ValidType && validPosition && availableslot && validField) return true;
+        else return false;
     }
+
+    public abstract void Play(Player triggerplayer, GameObject body, GameObject dropzone);
+
 
     public enum Position
     {
@@ -99,9 +87,9 @@ public abstract class Card
         Clear,
     }
 
-    public static void CardPowerImageColorchange(Transform cardbody, Color color)
+    public static void CardPowerImageColorchange(Transform body, Color color)
     {
-        cardbody.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color = color;
+        body.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color = color;
     }
 }
 
@@ -125,6 +113,27 @@ public abstract class FieldCard : Card
 public class Unit : FieldCard {
     public Unit(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
         base(id,owner, name, image, type, description, faction,positions, activation, power){}
+    public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
+    {
+        DropZone zone = dropzone.GetComponent<DropZone>();
+        if (Playable(triggerplayer, dropzone))
+        {
+
+            body.GetComponent<DragandDrop>().alreadyplayed = true;
+            Debug.Log("Played succesfully");
+
+            triggerplayer.hand.Remove(this);
+            triggerplayer.field.Push(this, (FieldDropZone)zone);
+
+            GlobalContext.gameMaster.ModifyZones();
+            GlobalContext.gameMaster.globalModified=true;
+            GlobalContext.gameMaster.NextTurn();
+        }
+        else
+        {
+            body.transform.position = body.GetComponent<DragandDrop>().startPosition;
+        }
+    }
 }
 
 
@@ -138,24 +147,22 @@ public class Decoy : FieldCard
         GameObject card2 = dropzone;
         GameObject parent = card2.transform.parent.gameObject;
         Carddisplay card2display = card2.GetComponent<Carddisplay>();
-        if (parent.TryGetComponent<FieldDropzone>(out _) && card2.GetComponent<Carddisplay>().card.type != Type.Golden && parent.GetComponent<DropZone>().player1 == triggerplayer.player1)
+        if (parent.TryGetComponent<FieldDropZone>(out _) && card2.GetComponent<Carddisplay>().card.type != Type.Golden && parent.GetComponent<DropZone>().player1 == triggerplayer.player1)
         {
             for (int i = 1; i < 4; i++)
                 (card2display.card as FieldCard).powers[i] = (card2display.card as FieldCard).powers[i - 1];
 
             CardPowerImageColorchange(card2.transform, Color.white);
 
-            triggerplayer.hand.Add(card2display.card);
-            parent.GetComponent<DropZone>().cardlist.Remove(card2display.card);
-            MonoBehaviour.Destroy(card2);
+            triggerplayer.hand.Push(card2display.card);
+            triggerplayer.field.Remove(card2display.card);
 
-            parent.GetComponent<DropZone>().cardlist.Add(this);
-            body.transform.SetParent(parent.transform);
+            triggerplayer.field.Push(this, parent.GetComponent<FieldDropZone>());
 
             body.GetComponent<DragandDrop>().alreadyplayed = true;
-            triggerplayer.gameMaster.globalModified = true;
-            triggerplayer.gameMaster.ModifyZones();
-            triggerplayer.gameMaster.NextTurn();
+            GlobalContext.gameMaster.globalModified = true;
+            GlobalContext.gameMaster.ModifyZones();
+            GlobalContext.gameMaster.NextTurn();
         }
         else
         {
@@ -171,27 +178,38 @@ public class Weather : Card
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
         DropZone zone = dropzone.GetComponent<DropZone>();
-        base.Play(triggerplayer, body, dropzone);
-        if (!body.GetComponent<DragandDrop>().alreadyplayed) return;
+        if (!Playable(triggerplayer, dropzone)){
+            body.transform.position = body.GetComponent<DragandDrop>().startPosition;
+            return;
+        }
         Debug.Log("Weather");
-
+        
         var buffer = dropzone.GetComponent<BufferLink>();
-        var dropzone0 = buffer.dropzones[0].GetComponent<FieldDropzone>();
-        var dropzone1 = buffer.dropzones[1].GetComponent<FieldDropzone>();
+        var dropzone0 = buffer.dropzones[0].GetComponent<FieldDropZone>();
+        var dropzone1 = buffer.dropzones[1].GetComponent<FieldDropZone>();
 
         dropzone0.weatheraffected = true;
         dropzone1.weatheraffected = true;
         Debug.Log("Weather Affected");
 
-        if (zone.cardlist.Count > 1)
+        if (zone.cardlist.Count > 0)
         {
-            zone.cardlist[0].owner.graveyard.Add(zone.cardlist[0]);
+            zone.cardlist[0].owner.graveyard.Push(zone.cardlist[0]);
             zone.cardlist.RemoveAt(0);
             MonoBehaviour.Destroy(zone.transform.GetChild(0).gameObject);
         }
 
-        triggerplayer.gameMaster.ModifyZones();
-        triggerplayer.gameMaster.globalModified = true;
+        body.GetComponent<DragandDrop>().alreadyplayed = true;
+        Debug.Log("Played succesfully");
+
+        triggerplayer.hand.Remove(this);
+        zone.cardlist.Add(this);
+
+        body.transform.SetParent(zone.gameObject.transform, false);
+        GlobalContext.gameMaster.NextTurn();
+
+        GlobalContext.gameMaster.ModifyZones();
+        GlobalContext.gameMaster.globalModified = true;
     }
 }
 public class Boost : Card
@@ -200,21 +218,34 @@ public class Boost : Card
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
-        base.Play(triggerplayer, body, dropzone);
-        if (!body.GetComponent<DragandDrop>().alreadyplayed) return;
+        DropZone zone = dropzone.GetComponent<DropZone>();
+        if (!Playable(triggerplayer, dropzone)){
+            body.transform.position = body.GetComponent<DragandDrop>().startPosition;
+            return;
+        }
         Debug.Log("Boost");
 
-        var unitrow = dropzone.GetComponent<BufferLink>().dropzones[0].GetComponent<FieldDropzone>();
+        var unitrow = dropzone.GetComponent<BufferLink>().dropzones[0].GetComponent<FieldDropZone>();
         unitrow.boostaffected = true;
         Debug.Log("Boost Affected");
 
-        triggerplayer.gameMaster.ModifyZones();
-        triggerplayer.gameMaster.globalModified = true;
+        body.GetComponent<DragandDrop>().alreadyplayed = true;
+        Debug.Log("Played succesfully");
+
+        triggerplayer.hand.Remove(this);
+        zone.cardlist.Add(this);
+
+        body.transform.SetParent(zone.gameObject.transform, false);
+        GlobalContext.gameMaster.NextTurn();
+
+        GlobalContext.gameMaster.ModifyZones();
+        GlobalContext.gameMaster.globalModified = true;
     }
 }
 public class Leader : Card {
     public Leader(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
+    public override void Play(Player triggerplayer, GameObject body, GameObject dropzone){}
 }
 public class Clear : Card
 {
@@ -222,23 +253,30 @@ public class Clear : Card
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
-        base.Play(triggerplayer, body, dropzone);
+        if (!Playable(triggerplayer, dropzone)){
+            body.transform.position = body.GetComponent<DragandDrop>().startPosition;
+            return;
+        }
+
         Transform weatherslots = dropzone.transform.parent;
         foreach (Transform child in weatherslots)
         {
             var buffer = child.gameObject.GetComponent<BufferLink>();
-            buffer.dropzones[0].GetComponent<FieldDropzone>().weatheraffected = false;
-            buffer.dropzones[1].GetComponent<FieldDropzone>().weatheraffected = false;
+            buffer.dropzones[0].GetComponent<FieldDropZone>().weatheraffected = false;
+            buffer.dropzones[1].GetComponent<FieldDropZone>().weatheraffected = false;
 
             if (child.childCount > 0)
             {
                 var childZoneCard = child.gameObject.GetComponent<DropZone>().cardlist[0];
-                childZoneCard.owner.graveyard.Add(childZoneCard);
+                childZoneCard.owner.graveyard.Push(childZoneCard);
                 MonoBehaviour.Destroy(child.GetChild(0).gameObject);
             }
             MonoBehaviour.Destroy(body);
-            triggerplayer.graveyard.Add(this);
+            triggerplayer.graveyard.Push(this);
         }
+
+        GlobalContext.gameMaster.ModifyZones();
+        GlobalContext.gameMaster.globalModified=true;
+        GlobalContext.gameMaster.NextTurn();
     }
 }
-

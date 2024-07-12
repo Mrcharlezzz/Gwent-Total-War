@@ -38,7 +38,7 @@ public class ShowCard : MonoBehaviour
     
     public void PointerEnter()
     {
-    if(!dragandDrop.dragging&&!gamemaster.GetComponent<GameMaster>().dragging)    
+    if(!dragandDrop.dragging&&!GlobalContext.gameMaster.dragging)    
     {
         //show card info in info Console while mouse is on the card
         Card.Type? type=gameObject.GetComponent<Carddisplay>().card.type;

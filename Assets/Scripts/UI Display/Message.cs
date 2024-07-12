@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class Message : MonoBehaviour
 {
-    public GameMaster gamemaster;
     public TextMeshProUGUI text;
     public GameObject winnertext;
     public Button pass;
@@ -21,7 +20,7 @@ public class Message : MonoBehaviour
         gameended=false;
         gameObject.SetActive(false);
         winnertext.SetActive(true);
-        gamemaster.currentplayer.hand.gameObject.SetActive(true);
+        GlobalContext.gameMaster.currentplayer.hand.gameObject.SetActive(true);
         pass.enabled=true;
     }
 }

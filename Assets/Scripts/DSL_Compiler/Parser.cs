@@ -381,7 +381,7 @@ public class Parser
                 left = new Pop(left, dot);
             }
             else if (Match(TokenType.TriggerPlayer)) left = Indexer(new TriggerPlayer());
-            //Card roperty access
+            //Card property access
             else if (Match(TokenType.Name)) left = Indexer(new NameAccess(left, dot));
             else if (Match(TokenType.Power)) left = Indexer(new PowerAccess(left, dot));
             else if (Match(TokenType.Faction)) left = Indexer(new FactionAccess(left, dot));

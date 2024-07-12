@@ -7,11 +7,9 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public GameMaster gameMaster;
     public Hand hand;
-    public Deck playerdeck;
+    public Deck deck;
     public GraveYard graveyard;
-    public GraveYard othergraveyard;
     public Field field;
     public LeaderCard leaderCard;
     public int totalpower = 0;
@@ -22,8 +20,10 @@ public class Player : MonoBehaviour
     public bool roundupdate = false;
     public GameObject point1;
     public GameObject point2;
-    public GameObject prefab;
-    private Carddisplay temporaldisplay;
+    
+    //public GameObject prefab;
+
+    //private Carddisplay temporaldisplay;
 
 
     /*//playcard fields
@@ -36,8 +36,8 @@ public class Player : MonoBehaviour
 
     public Player Other()
     {
-        if (this == gameMaster.player1) return gameMaster.player2;
-        return gameMaster.player1;
+        if (this == GlobalContext.gameMaster.player1) return GlobalContext.gameMaster.player2;
+        return GlobalContext.gameMaster.player1;
     }
 
     void Update()
@@ -70,10 +70,6 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-            if (!player1 && leaderCard.Alejandro)
-            {
-                totalpower = totalpower + totalpower / 5;
-            }
             totalPowerText.text = totalpower.ToString();
             fieldModified = false;
         }
@@ -88,19 +84,8 @@ public class Player : MonoBehaviour
 
     public void DrawCard()
     {
-
-        if (hand.size == 10)
-        {
-            graveyard.Add(playerdeck.cards[playerdeck.cards.Count - 1]);
-            playerdeck.DrawCard();
-        }
-        else
-        {
-
-            Debug.Log(playerdeck.cards.Count - 1); //DO NOT ERASE :)
-            hand.Add(playerdeck.cards[playerdeck.cards.Count - 1]);
-            playerdeck.DrawCard();
-        }
+        if (hand.Size == 10) graveyard.Push(deck.Pop());
+        else hand.Push(deck.Pop());
     }
 
     /*public void PlayCard(GameObject card, GameObject dropZone)

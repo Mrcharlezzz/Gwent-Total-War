@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class TurnUI : MonoBehaviour
 {
-    public GameMaster gameMaster;
     public TextMeshProUGUI playerText;
     public TextMeshProUGUI selectiontext;
     public Button pass;
@@ -16,12 +15,12 @@ public class TurnUI : MonoBehaviour
     {
         selectiontext.enabled=false;
         gameObject.SetActive(false);
-        gameMaster.currentplayer.hand.gameObject.SetActive(true);
+        GlobalContext.gameMaster.currentplayer.hand.gameObject.SetActive(true);
         pass.enabled=true;
-        if(gameMaster.turn<=1)
+        if(GlobalContext.gameMaster.turn<=1)
         {
             pass.enabled=false;
-            gameMaster.StartSelection();
+            GlobalContext.gameMaster.StartSelection();
         }
     }
 }

@@ -10,11 +10,9 @@ public class DragandDrop : MonoBehaviour
     public Vector2 startPosition;
     public GameObject dropZone;
     public bool alreadyplayed;
-    public Player player {get => gamemaster.GetComponent<GameMaster>().currentplayer;}
-    GameObject gamemaster;
+    public Player player {get => GlobalContext.gameMaster.currentplayer;}
     void Awake()
     {
-        gamemaster=GameObject.Find("gamemaster");
         alreadyplayed=false;
     }
     void Update()
@@ -48,7 +46,7 @@ public class DragandDrop : MonoBehaviour
         {
             startPosition= transform.position;
             dragging=true;
-            gamemaster.GetComponent<GameMaster>().dragging=true;
+            GlobalContext.gameMaster.dragging=true;
         }
         else{
             Debug.Log ("Cannot be dragged again");
@@ -61,7 +59,7 @@ public class DragandDrop : MonoBehaviour
         if(!alreadyplayed)
         {
         dragging=false;
-        gamemaster.GetComponent<GameMaster>().dragging=false;
+        GlobalContext.gameMaster.dragging=false;
 
         if(isOverDropZone)
         

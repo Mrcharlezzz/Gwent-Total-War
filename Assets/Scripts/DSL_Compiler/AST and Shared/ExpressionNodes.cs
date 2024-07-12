@@ -220,6 +220,7 @@ public abstract class List : Atom {
         this.accessToken = accesToken;
     }
     public Token accessToken;
+    public GameComponent gameComponent;
 }
 
 // List of cards on the board
@@ -231,7 +232,7 @@ public class BoardList : List
     public IExpression context;
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.board;
+        return GlobalContext.Board.cards;
     }
 }
 
@@ -258,7 +259,9 @@ public class HandList : IndividualList
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Hand((Player)player.Evaluate(context, targets));
+        Player targetPlayer = (Player)player.Evaluate(context, targets);
+        gameComponent = GlobalContext.Hand(targetPlayer);
+        return gameComponent.cards;
     }
 }
 
@@ -269,7 +272,9 @@ public class DeckList : IndividualList
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Deck((Player)player.Evaluate(context, targets));
+        Player targetPlayer = (Player)player.Evaluate(context, targets);
+        gameComponent = GlobalContext.Deck(targetPlayer);
+        return gameComponent.cards;
     }
 }
 
@@ -280,7 +285,9 @@ public class GraveyardList : IndividualList
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Graveyard((Player)player.Evaluate(context, targets));
+        Player targetPlayer = (Player)player.Evaluate(context, targets);
+        gameComponent = GlobalContext.Graveyard(targetPlayer);
+        return gameComponent.cards;    
     }
 }
 
@@ -291,7 +298,9 @@ public class FieldList : IndividualList
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return GlobalContext.Field((Player)player.Evaluate(context, targets));
+        Player targetPlayer = (Player)player.Evaluate(context, targets);
+        gameComponent = GlobalContext.Field(targetPlayer);
+        return gameComponent.cards;
     }
 }
 
@@ -533,10 +542,7 @@ public class OwnerAccess : PropertyAccess
         return aux.owner;
     }
 
-    public override void Set(Context context, List<Card> targets, object value)
-    {
-        (card.Evaluate(context, targets) as Card).owner = (Player)value;
-    }
+    public override void Set(Context context, List<Card> targets, object value){}
 }
 
 // Access card type property

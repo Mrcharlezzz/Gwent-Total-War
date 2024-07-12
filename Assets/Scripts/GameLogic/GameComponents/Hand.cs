@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,24 +6,37 @@ using UnityEngine;
 
 public class Hand : GameComponent
 {
-    public int size{get{return cards.Count;} }
-    public AddCards addCards;
-    public bool player1;
-    
-    
-    void Awake()
-    {
-        addCards=gameObject.GetComponent<AddCards>();
-    }
+    public Dictionary<Card, GameObject> bodies;
 
 
-    public void Add(Card card)
+    public override void Push(Card card)
     {
-        Push(card);
-        addCards.Add(card.id);
+        cards.Add(card);
+        GameObject body = GameTools.CreateCardInObject(card, gameObject, owner);
+        bodies[card] = body;
     }
-    public void RemoveCard(Card card)
+
+    public override void Remove(Card card)
     {
         cards.Remove(card);
+        Destroy(bodies[card]);
+        bodies.Remove(card);
+    }
+
+    public override Card Pop()
+    {
+        if (Size == 0) throw new IndexOutOfRangeException("Cannot apply pop method to an empty list");
+        Card removed = cards[Size - 1];
+        cards.RemoveAt(Size - 1);
+        Destroy(bodies[removed]);
+        bodies.Remove(removed);
+        return removed;
+    }
+
+    public override void SendBottom(Card card)
+    {
+        cards.Insert(0, card);
+        GameObject body = GameTools.CreateCardInObject(card, gameObject, owner);
+        bodies[card] = body;
     }
 }

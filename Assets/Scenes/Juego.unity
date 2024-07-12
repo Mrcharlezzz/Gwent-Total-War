@@ -855,7 +855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610da31da6f4a1345b5606651e7193b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 911483361}
   playerText: {fileID: 162542858}
   selectiontext: {fileID: 1357967083}
   pass: {fileID: 963447819}
@@ -2050,7 +2049,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 825327443}
-  cards: []
   unitRows: {fileID: 1532467181}
   boostSlots: {fileID: 1709234567}
 --- !u!1 &352948438
@@ -2382,11 +2380,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e2e7933324c45469e6dd0cbaad3c58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 911483361}
   hand: {fileID: 834097450}
   playerdeck: {fileID: 2095566815}
   graveyard: {fileID: 1973682792}
-  othergraveyard: {fileID: 406051210}
   field: {fileID: 1696145024}
   leaderCard: {fileID: 1003288243}
   totalpower: 0
@@ -2397,7 +2393,6 @@ MonoBehaviour:
   roundupdate: 0
   point1: {fileID: 61032662}
   point2: {fileID: 379000594}
-  prefab: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
 --- !u!4 &391260800
 Transform:
   m_ObjectHideFlags: 0
@@ -2647,7 +2642,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 825327443}
-  cards: []
 --- !u!114 &406051217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3797,11 +3791,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e2e7933324c45469e6dd0cbaad3c58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 911483361}
   hand: {fileID: 1233178610}
   playerdeck: {fileID: 1455321752}
   graveyard: {fileID: 406051210}
-  othergraveyard: {fileID: 1973682792}
   field: {fileID: 350735576}
   leaderCard: {fileID: 1874792260}
   totalpower: 0
@@ -3812,7 +3804,6 @@ MonoBehaviour:
   roundupdate: 0
   point1: {fileID: 309223389}
   point2: {fileID: 2029439886}
-  prefab: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
 --- !u!1 &834097445 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
@@ -3836,23 +3827,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 391260799}
-  cards: []
-  addCards: {fileID: 0}
-  player1: 1
---- !u!114 &834097451
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834097445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8790dad9c4b1e8d47bae68c9ff6d518d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  card: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
-  PlayerHand: {fileID: 834097445}
 --- !u!1 &843420640
 GameObject:
   m_ObjectHideFlags: 0
@@ -4045,7 +4019,7 @@ MonoBehaviour:
   currentplayer: {fileID: 391260799}
   notcurrentplayer: {fileID: 825327443}
   Winner: {fileID: 391260799}
-  board: []
+  board: {fileID: 5437374860291095346}
   dragging: 0
   globalModified: 0
   turn: 0
@@ -4066,7 +4040,6 @@ GameObject:
   - component: {fileID: 963447821}
   - component: {fileID: 963447820}
   - component: {fileID: 963447819}
-  - component: {fileID: 963447822}
   m_Layer: 5
   m_Name: Pass
   m_TagString: Untagged
@@ -4188,20 +4161,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963447817}
   m_CullTransparentMesh: 1
---- !u!114 &963447822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963447817}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8790dad9c4b1e8d47bae68c9ff6d518d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  card: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
-  PlayerHand: {fileID: 834097445}
 --- !u!1 &982378957
 GameObject:
   m_ObjectHideFlags: 0
@@ -4785,9 +4744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d95d658a154cb14586414a10931e057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 911483361}
   alreadyused: 0
-  Alejandro: 0
 --- !u!1 &1031214110
 GameObject:
   m_ObjectHideFlags: 0
@@ -5189,7 +5146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3679d40931a05c5468054b1728ab5210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamemaster: {fileID: 911483361}
   text: {fileID: 992310080}
   winnertext: {fileID: 422594862}
   pass: {fileID: 963447819}
@@ -5381,9 +5337,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1233178610}
-    - targetCorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1233178609}
   m_SourcePrefab: {fileID: 100100000, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
 --- !u!224 &1233178607 stripped
 RectTransform:
@@ -5395,20 +5348,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
   m_PrefabInstance: {fileID: 1233178606}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1233178609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1233178608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8790dad9c4b1e8d47bae68c9ff6d518d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  card: {fileID: 8609227221967644636, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
-  PlayerHand: {fileID: 1233178608}
 --- !u!114 &1233178610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5422,9 +5361,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 825327443}
-  cards: []
-  addCards: {fileID: 0}
-  player1: 0
 --- !u!1001 &1234938033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5617,7 +5553,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 010000000200000005000000
   position: 2
-  cardlist: []
   maxsize: 5
   player1: 1
   weatheraffected: 0
@@ -5646,7 +5581,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 050000000200000001000000
   position: 1
-  cardlist: []
   maxsize: 5
   player1: 1
   weatheraffected: 0
@@ -5865,7 +5799,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 050000000100000002000000
   position: 0
-  cardlist: []
   maxsize: 5
   player1: 1
   weatheraffected: 0
@@ -6327,7 +6260,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 010000000200000005000000
   position: 2
-  cardlist: []
   maxsize: 5
   player1: 0
   weatheraffected: 0
@@ -6425,7 +6357,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 825327443}
-  cards: []
 --- !u!1 &1458751525
 GameObject:
   m_ObjectHideFlags: 0
@@ -6941,7 +6872,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 020000000100000005000000
   position: 1
-  cardlist: []
   maxsize: 5
   player1: 0
   weatheraffected: 0
@@ -7278,7 +7208,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 391260799}
-  cards: []
   unitRows: {fileID: 196361519}
   boostSlots: {fileID: 363401535}
 --- !u!1 &1709234567
@@ -8148,9 +8077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d95d658a154cb14586414a10931e057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 911483361}
   alreadyused: 0
-  Alejandro: 1
 --- !u!1001 &1955564438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8521,8 +8448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b4ba8ffb7fa444d91d70000174bf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 0}
-  cards: []
+  owner: {fileID: 391260799}
 --- !u!114 &1973682803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8739,7 +8665,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typelist: 010000000200000005000000
   position: 0
-  cardlist: []
   maxsize: 5
   player1: 0
   weatheraffected: 0
@@ -9134,7 +9059,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 391260799}
-  cards: []
 --- !u!224 &2095566816
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9410,9 +9334,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
       insertIndex: -1
       addedObject: {fileID: 834097450}
-    - targetCorrespondingSourceObject: {fileID: 6958085767579144991, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 834097451}
   m_SourcePrefab: {fileID: 100100000, guid: b4db7a08c636edc47aa323104e299bda, type: 3}
 --- !u!1001 &5437374860291095344
 PrefabInstance:
@@ -9561,8 +9482,29 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6810676486430019957, guid: 62e67f3267abc094e8fd87449997f9c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1304906136}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4961626767064044092, guid: 62e67f3267abc094e8fd87449997f9c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5437374860291095346}
   m_SourcePrefab: {fileID: 100100000, guid: 62e67f3267abc094e8fd87449997f9c3, type: 3}
+--- !u!1 &5437374860291095345 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4961626767064044092, guid: 62e67f3267abc094e8fd87449997f9c3, type: 3}
+  m_PrefabInstance: {fileID: 5437374860291095344}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5437374860291095346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5437374860291095345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae3fdb0051175894d8d92c97a5c0e694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

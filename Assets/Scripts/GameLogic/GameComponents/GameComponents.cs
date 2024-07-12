@@ -7,22 +7,11 @@ public abstract class GameComponent : MonoBehaviour
 {
     public Player owner;
     public List<Card> cards;
-    public void Push(Card card)
-    {
-        cards.Add(card);
-    }
-    public void Pop()
-    {
-        cards.RemoveAt(cards.Count - 1);
-    }
-    public void SendBottom(Card card)
-    {
-        cards.Insert(0, card);
-    }
-    public void Remove(Card card)
-    {
-        cards.Remove(card);
-    }
+    public abstract void Push(Card card);
+    public abstract Card Pop();
+    public abstract void SendBottom(Card card);
+    public abstract void Remove(Card card);
+    public int Size {get => cards.Count;}
     public void Shuffle()
     {
         for (int i=cards.Count-1;i>0;i--)
