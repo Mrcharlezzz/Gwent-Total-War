@@ -238,6 +238,18 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public void SetDecks(){
+        foreach(Card card in Database.deck1){
+            player1.deck.Push(card);
+            card.owner=GlobalContext.gameMaster.player1;
+        }
+
+        foreach (Card card in Database.deck2){
+            player2.deck.Push(card);
+            card.owner=GlobalContext.gameMaster.player2;
+        }
+    }
+
     string SpanishTranslate(string a)
     {
         switch (a)
@@ -251,7 +263,8 @@ public class GameMaster : MonoBehaviour
     void Start()
     {
         GlobalContext.gameMaster = this;
-        Database.Poblate();
+        Database.Initialize();
+        SetDecks();
         StartGame();
     } 
     void Update()

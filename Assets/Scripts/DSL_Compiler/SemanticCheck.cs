@@ -86,13 +86,13 @@ public class SemanticCheck
 
     public void CheckEqualityOperator(BinaryOperator binaryOp, Scope scope)
     {
-        List<ExpressionType> types = new List<ExpressionType>() { ExpressionType.Number, ExpressionType.String, ExpressionType.Bool };
+        List<ExpressionType> types = new List<ExpressionType>() { ExpressionType.Number, ExpressionType.String, ExpressionType.Bool, ExpressionType.Player};
         CheckExpression(binaryOp.left, scope);
         CheckExpression(binaryOp.right, scope);
         if (!MatchType(expressiontypes[binaryOp.left], types))
-            SemanticError(binaryOp.operation, $"Left operand must be String, Number or Bool");
+            SemanticError(binaryOp.operation, $"Left operand must be Player, String, Number or Bool");
         if (!MatchType(expressiontypes[binaryOp.right], types))
-            SemanticError(binaryOp.operation, $"Right operand must be String, Number or Bool");
+            SemanticError(binaryOp.operation, $"Right operand must be Player, String, Number or Bool");
         if (expressiontypes[binaryOp.left] != expressiontypes[binaryOp.right])
             SemanticError(binaryOp.operation, "Invalid comparation, operands must be of the same type");
         expressiontypes[binaryOp] = ExpressionType.Bool;
@@ -114,11 +114,12 @@ public class SemanticCheck
         }
         if (list is ListFind find)
         {
+            scope.Set(find.parameter, ExpressionType.Card);
             CheckExpression(find.list, scope);
             CheckExpression(find.predicate, scope);
             if (expressiontypes[find.list] != ExpressionType.List && expressiontypes[find.list] != ExpressionType.Targets)
                 SemanticError(find.accessToken, "Find method must be called by a list or targets");
-            if (expressiontypes[find.list] != ExpressionType.Bool)
+            if (expressiontypes[find.predicate] != ExpressionType.Bool)
                 SemanticError(find.argumentToken, "Find method predicate must be a boolean expression");
             return;
         }
@@ -131,7 +132,7 @@ public class SemanticCheck
         CheckExpression(unary.right, scope);
         if (expressiontypes[unary.right] != type)
             SemanticError(unary.operation, $"Right operand must be a {type}");
-        expressiontypes[unary.right] = type;
+        expressiontypes[unary] = type;
     }
 
     // Checks literals, setting their type based on the value

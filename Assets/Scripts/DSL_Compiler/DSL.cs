@@ -6,24 +6,18 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 
-public class DSL
+public static class DSL
 {
     static bool hadError = false;
-    static int destinyDeck = 0;
-    public static TextMeshProUGUI SelectionText;
+    public static int destinyDeck = 0;
 
     public static void DeckSwitch(){
         destinyDeck = (destinyDeck + 1) % 3;
-        switch (destinyDeck) {
-            case 0: SelectionText.text = "Storage"; break;
-            case 1: SelectionText.text = "Deck 1"; break;
-            case 2: SelectionText.text = "Deck 2"; break;
-        }
     }
 
     public static void Report(int line, int column, string where, string message)
     {
-        Debug.Log($"[Ln {line}, Col {column}] {where} Error: " + message);
+        Debug.LogError($"[Ln {line}, Col {column}] {where} Error: " + message);
         hadError = true;
     }
     public static void Error(Token token, string message)
@@ -40,6 +34,12 @@ public class DSL
     public static void Compile(string source)
     {
         hadError=false;
+
+        if(source==""){
+            Debug.LogError("Empty source");
+            CancelCompilation();
+            return;
+        }
         // Create an instance of the Lexer with the input source code
         Lexer lexer= new Lexer(source);
         // Tokenize the input source code
@@ -62,6 +62,8 @@ public class DSL
             CancelCompilation();
             return;
         }
+
+        Debug.Log("Successfull Compilation");
 
         foreach(var effect in nodes.nodes.Where(n => n is EffectDefinition).Select(n => (EffectDefinition)n)) {
             
@@ -91,7 +93,7 @@ public class DSL
                     newcard = new Clear(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
                     break;
             }
-            Database.storage.Add(newcard);
+            if(destinyDeck == 0) Database.storage.Add(newcard);
             if(destinyDeck == 1) Database.deck1.Add(newcard);
             if(destinyDeck == 2) Database.deck2.Add(newcard);
         }

@@ -269,7 +269,7 @@ public class Parser
         if (Match(TokenType.LeftParen))
         {
             IExpression expr = Expression();
-            Token check = Consume(TokenType.RightParen, "Expect ')' after expression", null);
+            Token check = Consume(TokenType.RightParen, "Expect ')' after expression", Atom.synchrotypes);
             if (check == null) return null;
             return expr;
         }
@@ -287,8 +287,8 @@ public class Parser
             return left;
         }
 
-        if (Check(TokenType.Dot)) Error(Peek(), "Invalid property access", null);
-        else Error(Peek(), "Expect expression", null);
+        if (Check(TokenType.Dot)) Error(Peek(), "Invalid property access", Atom.synchrotypes);
+        else Error(Peek(), "Expect expression", Atom.synchrotypes);
         return null;
     }
 
@@ -297,10 +297,10 @@ public class Parser
     {
         Token check;
         //Store dot token in order to report posible semantic errors later in the Access
-        Token dot = Peek();
 
         while (Match(TokenType.Dot))
         {
+            Token dot = Previous();
             List<TokenType> types = new List<TokenType>(){
                 TokenType.HandOfPlayer, TokenType.DeckOfPlayer,
                 TokenType.GraveyardOfPlayer, TokenType.FieldOfPlayer,
@@ -318,12 +318,12 @@ public class Parser
                 if (Check(types))
                 {
 
-                    Token player = Consume(TokenType.LeftParen, "Expected Player Argument", null);
+                    Token player = Consume(TokenType.LeftParen, "Expected Player Argument", Atom.synchrotypes);
                     if (player == null) return null;
 
                     //store player argument
                     IExpression arg = Expression();
-                    check = Consume(TokenType.RightParen, "Expected ')' after Player Argument", null);
+                    check = Consume(TokenType.RightParen, "Expected ')' after Player Argument", Atom.synchrotypes);
                     if (check == null) return null;
 
                     switch (aux.type)
@@ -351,31 +351,34 @@ public class Parser
             else if (Match(TokenType.Find))
             {
                 //Consume all expected tokens in a Find method
-                Token argument = Consume(TokenType.LeftParen, "Expected '(' after method", null);
+                Token argument = Consume(TokenType.LeftParen, "Expected '(' after method", Atom.synchrotypes);
                 if (argument == null) return null;
 
-                Token parameter = Consume(TokenType.Identifier, "Invalid predicate argument", null);
-                if (parameter == null) return null;
-
-                check = Consume(TokenType.RightParen, "Expeted ')' after predicate argument", null);
+                check = Consume(TokenType.LeftParen, "Expected '('", Atom.synchrotypes);
                 if (check == null) return null;
 
-                check = Consume(TokenType.Arrow, "Expected predicate function call", null);
+                Token parameter = Consume(TokenType.Identifier, "Invalid predicate argument", Atom.synchrotypes);
+                if (parameter == null) return null;
+
+                check = Consume(TokenType.RightParen, "Expeted ')' after predicate argument", Atom.synchrotypes);
+                if (check == null) return null;
+
+                check = Consume(TokenType.Arrow, "Expected predicate function call", Atom.synchrotypes);
                 if (check == null) return null;
 
                 //store predicate 
                 IExpression predicate = Expression();
-                check = Consume(TokenType.RightParen, "Expected ')' after predicate", null);
+                check = Consume(TokenType.RightParen, "Expected ')' after predicate", Atom.synchrotypes);
                 if (check == null) return null;
 
                 left = Indexer(new ListFind(left, predicate, parameter, dot, argument));
             }
             else if (Match(TokenType.Pop))
             {
-                check = Consume(TokenType.LeftParen, "Expected '(' after method", null);
+                check = Consume(TokenType.LeftParen, "Expected '(' after method", Atom.synchrotypes);
                 if (check == null) return null;
 
-                check = Consume(TokenType.RightParen, "Expected ')' after method", null);
+                check = Consume(TokenType.RightParen, "Expected ')' after method", Atom.synchrotypes);
                 if (check == null) return null;
 
                 left = new Pop(left, dot);
@@ -399,7 +402,7 @@ public class Parser
                 }
                 else
                 {
-                    Error(Peek(), "Invalid property access", null);
+                    Error(Peek(), "Invalid property access", Atom.synchrotypes);
                     return null;
                 }
             }
@@ -414,7 +417,7 @@ public class Parser
         {
             Token indexToken = Previous();
             IExpression index = Expression();
-            Token check = Consume(TokenType.RightBracket, "Expected ']' after List Indexing", null);
+            Token check = Consume(TokenType.RightBracket, "Expected ']' after List Indexing", Atom.synchrotypes);
             if (check == null) return null;
             if (list is RangeAccess)
             {

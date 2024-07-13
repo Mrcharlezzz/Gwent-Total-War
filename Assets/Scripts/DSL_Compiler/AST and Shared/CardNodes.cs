@@ -22,6 +22,7 @@ public class CardNode : IASTNode
 }
 
 // Represents the onactivation field of a card
+[Serializable]
 public class Onactivation : IASTNode
 {
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.LeftBrace, TokenType.RightBracket, TokenType.Comma};
@@ -42,9 +43,10 @@ public class Onactivation : IASTNode
 }
 
 // Represents an effect activation in the AST
+[Serializable]
 public class EffectActivation : IASTNode
 {
-    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Effect, TokenType.Selector, TokenType.PostAction, TokenType.RightBrace};
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Effect, TokenType.Selector, TokenType.PostAction, TokenType.RightBrace, TokenType.RightBracket};
     public Effect effect;
     public Selector selector;
     public EffectActivation postAction;
@@ -81,6 +83,7 @@ public class EffectActivation : IASTNode
 }
 
 // Represents an effect definition in the AST
+[Serializable]
 public class EffectDefinition : IASTNode
 {
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {
@@ -110,7 +113,7 @@ public class ParameterDef : IASTNode{
 // Represents an effect in the AST
 public class Effect : IASTNode
 {
-    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.Name, TokenType.RightBrace};
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.Name, TokenType.RightBrace, TokenType.RightBracket};
     public string definition;
     public Parameters parameters;
     public Token keyword;
@@ -125,7 +128,7 @@ public class Effect : IASTNode
 }
 
 public class Parameters{
-    public static readonly List<TokenType> synchroTypes;
+    public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
     public Dictionary<string, object> parameters;
     public Parameters(Dictionary<string,object> parameters){
         this.parameters=parameters;
@@ -135,7 +138,7 @@ public class Parameters{
 // Used ListFind object with predicate based selection Evaluate method
 public class Selector : IASTNode
 {
-    public static readonly List<TokenType> synchroTypes = new List<TokenType> {TokenType.Source, TokenType.Single, TokenType.Predicate, TokenType.RightBrace,};
+    public static readonly List<TokenType> synchroTypes = new List<TokenType> {TokenType.Source, TokenType.Single, TokenType.Predicate, TokenType.RightBrace, TokenType.LeftBracket};
     public Selector() { }
     public Token source;
     public bool? single;
@@ -200,3 +203,4 @@ public class Context : IASTNode
         variables[key.lexeme] = value;
     }
 }
+

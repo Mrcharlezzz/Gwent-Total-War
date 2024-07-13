@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SocialPlatforms.Impl;
 
-
+[Serializable]
 public abstract class Card 
 {
     public Card(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation){
@@ -92,7 +92,7 @@ public abstract class Card
         body.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<Image>().color = color;
     }
 }
-
+[Serializable]
 public abstract class FieldCard : Card
 {
     public FieldCard(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
@@ -109,7 +109,7 @@ public abstract class FieldCard : Card
 
     public int[] powers = new int[4];
 }
-
+[Serializable]
 public class Unit : FieldCard {
     public Unit(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
         base(id,owner, name, image, type, description, faction,positions, activation, power){}
@@ -136,7 +136,7 @@ public class Unit : FieldCard {
     }
 }
 
-
+[Serializable]
 public class Decoy : FieldCard
 {
     public Decoy(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
@@ -170,7 +170,7 @@ public class Decoy : FieldCard
         }
     }
 }
-
+[Serializable]
 public class Weather : Card
 {
     public Weather(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
@@ -212,6 +212,7 @@ public class Weather : Card
         GlobalContext.gameMaster.globalModified = true;
     }
 }
+[Serializable]
 public class Boost : Card
 {
     public Boost(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
@@ -242,11 +243,13 @@ public class Boost : Card
         GlobalContext.gameMaster.globalModified = true;
     }
 }
+[Serializable]
 public class Leader : Card {
     public Leader(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone){}
 }
+[Serializable]
 public class Clear : Card
 {
     public Clear(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):

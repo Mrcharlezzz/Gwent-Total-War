@@ -211,6 +211,11 @@ public class SpaceJoin : BinaryOperator
 // Abstract class for atomic expressions
 public abstract class Atom : IExpression
 {
+    public static readonly List<TokenType> synchrotypes = new List<TokenType>(){
+        TokenType.RightBracket,TokenType.RightBrace, TokenType.Arrow, TokenType.Semicolon,
+        TokenType.Colon,TokenType.Comma, TokenType.Equal, TokenType.PlusEqual, TokenType.StarEqual,
+        TokenType.For, TokenType.While, TokenType.MinusEqual, TokenType.SlashEqual,
+    };
     public abstract object Evaluate(Context context, List<Card> targets);
 }
 
@@ -493,7 +498,7 @@ public class PowerAccess : PropertyAccess
 
     public override void Set(Context context, List<Card> targets, object value)
     {
-        (card.Evaluate(context, targets) as Unit).powers[1] = (int)value;
+        (card.Evaluate(context, targets) as FieldCard).powers[1] = (int)value;
     }
 }
 
@@ -565,7 +570,7 @@ public class TypeAccess : PropertyAccess
 // Access card position property
 public class RangeAccess : PropertyAccess
 {
-    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.Comma, TokenType.RightBracket};
+    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.Comma, TokenType.RightBracket, TokenType.RightBrace};
     public RangeAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
 
     public override object Evaluate(Context context, List<Card> targets)
@@ -603,4 +608,3 @@ public class TriggerPlayer : Atom
         return context.triggerplayer;
     }
 }
-

@@ -84,7 +84,7 @@ public class Player : MonoBehaviour
 
     public void DrawCard()
     {
-        if (hand.Size == 10) graveyard.Push(deck.Pop());
+        if (hand.Size >= 10) graveyard.Push(deck.Pop());
         else hand.Push(deck.Pop());
     }
 

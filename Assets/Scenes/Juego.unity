@@ -2381,7 +2381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 834097450}
-  playerdeck: {fileID: 2095566815}
+  deck: {fileID: 2095566815}
   graveyard: {fileID: 1973682792}
   field: {fileID: 1696145024}
   leaderCard: {fileID: 1003288243}
@@ -3792,7 +3792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 1233178610}
-  playerdeck: {fileID: 1455321752}
+  deck: {fileID: 1455321752}
   graveyard: {fileID: 406051210}
   field: {fileID: 350735576}
   leaderCard: {fileID: 1874792260}
@@ -3961,6 +3961,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 843420640}
   m_CullTransparentMesh: 1
+--- !u!1 &856127539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 856127540}
+  - component: {fileID: 856127541}
+  m_Layer: 0
+  m_Name: Database
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &856127540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856127539}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 876.7258, y: 612.0798, z: -12.353402}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &856127541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856127539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a27961103a442084f914e93153049299, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &864460873 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8920348530738007160, guid: a1735b306a9f43c488d0297a994f3002, type: 3}
@@ -4745,6 +4789,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alreadyused: 0
+  leader:
+    id: 0
+    owner: {fileID: 0}
+    name: 
+    image: {fileID: 0}
+    description: 
+    faction: 
+    positions: 
+    activation:
+      activations: []
 --- !u!1 &1031214110
 GameObject:
   m_ObjectHideFlags: 0
@@ -8078,6 +8132,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alreadyused: 0
+  leader:
+    id: 0
+    owner: {fileID: 0}
+    name: 
+    image: {fileID: 0}
+    description: 
+    faction: 
+    positions: 
+    activation:
+      activations: []
 --- !u!1001 &1955564438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9512,3 +9576,4 @@ SceneRoots:
   - {fileID: 282011594}
   - {fileID: 1171881267}
   - {fileID: 982378961}
+  - {fileID: 856127540}

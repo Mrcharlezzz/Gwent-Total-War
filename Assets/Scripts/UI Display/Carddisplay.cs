@@ -52,7 +52,7 @@ public class Carddisplay : MonoBehaviour
                 powerText.text=fieldCard.powers[3].ToString();
             }
             else{
-                powerText.text="null";
+                powerText.text="";
                 powerborder.SetActive(false);
             }
 

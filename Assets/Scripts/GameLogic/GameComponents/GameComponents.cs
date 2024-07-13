@@ -22,4 +22,8 @@ public abstract class GameComponent : MonoBehaviour
             cards[randomIndex]=container;
         }
     }
+
+    void Awake(){
+        cards = new List<Card>();
+    }
 }
