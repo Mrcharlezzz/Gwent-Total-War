@@ -23,6 +23,7 @@ public class GameMaster : MonoBehaviour
     public GameObject turnUI;
     public GameObject message;
     public GameObject WeatherSlots;
+    public GameObject cardPrefab;
     public Button pass;
     public void StartGame()
     {
@@ -260,9 +261,11 @@ public class GameMaster : MonoBehaviour
         }
     }
     
-    void Start()
+    public void BeforeStart()
     {
         GlobalContext.gameMaster = this;
+        GameTools.cardPrefab=cardPrefab;
+
         Database.Initialize();
         SetDecks();
         StartGame();

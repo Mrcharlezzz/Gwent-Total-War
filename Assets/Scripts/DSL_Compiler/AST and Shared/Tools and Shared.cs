@@ -78,6 +78,7 @@ public static class Tools
 }
 
 // Enum representing the types of expressions that can appear in the DSL
+[Serializable]
 public enum ExpressionType
 {
     Number, Bool, String, Card, List, RangeList, Player, Context, Targets, Null,

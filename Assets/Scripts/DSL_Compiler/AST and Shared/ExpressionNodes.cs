@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+//SHUNTING YARD
+
 // Abstract Syntax Tree (AST) for card and effect compiler
 
 public interface IASTNode {}
 
 
 // Interface for expressions in the AST
+
 public interface IExpression : IASTNode
 {
     public object Evaluate(Context context, List<Card> targets);
@@ -17,6 +20,7 @@ public interface IExpression : IASTNode
 
 
 // Abstract class for binary operators in expressions
+[Serializable]
 public abstract class BinaryOperator : IExpression
 {
     public IExpression left;
@@ -33,6 +37,7 @@ public abstract class BinaryOperator : IExpression
 }
 
 // Addition operator
+[Serializable]
 public class Plus : BinaryOperator
 {
     public Plus(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -44,6 +49,7 @@ public class Plus : BinaryOperator
 }
 
 // Subtraction operator
+[Serializable]
 public class Minus : BinaryOperator
 {
     public Minus(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -55,6 +61,7 @@ public class Minus : BinaryOperator
 }
 
 // Product operator
+[Serializable]
 public class Product : BinaryOperator
 {
     public Product(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -66,6 +73,7 @@ public class Product : BinaryOperator
 }
 
 // Division operator
+[Serializable]
 public class Division : BinaryOperator
 {
     public Division(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -77,6 +85,7 @@ public class Division : BinaryOperator
 }
 
 // Power operator (exponentiation)
+[Serializable]
 public class Power : BinaryOperator
 {
     public Power(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -99,6 +108,7 @@ public class Power : BinaryOperator
 }
 
 // Equality operator
+[Serializable]
 public class Equal : BinaryOperator
 {
     public Equal(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -110,6 +120,7 @@ public class Equal : BinaryOperator
 }
 
 // Inequality operator
+[Serializable]
 public class Differ : BinaryOperator
 {
     public Differ(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -121,6 +132,7 @@ public class Differ : BinaryOperator
 }
 
 // Less than or equal operator
+[Serializable]
 public class AtMost : BinaryOperator
 {
     public AtMost(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -132,6 +144,7 @@ public class AtMost : BinaryOperator
 }
 
 // Greater than or equal operator
+[Serializable]
 public class AtLeast : BinaryOperator
 {
     public AtLeast(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -143,6 +156,7 @@ public class AtLeast : BinaryOperator
 }
 
 // Less than operator
+[Serializable]
 public class Less : BinaryOperator
 {
     public Less(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -154,6 +168,7 @@ public class Less : BinaryOperator
 }
 
 // Greater than operator
+[Serializable]
 public class Greater : BinaryOperator
 {
     public Greater(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -165,6 +180,7 @@ public class Greater : BinaryOperator
 }
 
 // Logical OR operator
+[Serializable]
 public class Or : BinaryOperator
 {
     public Or(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -176,6 +192,7 @@ public class Or : BinaryOperator
 }
 
 // Logical AND operator
+[Serializable]
 public class And : BinaryOperator
 {
     public And(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -187,6 +204,7 @@ public class And : BinaryOperator
 }
 
 // String concatenation operator
+[Serializable]
 public class Join : BinaryOperator
 {
     public Join(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -198,6 +216,7 @@ public class Join : BinaryOperator
 }
 
 // String concatenation with space operator
+[Serializable]
 public class SpaceJoin : BinaryOperator
 {
     public SpaceJoin(IExpression left, IExpression right, Token token) : base(left, right, token) { }
@@ -209,6 +228,7 @@ public class SpaceJoin : BinaryOperator
 }
 
 // Abstract class for atomic expressions
+[Serializable]
 public abstract class Atom : IExpression
 {
     public static readonly List<TokenType> synchrotypes = new List<TokenType>(){
@@ -220,6 +240,7 @@ public abstract class Atom : IExpression
 }
 
 // Abstract class for lists of cards
+[Serializable]
 public abstract class List : Atom {
     public List(Token accesToken){
         this.accessToken = accesToken;
@@ -229,6 +250,7 @@ public abstract class List : Atom {
 }
 
 // List of cards on the board
+[Serializable]
 public class BoardList : List
 {
     public BoardList(IExpression context, Token accessToken) : base(accessToken){
@@ -242,6 +264,7 @@ public class BoardList : List
 }
 
 // Abstract class for lists specific to a player
+[Serializable]
 public abstract class IndividualList : List
 {
     //This field isn't used in the evaluation method, it is only for the semnatic check
@@ -258,6 +281,7 @@ public abstract class IndividualList : List
 }
 
 // List of cards in a player's hand
+[Serializable]
 public class HandList : IndividualList
 {
     public HandList(IExpression context, IExpression player, Token accessToken, Token playertoken) : base(context, player, accessToken, playertoken) { }
@@ -271,6 +295,7 @@ public class HandList : IndividualList
 }
 
 // List of cards in a player's deck
+[Serializable]
 public class DeckList : IndividualList
 {
     public DeckList(IExpression context,IExpression player, Token accessToken, Token playertoken) : base(context, player, accessToken, playertoken) { }
@@ -284,6 +309,7 @@ public class DeckList : IndividualList
 }
 
 // List of cards in a player's graveyard
+[Serializable]
 public class GraveyardList : IndividualList
 {
     public GraveyardList(IExpression context,IExpression player, Token accessToken, Token playertoken) : base(context, player, accessToken, playertoken) { }
@@ -297,6 +323,7 @@ public class GraveyardList : IndividualList
 }
 
 // List of cards in a player's field
+[Serializable]
 public class FieldList : IndividualList
 {
     public FieldList(IExpression context,IExpression player, Token accessToken, Token playertoken) : base(context, player, accessToken, playertoken) { }
@@ -310,6 +337,7 @@ public class FieldList : IndividualList
 }
 
 // List of cards filtered by a predicate
+[Serializable]
 public class ListFind : List
 {
     public ListFind() : base(null){ }
@@ -355,6 +383,7 @@ public class ListFind : List
 }
 
 // Abstract class for unary operators in expressions
+[Serializable]
 public abstract class Unary : Atom
 {
     public Token operation;
@@ -367,6 +396,7 @@ public abstract class Unary : Atom
 }
 
 // Logical negation operator
+[Serializable]
 public class Negation : Unary
 {
     public Negation(IExpression right, Token operation) : base(right, operation) { }
@@ -378,6 +408,7 @@ public class Negation : Unary
 }
 
 // Arithmetic negation operator
+[Serializable]
 public class Negative : Unary
 {
     public Negative(IExpression right, Token operation) : base(right, operation) { }
@@ -388,7 +419,10 @@ public class Negative : Unary
     }
 }
 
+
+
 // Literal values in expressions
+[Serializable]
 public class Literal : Atom
 {
     public Literal(object value)
@@ -412,6 +446,7 @@ public interface ICardAtom : IExpression
 }
 
 // Variable expressions
+[Serializable]
 public class Variable : Atom
 {
     public Variable(Token name)
@@ -428,6 +463,7 @@ public class Variable : Atom
 }
 
 // Card variable expressions
+[Serializable]
 public class CardVariable : Variable, ICardAtom
 {
     public CardVariable(Token name) : base(name) { }
@@ -439,6 +475,7 @@ public class CardVariable : Variable, ICardAtom
 }
 
 // Indexed card expressions
+[Serializable]
 public class IndexedCard : ICardAtom
 {
     public IndexedCard(IExpression index, IExpression list, Token indexToken)
@@ -467,6 +504,7 @@ public class IndexedCard : ICardAtom
 
 
 // Abstract class for property access expressions
+[Serializable]
 public abstract class PropertyAccess : Atom
 {
     public PropertyAccess(IExpression card, Token accessToken)
@@ -482,6 +520,7 @@ public abstract class PropertyAccess : Atom
 }
 
 // Access card power property
+[Serializable]
 public class PowerAccess : PropertyAccess
 {
     public PowerAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
@@ -503,6 +542,7 @@ public class PowerAccess : PropertyAccess
 }
 
 // Access card name property
+[Serializable]
 public class NameAccess : PropertyAccess
 {
     public NameAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
@@ -520,6 +560,7 @@ public class NameAccess : PropertyAccess
 }
 
 // Access card faction property
+[Serializable]
 public class FactionAccess : PropertyAccess
 {
     public FactionAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
@@ -537,6 +578,7 @@ public class FactionAccess : PropertyAccess
 }
 
 // Access card owner property
+[Serializable]
 public class OwnerAccess : PropertyAccess
 {
     public OwnerAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
@@ -551,6 +593,7 @@ public class OwnerAccess : PropertyAccess
 }
 
 // Access card type property
+[Serializable]
 public class TypeAccess : PropertyAccess
 {
     public TypeAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
@@ -568,6 +611,7 @@ public class TypeAccess : PropertyAccess
 }
 
 // Access card position property
+[Serializable]
 public class RangeAccess : PropertyAccess
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.Comma, TokenType.RightBracket, TokenType.RightBrace};
@@ -585,6 +629,7 @@ public class RangeAccess : PropertyAccess
     }
 }
 
+[Serializable]
 public class IndexedRange: IExpression{
     public IExpression range;
     public IExpression index;   
@@ -601,6 +646,7 @@ public class IndexedRange: IExpression{
 }
 
 // Access trigger player
+[Serializable]
 public class TriggerPlayer : Atom
 {
     public override object Evaluate(Context context, List<Card> targets)

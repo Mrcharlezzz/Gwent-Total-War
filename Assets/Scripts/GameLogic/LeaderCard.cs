@@ -10,10 +10,10 @@ public class LeaderCard: MonoBehaviour
     
     public void ActivateLeaderEffect()
     {
-        if(!alreadyused && GlobalContext.gameMaster.currentplayer == leader.owner)
+        if(!alreadyused && GlobalContext.gameMaster.currentplayer == GlobalContext.GetPlayer(leader.owner))
         {
             alreadyused=true;
-            leader.ActivateEffect(leader.owner);
+            leader.ActivateEffect(GlobalContext.GetPlayer(leader.owner));
             GlobalContext.gameMaster.NextTurn();
         }
     }

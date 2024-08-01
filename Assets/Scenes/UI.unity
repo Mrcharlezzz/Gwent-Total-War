@@ -211,7 +211,6 @@ GameObject:
   - component: {fileID: 502492186}
   - component: {fileID: 502492185}
   - component: {fileID: 502492188}
-  - component: {fileID: 502492189}
   m_Layer: 5
   m_Name: CreateCard
   m_TagString: Untagged
@@ -346,18 +345,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SelectionText: {fileID: 1596322674}
---- !u!114 &502492189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 502492183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27961103a442084f914e93153049299, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

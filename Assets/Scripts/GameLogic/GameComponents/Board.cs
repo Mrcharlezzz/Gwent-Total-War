@@ -9,7 +9,7 @@ public class Board: GameComponent{
 
     public override void Push(Card card)
     {
-        cardField[card] = card.owner.field;
+        cardField[card] = GlobalContext.GetPlayer(card.owner).field;
         cardField[card].Push(card);
         cards.Add(card);
     }
@@ -28,7 +28,7 @@ public class Board: GameComponent{
 
     public override void SendBottom(Card card)
     {
-        cardField[card] = card.owner.field;
+        cardField[card] = GlobalContext.GetPlayer(card.owner).field;
         cardField[card].SendBottom(card);
         cards.Insert(0, card);
     }

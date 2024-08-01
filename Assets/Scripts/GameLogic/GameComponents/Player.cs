@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+
+
 
 public class Player : MonoBehaviour
 {
@@ -20,19 +23,8 @@ public class Player : MonoBehaviour
     public bool roundupdate = false;
     public GameObject point1;
     public GameObject point2;
-    
-    //public GameObject prefab;
 
-    //private Carddisplay temporaldisplay;
-
-
-    /*//playcard fields
-    bool isValidType = false;
-    bool isValidPosition = false;
-    bool availableSlot = false;
-    bool playable = false;
-    bool isValidField = false;
-    */
+    public static implicit operator int (Player p) => p.player1? 1 : 2;
 
     public Player Other()
     {

@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 // Represents a card in the AST
+
+
 public class CardNode : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType>() {
@@ -101,7 +103,7 @@ public class EffectDefinition : IASTNode
         action.Execute(action.context, action.targets);
     }
 }
-
+[Serializable]
 public class ParameterDef : IASTNode{
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
     public Dictionary<string, ExpressionType> parameters;
@@ -111,6 +113,7 @@ public class ParameterDef : IASTNode{
 }
 
 // Represents an effect in the AST
+[Serializable]
 public class Effect : IASTNode
 {
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.Name, TokenType.RightBrace, TokenType.RightBracket};
@@ -126,6 +129,7 @@ public class Effect : IASTNode
         GlobalEffects.effects[definition].Execute();
     }
 }
+[Serializable]
 
 public class Parameters{
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
@@ -136,6 +140,7 @@ public class Parameters{
 }
 
 // Used ListFind object with predicate based selection Evaluate method
+[Serializable]
 public class Selector : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType> {TokenType.Source, TokenType.Single, TokenType.Predicate, TokenType.RightBrace, TokenType.LeftBracket};
@@ -161,6 +166,7 @@ public class ProgramNode : IASTNode
 }
 
 // Represents the execution context in the AST
+[Serializable]
 public class Context : IASTNode
 {
     public Context() { }
@@ -203,4 +209,3 @@ public class Context : IASTNode
         variables[key.lexeme] = value;
     }
 }
-

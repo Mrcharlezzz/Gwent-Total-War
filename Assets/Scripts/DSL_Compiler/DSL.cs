@@ -12,12 +12,12 @@ public static class DSL
     public static int destinyDeck = 0;
 
     public static void DeckSwitch(){
-        destinyDeck = (destinyDeck + 1) % 3;
+        destinyDeck = (destinyDeck + 1) % 2;
     }
 
     public static void Report(int line, int column, string where, string message)
     {
-        Debug.LogError($"[Ln {line}, Col {column}] {where} Error: " + message);
+        Debug.LogError($"[Ln {line+1}, Col {column}] {where} Error: " + message);
         hadError = true;
     }
     public static void Error(Token token, string message)
@@ -75,27 +75,26 @@ public static class DSL
             switch(card.type){
                 case Card.Type.Silver:
                 case Card.Type.Golden:
-                    newcard = new Unit(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation, (int)card.power);
+                    newcard = new Unit(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation, (int)card.power);
                     break;
                 case Card.Type.Decoy:
-                    newcard = new Decoy(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation, 0);
+                    newcard = new Decoy(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation, 0);
                     break;
                 case Card.Type.Boost:
-                    newcard = new Boost(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
+                    newcard = new Boost(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
                     break;
                 case Card.Type.Weather:
-                    newcard = new Weather(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
+                    newcard = new Weather(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
                     break;
                 case Card.Type.Leader:
-                    newcard = new Leader(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
+                    newcard = new Leader(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
                     break;
                 case Card.Type.Clear:
-                    newcard = new Clear(Database.Count, null, card.name, Resources.Load<Sprite>("DefaultImage"), card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
+                    newcard = new Clear(Database.Count, 0, card.name, "DefaultImage", card.type, "Created Card", card.faction, Tools.GetCardPositions(card.position), card.activation);
                     break;
             }
-            if(destinyDeck == 0) Database.storage.Add(newcard);
-            if(destinyDeck == 1) Database.deck1.Add(newcard);
-            if(destinyDeck == 2) Database.deck2.Add(newcard);
+            if(destinyDeck == 0) Database.deck1.Add(newcard);
+            if(destinyDeck == 1) Database.deck2.Add(newcard);
         }
     }
 }

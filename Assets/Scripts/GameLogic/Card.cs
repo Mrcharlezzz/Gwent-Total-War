@@ -12,7 +12,7 @@ using UnityEngine.SocialPlatforms.Impl;
 [Serializable]
 public abstract class Card 
 {
-    public Card(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation){
+    public Card(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation){
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -24,9 +24,9 @@ public abstract class Card
         this.activation = activation;
     }
     public int id;
-    public Player owner;
+    public int owner;
     public string name;
-    public Sprite image;
+    public string image;
     public Type? type;
     public string description;
     public string faction;
@@ -41,6 +41,7 @@ public abstract class Card
 
     protected bool Playable(Player triggerplayer,  GameObject dropzone){
         DropZone zone = dropzone.GetComponent<DropZone>();
+        if(zone == null) zone = dropzone.GetComponent<FieldDropZone>();
         bool ValidType = false, validPosition = false, availableslot = false, validField = false;
 
         foreach (Type type in zone.typelist)
@@ -69,13 +70,13 @@ public abstract class Card
 
     public abstract void Play(Player triggerplayer, GameObject body, GameObject dropzone);
 
-
+    [Serializable]
     public enum Position
     {
         Melee, Ranged, Siege,
     }
 
-
+    [Serializable]
     public enum Type
     {
         Leader,
@@ -95,7 +96,7 @@ public abstract class Card
 [Serializable]
 public abstract class FieldCard : Card
 {
-    public FieldCard(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+    public FieldCard(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
         base(id, owner, name, image, type, description, faction, positions, activation){
             for (int i = 0; i<4; i++) powers[i] = power;
         }
@@ -111,7 +112,7 @@ public abstract class FieldCard : Card
 }
 [Serializable]
 public class Unit : FieldCard {
-    public Unit(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+    public Unit(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
         base(id,owner, name, image, type, description, faction,positions, activation, power){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
@@ -139,7 +140,7 @@ public class Unit : FieldCard {
 [Serializable]
 public class Decoy : FieldCard
 {
-    public Decoy(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
+    public Decoy(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation, int power):
         base(id,owner, name, image, type, description, faction,positions, activation, power){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
@@ -173,7 +174,7 @@ public class Decoy : FieldCard
 [Serializable]
 public class Weather : Card
 {
-    public Weather(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+    public Weather(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
@@ -194,7 +195,7 @@ public class Weather : Card
 
         if (zone.cardlist.Count > 0)
         {
-            zone.cardlist[0].owner.graveyard.Push(zone.cardlist[0]);
+            GlobalContext.GetPlayer(zone.cardlist[0].owner).graveyard.Push(zone.cardlist[0]);
             zone.cardlist.RemoveAt(0);
             MonoBehaviour.Destroy(zone.transform.GetChild(0).gameObject);
         }
@@ -215,7 +216,7 @@ public class Weather : Card
 [Serializable]
 public class Boost : Card
 {
-    public Boost(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+    public Boost(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
@@ -245,14 +246,14 @@ public class Boost : Card
 }
 [Serializable]
 public class Leader : Card {
-    public Leader(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+    public Leader(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone){}
 }
 [Serializable]
 public class Clear : Card
 {
-    public Clear(int id, Player owner, string name, Sprite image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
+    public Clear(int id, int owner, string name, string image, Type? type, string description, string faction, List<Position> positions, Onactivation activation):
         base(id,owner, name, image, type, description, faction,positions, activation){}
     public override void Play(Player triggerplayer, GameObject body, GameObject dropzone)
     {
@@ -271,7 +272,7 @@ public class Clear : Card
             if (child.childCount > 0)
             {
                 var childZoneCard = child.gameObject.GetComponent<DropZone>().cardlist[0];
-                childZoneCard.owner.graveyard.Push(childZoneCard);
+                GlobalContext.GetPlayer(childZoneCard.owner).graveyard.Push(childZoneCard);
                 MonoBehaviour.Destroy(child.GetChild(0).gameObject);
             }
             MonoBehaviour.Destroy(body);

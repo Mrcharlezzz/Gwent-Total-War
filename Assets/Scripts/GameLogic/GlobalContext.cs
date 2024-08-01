@@ -22,4 +22,12 @@ public static class GlobalContext
     {
         return player.graveyard;
     }
+
+    public static Player GetPlayer(int n){
+        if(n == 0) return null;
+        if(n == 1) return gameMaster.player1;
+        return gameMaster.player2;
+    }
+
+    
 }

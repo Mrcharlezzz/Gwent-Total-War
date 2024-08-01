@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[Serializable]
 public class Hand : GameComponent
 {
-    public Dictionary<Card, GameObject> bodies;
+    public Dictionary<Card, GameObject> bodies = new Dictionary<Card, GameObject>();
 
 
     public override void Push(Card card)

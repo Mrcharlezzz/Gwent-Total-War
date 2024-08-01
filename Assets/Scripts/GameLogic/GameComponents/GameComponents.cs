@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class GameComponent : MonoBehaviour
 {
-    public Player owner;
+    public int owner;
     public List<Card> cards;
     public abstract void Push(Card card);
     public abstract Card Pop();

@@ -57,7 +57,7 @@ public class Carddisplay : MonoBehaviour
             }
 
             posText.text=PositionString(card.positions);
-            CardImage.sprite=card.image;
+            CardImage.sprite=Resources.Load<Sprite>($"CardImages/{card.image}");
         }
     }
     public static string PositionString(List<Card.Position> positions){

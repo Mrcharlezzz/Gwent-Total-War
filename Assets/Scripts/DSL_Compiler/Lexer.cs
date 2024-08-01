@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 using JetBrains.Annotations;
 using Unity.VisualScripting.FullSerializer;
 using Unity.VisualScripting.Antlr3.Runtime;
+using System;
 
 public class Lexer
 {
@@ -149,6 +150,7 @@ public class Lexer
                 break;
             case '"': String(); break;
             case ' ':
+            case '\0':
             case '\t':
             case '\r': break;
             case '\n':
@@ -166,7 +168,7 @@ public class Lexer
                 }
                 else
                 {
-                    DSL.Report(line, column, "", "Unexpected character: " + c);
+                    DSL.Report(line, column, "", "Unexpected character: " + c.ToString());
                 }
                 break;
         }
@@ -284,6 +286,7 @@ public class Lexer
     }
 }
 
+[Serializable]
 public enum TokenType
 {
     // Single character tokens
@@ -327,6 +330,8 @@ public enum TokenType
 
     EOF
 }
+
+[Serializable]
 
 public class Token
 {

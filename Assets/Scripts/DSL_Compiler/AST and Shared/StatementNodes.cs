@@ -11,6 +11,8 @@ public interface IStatement : IASTNode
 }
 
 // Abstract class for blocks of statements
+
+[Serializable]
 public abstract class Block : IStatement
 {
     public readonly static List<TokenType> synchroTypes = new List<TokenType>() {TokenType.For, TokenType.While, TokenType.RightBrace};
@@ -26,6 +28,7 @@ public abstract class Block : IStatement
 }
 
 // Action block
+[Serializable]
 public class Action : Block
 {
     public Action(List<IStatement> statements, Token contextID, Token targetsID, Token keyword) : base(statements, keyword)
@@ -50,6 +53,7 @@ public class Action : Block
 }
 
 // Assignment statement
+[Serializable]
 public class Assignation : IStatement
 {
     public Assignation(IExpression operand, IExpression assignation, Token operation)
@@ -72,6 +76,7 @@ public class Assignation : IStatement
 }
 
 // Increment and decrement operations
+[Serializable]
 public class Increment_Decrement : Assignation, IExpression
 {
     public Increment_Decrement(IExpression operand, Token operation) : base(operand, null, operation){}
@@ -94,6 +99,7 @@ public class Increment_Decrement : Assignation, IExpression
 }
 
 // Numeric modification operations (e.g., +=, -=, etc.)
+[Serializable]
 public class NumericModification : Assignation
 {
     public NumericModification(IExpression operand, IExpression assignation, Token operation) : base(operand, assignation ,operation){}
@@ -115,6 +121,7 @@ public class NumericModification : Assignation
 }
 
 // Foreach loop statement
+[Serializable]
 public class Foreach : Block
 {
     public Foreach(List<IStatement> statements, IExpression collection, Token variable, Token keyword) : base(statements, keyword)
@@ -142,6 +149,7 @@ public class Foreach : Block
 }
 
 // While loop statement
+[Serializable]
 public class While : Block
 {
     public While(List<IStatement> statements, IExpression predicate, Token keyword) : base(statements, keyword)
@@ -165,6 +173,7 @@ public class While : Block
 }
 
 // Abstract class for list methods
+[Serializable]
 public abstract class Method : IStatement
 {
     public Method(IExpression list, Token accessToken)
@@ -179,6 +188,7 @@ public abstract class Method : IStatement
 }
 
 // Pop operation on lists
+[Serializable]
 public class Pop : Method, ICardAtom
 {
     public Pop(IExpression list, Token accessToken) : base(list, accessToken) {}
@@ -202,6 +212,7 @@ public class Pop : Method, ICardAtom
 }
 
 // Shuffle method (shuffles the list of cards)
+[Serializable]
 public class Shuffle : Method
 {
     public Shuffle(IExpression list, Token accessToken) : base(list,accessToken) {}
@@ -213,6 +224,7 @@ public class Shuffle : Method
     }
 }
 
+[Serializable]
 public abstract class ArgumentMethod: Method{
     public ArgumentMethod(IExpression list,IExpression card, Token accessToken) : base(list,accessToken){
         this.card = card;
@@ -221,6 +233,7 @@ public abstract class ArgumentMethod: Method{
 }
 
 // Push method (adds card to list)
+[Serializable]
 public class Push : ArgumentMethod
 {
     public Push(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
@@ -233,6 +246,7 @@ public class Push : ArgumentMethod
 }
 
 // SendBottom method (adds card to the bottom of the list)
+[Serializable]
 public class SendBottom : ArgumentMethod
 {
     public SendBottom(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
@@ -246,6 +260,7 @@ public class SendBottom : ArgumentMethod
 }
 
 // Remove method (removes card from list)
+[Serializable]
 public class Remove : ArgumentMethod
 {
     public Remove(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
