@@ -10,9 +10,11 @@ public class DropZone : MonoBehaviour
     public List<Card> cardlist;
     public int maxsize;
     public bool player1; // side of the field of the row (false means it is player2's)
-    
 
 
+    void Awake(){
+        cardlist=new List<Card>();
+    }
     public void ZoneClear()
     {
         cardlist.Clear();

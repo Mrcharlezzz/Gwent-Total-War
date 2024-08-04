@@ -1953,9 +1953,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 752670781}
-        m_TargetAssemblyTypeName: DSLManager, Assembly-CSharp
-        m_MethodName: CreateCard
+      - m_Target: {fileID: 346297493}
+        m_TargetAssemblyTypeName: ExitEditor, Assembly-CSharp
+        m_MethodName: ExitAndPlay
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2197,7 +2197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057fb8e347829f945901ad7ae8aa41c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 2
   unitRows: {fileID: 1532467181}
   boostSlots: {fileID: 1709234567}
 --- !u!1 &352948438
@@ -3079,7 +3079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b4ba8ffb7fa444d91d70000174bf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 2
 --- !u!114 &406051217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4813,7 +4813,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36be4e6239e9534aba3b0a3bf1bea29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 1
 --- !u!1 &842629539
 GameObject:
   m_ObjectHideFlags: 0
@@ -6696,7 +6696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36be4e6239e9534aba3b0a3bf1bea29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 2
 --- !u!1001 &1234938033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7901,7 +7901,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016690b5dcf68e14aa46d1f48feb31fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 2
 --- !u!1 &1458751525
 GameObject:
   m_ObjectHideFlags: 0
@@ -9395,7 +9395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057fb8e347829f945901ad7ae8aa41c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 1
   unitRows: {fileID: 196361519}
   boostSlots: {fileID: 363401535}
 --- !u!1 &1702923108
@@ -10855,7 +10855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b4ba8ffb7fa444d91d70000174bf33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 1
 --- !u!114 &1973682803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11613,7 +11613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016690b5dcf68e14aa46d1f48feb31fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner: 1
 --- !u!224 &2095566816
 RectTransform:
   m_ObjectHideFlags: 0

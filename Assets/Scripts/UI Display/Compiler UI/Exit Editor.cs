@@ -11,6 +11,7 @@ public class ExitEditor : MonoBehaviour
     {
         editorCanvas.SetActive(false);
         gameCanvas.SetActive(true);
+        GlobalContext.gameMaster=GameObject.Find("gamemaster").GetComponent<GameMaster>();
         GlobalContext.gameMaster.BeforeStart();
     }
 }

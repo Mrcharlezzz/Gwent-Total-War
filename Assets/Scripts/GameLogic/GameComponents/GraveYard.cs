@@ -13,7 +13,7 @@ public class GraveYard : GameComponent
         }
         Show();
         gameObject.GetComponent<Carddisplay>().displayId=cards[^1].id;
-        gameObject.GetComponent<Carddisplay>().update=true;
+        gameObject.GetComponent<Carddisplay>().DisplayUpdate();
 
     }
 
@@ -30,21 +30,25 @@ public class GraveYard : GameComponent
     public override void Push(Card card)
     {
         cards.Add(card);
+        Modify();
     }
     public override void Remove(Card card)
     {
         cards.Remove(card);
+        Modify();
     }
     public override Card Pop()
     {
         if (Size == 0) throw new IndexOutOfRangeException("Cannot apply pop method to an empty list");
         Card removed = cards[Size - 1];
         cards.RemoveAt(Size - 1);
+        Modify();
         return removed;
     }
 
     public override void SendBottom(Card card)
     {
         cards.Insert(0, card);
+        Modify();
     }
 }

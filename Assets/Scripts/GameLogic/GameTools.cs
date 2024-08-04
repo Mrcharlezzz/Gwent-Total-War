@@ -9,7 +9,7 @@ public class GameTools{
         body.transform.SetParent(obj.transform,false);
         Carddisplay display = body.GetComponent<Carddisplay>();
         display.displayId = card.id;
-        display.update = true;
+        display.DisplayUpdate();
         card.owner=owner;
         return body;
     }

@@ -355,7 +355,7 @@ public class Player : MonoBehaviour
             boost.GetComponent<DragandDrop>().alreadyplayed = true;
             Carddisplay carddisplay = boost.GetComponent<Carddisplay>();
             carddisplay.displayId = boostID;
-            carddisplay.update = true;
+            carddisplay.DisplayUpdate();
 
 
             boostslot.cardlist.Add(carddisplay.card);
@@ -423,7 +423,7 @@ public class Player : MonoBehaviour
             weather.GetComponent<DragandDrop>().alreadyplayed = true;
             Carddisplay carddisplay = weather.GetComponent<Carddisplay>();
             carddisplay.displayId = weatherID;
-            carddisplay.update = true;
+            carddisplay.DisplayUpdate;
 
             weatherSlot.cardlist.Add(carddisplay.card);
 

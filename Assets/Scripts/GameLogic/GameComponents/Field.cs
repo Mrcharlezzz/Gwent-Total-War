@@ -13,6 +13,12 @@ public class Field : GameComponent
     public Dictionary<Card, GameObject> bodies;
     public Dictionary<GameObject, FieldDropZone> bodiesRows;
 
+    void Awake(){
+        bodies =new Dictionary<Card, GameObject>();
+        bodiesRows= new Dictionary<GameObject, FieldDropZone>();
+        cards=new List<Card>();
+    }
+
     public void Clear()
     {
         foreach(Transform child in unitRows.transform)
@@ -46,6 +52,7 @@ public class Field : GameComponent
     public void Push(Card card, FieldDropZone row){
         if(!(card is FieldCard)) throw new InvalidOperationException("Card can't be placed in field");
         cards.Add(card);
+        row.cardlist.Add(card);
         GameObject body = GameTools.CreateCardInObject(card, row.gameObject, owner);
         bodiesRows[body] = row;
         row.children[card] = body;

@@ -7,6 +7,11 @@ using UnityEngine;
 public class Board: GameComponent{
     public Dictionary<Card, Field> cardField;
 
+    void Awake(){
+        cardField=new Dictionary<Card, Field>();
+        cards=new List<Card>();
+    }
+
     public override void Push(Card card)
     {
         cardField[card] = GlobalContext.GetPlayer(card.owner).field;

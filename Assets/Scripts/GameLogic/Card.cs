@@ -119,7 +119,6 @@ public class Unit : FieldCard {
         DropZone zone = dropzone.GetComponent<DropZone>();
         if (Playable(triggerplayer, dropzone))
         {
-
             body.GetComponent<DragandDrop>().alreadyplayed = true;
             Debug.Log("Played succesfully");
 
@@ -203,7 +202,8 @@ public class Weather : Card
         body.GetComponent<DragandDrop>().alreadyplayed = true;
         Debug.Log("Played succesfully");
 
-        triggerplayer.hand.Remove(this);
+        triggerplayer.hand.cards.Remove(this);
+        triggerplayer.hand.bodies.Remove(this);
         zone.cardlist.Add(this);
 
         body.transform.SetParent(zone.gameObject.transform, false);

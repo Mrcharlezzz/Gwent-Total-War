@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class Carddisplay : MonoBehaviour
 {
-    //Pendiente redisennar el carddisplay con los datos solamente necesarios para su funcionamiento
     public Card card;
     public int displayId; // this will allow me to display different cards from the inspector in the same Card GameObject
     public bool update=false;
@@ -23,42 +22,36 @@ public class Carddisplay : MonoBehaviour
 
     
     // Start is called before the first frame update
-    void Start()
+    
+    public void DisplayUpdate()
     {
-        update=true;
-    }
-    void Update()
-    {
-        if(update)
-        {    
-            update=false;
-            card=Database.Search(displayId);
+        
+        card=Database.Search(displayId);
             
-            //Layer use for decoy collisions
-            if(card.type==Card.Type.Decoy)
-            {
-                int decoyLayerIndex = LayerMask.NameToLayer("Decoy");
-                gameObject.layer=decoyLayerIndex;
-                gameObject.GetComponent<BoxCollider2D>().size=new Vector2(20.0f,30.0f);
-            }
-
-            /*
-            When the card is drawn, the power modifications of previous games
-            (these may remain if the execution was interrupted) must be reverted
-            */ 
-
-            if(card is FieldCard fieldCard){
-                for(int i=1; i<4 ;i++) fieldCard.powers[i]=fieldCard.powers[i-1];
-                powerText.text=fieldCard.powers[3].ToString();
-            }
-            else{
-                powerText.text="";
-                powerborder.SetActive(false);
-            }
-
-            posText.text=PositionString(card.positions);
-            CardImage.sprite=Resources.Load<Sprite>($"CardImages/{card.image}");
+        //Layer use for decoy collisions
+        if(card.type==Card.Type.Decoy)
+        {
+            int decoyLayerIndex = LayerMask.NameToLayer("Decoy");
+            gameObject.layer=decoyLayerIndex;
+            gameObject.GetComponent<BoxCollider2D>().size=new Vector2(20.0f,30.0f);
         }
+
+        /*
+        When the card is drawn, the power modifications of previous games
+        (these may remain if the execution was interrupted) must be reverted
+        */ 
+        Debug.Log("POWERS RESET");
+        if(card is FieldCard fieldCard){
+            for(int i=1; i<4 ;i++) fieldCard.powers[i]=fieldCard.powers[i-1];
+            powerText.text=fieldCard.powers[3].ToString();
+        }
+        else{
+            powerText.text="";
+            powerborder.SetActive(false);
+        }
+
+        posText.text=PositionString(card.positions);
+        CardImage.sprite=Resources.Load<Sprite>($"CardImages/{card.image}");      
     }
     public static string PositionString(List<Card.Position> positions){
         bool melee=false, ranged=false, siege=false;

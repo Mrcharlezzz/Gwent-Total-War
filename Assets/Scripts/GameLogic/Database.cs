@@ -8,9 +8,9 @@ using System.IO;
 public static class Database 
 {
     public static int Count{get => storage.Count + deck1.Count + deck2.Count;}
-    public static List<Card> storage;
-    public static List<Card> deck1;
-    public static List<Card> deck2;
+    public static List<Card> storage=new List<Card>();
+    public static List<Card> deck1=new List<Card>();
+    public static List<Card> deck2=new List<Card>();
 
 
     public static void Initialize(){
@@ -58,7 +58,7 @@ public static class Database
     }
 
     public static Card Search(int id)
-    {
+        {
         var a =storage;
         var b =deck1;
         var c =deck2;
