@@ -7,6 +7,10 @@ public class LeaderCard: MonoBehaviour
     public bool alreadyused=false;
     public Leader leader;
 
+    public void ShowLeader(){
+        gameObject.GetComponent<Carddisplay>().displayId=leader.id;
+        gameObject.GetComponent<Carddisplay>().DisplayUpdate();
+    }
     
     public void ActivateLeaderEffect()
     {

@@ -18,6 +18,7 @@ public class ShowCard : MonoBehaviour
     public GameObject RangeRow1;
     public GameObject RangeRow2;
     public GameObject PassButton;
+    public bool show=true;
 
     public void Awake()//References to info console children
     {
@@ -38,35 +39,34 @@ public class ShowCard : MonoBehaviour
     
     public void PointerEnter()
     {
-    if(!dragandDrop.dragging&&!GlobalContext.gameMaster.dragging)    
-    {
-        //show card info in info Console while mouse is on the card
-        Card.Type? type=gameObject.GetComponent<Carddisplay>().card.type;
-        cardName.GetComponent<TextMeshProUGUI>().text="Nombre: "+ gameObject.GetComponent<Carddisplay>().card.name;
-        cardDescription.GetComponent<TextMeshProUGUI>().text="Descripción: "+ gameObject.GetComponent<Carddisplay>().card.description;
-        cardFaction.GetComponent<TextMeshProUGUI>().text="Facción: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.faction.ToString());
-        cardType.GetComponent<TextMeshProUGUI>().text="Tipo: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.type.ToString());
-        
-
-        //Different instantiation position for leaders and graveyards particular cases
-        Vector2 position;
-        
-        position=Input.mousePosition.y>PassButton.transform.position.y ? RangeRow1.transform.position : RangeRow2.transform.position;
-
-        // Instantiate the card at the determined position
-        showCard=Instantiate(gameObject, new Vector2(0,0), Quaternion.identity);
-        
-        showCard.transform.SetParent(tempCanvas.transform, false);
-        showCard.transform.position=position;
-        
-        // Adjust the scale
-        foreach(Transform child in showCard.transform)
+        if(!show) return;
+        if(!dragandDrop.dragging&&!GlobalContext.gameMaster.dragging)    
         {
-            child.localScale=new Vector3(3, 3, 3);
-        }
-    }
-    
-        
+            //show card info in info Console while mouse is on the card
+            Card.Type? type=gameObject.GetComponent<Carddisplay>().card.type;
+            cardName.GetComponent<TextMeshProUGUI>().text="Nombre: "+ gameObject.GetComponent<Carddisplay>().card.name;
+            cardDescription.GetComponent<TextMeshProUGUI>().text="Descripción: "+ gameObject.GetComponent<Carddisplay>().card.description;
+            cardFaction.GetComponent<TextMeshProUGUI>().text="Facción: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.faction.ToString());
+            cardType.GetComponent<TextMeshProUGUI>().text="Tipo: "+ SpanishTranslator(gameObject.GetComponent<Carddisplay>().card.type.ToString());
+            
+
+            //Different instantiation position for leaders and graveyards particular cases
+            Vector2 position;
+            
+            position=Input.mousePosition.y>PassButton.transform.position.y ? RangeRow1.transform.position : RangeRow2.transform.position;
+
+            // Instantiate the card at the determined position
+            showCard=Instantiate(gameObject, new Vector2(0,0), Quaternion.identity);
+            
+            showCard.transform.SetParent(tempCanvas.transform, false);
+            showCard.transform.position=position;
+            
+            // Adjust the scale
+            foreach(Transform child in showCard.transform)
+            {
+                child.localScale=new Vector3(3, 3, 3);
+            }
+        }        
     }
     public void PointerExit()
     {

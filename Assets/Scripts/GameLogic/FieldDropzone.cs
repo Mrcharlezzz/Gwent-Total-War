@@ -14,6 +14,12 @@ public class FieldDropZone : DropZone{
         children = new Dictionary<Card, GameObject>();
     }
 
+    public override void ZoneClear(){
+        base.ZoneClear();
+        weatheraffected=false;
+        boostaffected=false;
+    }
+
     public void Modify()
     {
         if (boostaffected){

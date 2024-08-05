@@ -975,6 +975,9 @@ MonoBehaviour:
   cardDescription: {fileID: 0}
   cardFaction: {fileID: 0}
   cardType: {fileID: 0}
+  RangeRow1: {fileID: 0}
+  RangeRow2: {fileID: 0}
+  PassButton: {fileID: 0}
 --- !u!114 &5244831887435599107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,7 +994,6 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   dropZone: {fileID: 0}
   alreadyplayed: 0
-  player: {fileID: 0}
 --- !u!114 &9030520831965523005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1004,27 +1006,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0cd34e829f6a04981239665497e425, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 0}
   displayId: 0
-  id: 0
-  cardname: 
-  image: {fileID: 0}
-  type: 0
-  effect: 0
-  faction: 0
-  carddescription: 
-  basepower: 0
-  power: 0
-  position: 0
-  effectposition: 0
   update: 0
-  averaged: 0
   player1: 0
-  initialdisplay: 0
+  averaged: 0
   CardImage: {fileID: 8212527172396860814}
   posText: {fileID: 9115360850638722919}
   powerText: {fileID: 8706961009465892002}
   powerborder: {fileID: 5174761619671674795}
+  posborder: {fileID: 2018859190792556462}
 --- !u!114 &576462809804299976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1093,4 +1083,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8349d46ff7d95ae47b1637c2eea17ed8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMaster: {fileID: 0}

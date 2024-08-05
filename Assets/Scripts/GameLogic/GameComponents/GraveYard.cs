@@ -20,11 +20,13 @@ public class GraveYard : GameComponent
     void Show(){
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
         gameObject.transform.GetChild(1).gameObject.SetActive(true);
+        gameObject.GetComponent<ShowCard>().show=true;
     }
 
     void Hide(){
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
         gameObject.transform.GetChild(1).gameObject.SetActive(false);
+        gameObject.GetComponent<ShowCard>().show=false;
     }
 
     public override void Push(Card card)

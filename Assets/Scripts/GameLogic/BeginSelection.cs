@@ -6,6 +6,7 @@ public class BeginSelection : MonoBehaviour
 {
     public void Substitution()
     {
+        GlobalContext.gameMaster.dragging=false;
         Destroy(gameObject.GetComponent<ShowCard>().showCard);
         if(GlobalContext.gameMaster.selectionCount<2) 
         {    

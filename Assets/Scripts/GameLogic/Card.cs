@@ -52,6 +52,7 @@ public abstract class Card
                 break;
             }
         }
+        if(this is Clear) validPosition=true;
         foreach (Position pos in positions)
         {
             if (pos == zone.position)
@@ -119,7 +120,6 @@ public class Unit : FieldCard {
         DropZone zone = dropzone.GetComponent<DropZone>();
         if (Playable(triggerplayer, dropzone))
         {
-            body.GetComponent<DragandDrop>().alreadyplayed = true;
             Debug.Log("Played succesfully");
 
             triggerplayer.hand.Remove(this);
@@ -127,6 +127,7 @@ public class Unit : FieldCard {
 
             GlobalContext.gameMaster.ModifyZones();
             GlobalContext.gameMaster.globalModified=true;
+            ActivateEffect(GlobalContext.gameMaster.currentplayer);
             GlobalContext.gameMaster.NextTurn();
         }
         else
@@ -154,14 +155,15 @@ public class Decoy : FieldCard
 
             CardPowerImageColorchange(card2.transform, Color.white);
 
+            triggerplayer.hand.Remove(this);
             triggerplayer.hand.Push(card2display.card);
             triggerplayer.field.Remove(card2display.card);
-
             triggerplayer.field.Push(this, parent.GetComponent<FieldDropZone>());
 
             body.GetComponent<DragandDrop>().alreadyplayed = true;
-            GlobalContext.gameMaster.globalModified = true;
             GlobalContext.gameMaster.ModifyZones();
+            GlobalContext.gameMaster.globalModified = true;
+            ActivateEffect(GlobalContext.gameMaster.currentplayer);
             GlobalContext.gameMaster.NextTurn();
         }
         else
@@ -207,10 +209,12 @@ public class Weather : Card
         zone.cardlist.Add(this);
 
         body.transform.SetParent(zone.gameObject.transform, false);
-        GlobalContext.gameMaster.NextTurn();
 
         GlobalContext.gameMaster.ModifyZones();
         GlobalContext.gameMaster.globalModified = true;
+
+        ActivateEffect(GlobalContext.gameMaster.currentplayer);
+        GlobalContext.gameMaster.NextTurn();
     }
 }
 [Serializable]
@@ -234,14 +238,17 @@ public class Boost : Card
         body.GetComponent<DragandDrop>().alreadyplayed = true;
         Debug.Log("Played succesfully");
 
-        triggerplayer.hand.Remove(this);
+        triggerplayer.hand.cards.Remove(this);
+        triggerplayer.hand.bodies.Remove(this);
         zone.cardlist.Add(this);
 
         body.transform.SetParent(zone.gameObject.transform, false);
-        GlobalContext.gameMaster.NextTurn();
 
         GlobalContext.gameMaster.ModifyZones();
         GlobalContext.gameMaster.globalModified = true;
+
+        ActivateEffect(GlobalContext.gameMaster.currentplayer);
+        GlobalContext.gameMaster.NextTurn();
     }
 }
 [Serializable]
@@ -281,6 +288,8 @@ public class Clear : Card
 
         GlobalContext.gameMaster.ModifyZones();
         GlobalContext.gameMaster.globalModified=true;
+
+        ActivateEffect(GlobalContext.gameMaster.currentplayer);
         GlobalContext.gameMaster.NextTurn();
     }
 }

@@ -19,6 +19,7 @@ public class Carddisplay : MonoBehaviour
     public TextMeshProUGUI posText;
     public TextMeshProUGUI powerText;
     public GameObject powerborder;
+    public GameObject posborder;
 
     
     // Start is called before the first frame update
@@ -48,6 +49,9 @@ public class Carddisplay : MonoBehaviour
         else{
             powerText.text="";
             powerborder.SetActive(false);
+        }
+        if(card is Clear|| card is Decoy|| card is Leader){
+            posborder.SetActive(false);
         }
 
         posText.text=PositionString(card.positions);

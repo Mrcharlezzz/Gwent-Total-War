@@ -15,7 +15,7 @@ public class DropZone : MonoBehaviour
     void Awake(){
         cardlist=new List<Card>();
     }
-    public void ZoneClear()
+    public virtual void ZoneClear()
     {
         cardlist.Clear();
         if (gameObject.transform.childCount > 0)

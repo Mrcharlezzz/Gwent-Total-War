@@ -241,14 +241,26 @@ public class GameMaster : MonoBehaviour
 
     public void SetDecks(){
         foreach(Card card in Database.deck1){
-            player1.deck.Push(card);
+            if(card is Leader leader) player1.leaderCard.leader=leader;
+            else player1.deck.Push(card);
             card.owner=1;
         }
+        if(player1.leaderCard.leader.id==-1){
+            player1.leaderCard.leader=new Leader(Database.Count, 1, "Sin líder", "DefaultImage", Card.Type.Leader, "Facción sin líder", "Neutral", new List<Card.Position>(){}, new Onactivation(new List<EffectActivation>()));
+            Database.deck1.Add(player1.leaderCard.leader);
+        }
+        player1.leaderCard.ShowLeader();
 
         foreach (Card card in Database.deck2){
-            player2.deck.Push(card);
+            if(card is Leader leader) player2.leaderCard.leader=leader;
+            else player2.deck.Push(card);
             card.owner=2;
         }
+        if (player2.leaderCard.leader.id==-1){
+            player2.leaderCard.leader=new Leader(Database.Count, 2, "Sin líder", "DefaultImage", Card.Type.Leader, "Facción sin líder", "Neutral", new List<Card.Position>(){}, new Onactivation(new List<EffectActivation>()));
+            Database.deck2.Add(player2.leaderCard.leader);
+        }
+        player2.leaderCard.ShowLeader();
     }
 
     string SpanishTranslate(string a)

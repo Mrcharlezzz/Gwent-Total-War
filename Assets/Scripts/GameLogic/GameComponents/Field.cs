@@ -57,6 +57,7 @@ public class Field : GameComponent
         bodiesRows[body] = row;
         row.children[card] = body;
         bodies[card] = body;
+        body.GetComponent<DragandDrop>().alreadyplayed = true;
         //Add the card to the board as well and assigning the card this field
         GlobalContext.gameMaster.board.cards.Add(card);
         GlobalContext.gameMaster.board.cardField[card]=this;
