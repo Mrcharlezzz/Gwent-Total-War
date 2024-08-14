@@ -115,7 +115,7 @@ public class Equal : BinaryOperator
 
     public override object Evaluate(Context context, List<Card> targets)
     {
-        return left.Evaluate(context, targets) == right.Evaluate(context, targets);
+        return left.Evaluate(context, targets).Equals(right.Evaluate(context, targets));
     }
 }
 
@@ -361,9 +361,9 @@ public class ListFind : List
         object card = 0;
         List<Card> result = new List<Card>();
         bool usedvariable = false;
-        if (context.variables.ContainsKey(parameter.lexeme))
+        if (context.Contains(parameter))
         {
-            card = context.variables[parameter.lexeme];
+            card = context.Get(parameter);
             usedvariable = true;
         }
 
@@ -530,7 +530,7 @@ public class PowerAccess : PropertyAccess
         Card aux = (Card)card.Evaluate(context, targets);
         if (aux is FieldCard)
         {
-            return (card.Evaluate(context, targets) as FieldCard).powers[3];
+            return (card.Evaluate(context, targets) as FieldCard).powers[1];
         }
         else throw new InvalidOperationException("Card doesn't contain power field");
     }
@@ -614,7 +614,7 @@ public class TypeAccess : PropertyAccess
 [Serializable]
 public class RangeAccess : PropertyAccess
 {
-    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.Comma, TokenType.RightBracket, TokenType.RightBrace};
+    public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.RightBracket, TokenType.RightBrace};
     public RangeAccess(IExpression card, Token accessToken) : base(card, accessToken) { }
 
     public override object Evaluate(Context context, List<Card> targets)

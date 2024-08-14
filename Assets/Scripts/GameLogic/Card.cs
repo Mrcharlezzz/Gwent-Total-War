@@ -126,8 +126,10 @@ public class Unit : FieldCard {
             triggerplayer.field.Push(this, (FieldDropZone)zone);
 
             GlobalContext.gameMaster.ModifyZones();
-            GlobalContext.gameMaster.globalModified=true;
             ActivateEffect(GlobalContext.gameMaster.currentplayer);
+            GlobalContext.gameMaster.ModifyZones();
+            
+            GlobalContext.gameMaster.globalModified=true;
             GlobalContext.gameMaster.NextTurn();
         }
         else
@@ -162,8 +164,10 @@ public class Decoy : FieldCard
 
             body.GetComponent<DragandDrop>().alreadyplayed = true;
             GlobalContext.gameMaster.ModifyZones();
-            GlobalContext.gameMaster.globalModified = true;
             ActivateEffect(GlobalContext.gameMaster.currentplayer);
+            GlobalContext.gameMaster.ModifyZones();
+
+            GlobalContext.gameMaster.globalModified = true;
             GlobalContext.gameMaster.NextTurn();
         }
         else
@@ -211,9 +215,10 @@ public class Weather : Card
         body.transform.SetParent(zone.gameObject.transform, false);
 
         GlobalContext.gameMaster.ModifyZones();
-        GlobalContext.gameMaster.globalModified = true;
-
         ActivateEffect(GlobalContext.gameMaster.currentplayer);
+        GlobalContext.gameMaster.ModifyZones();
+
+        GlobalContext.gameMaster.globalModified = true;
         GlobalContext.gameMaster.NextTurn();
     }
 }
@@ -245,9 +250,10 @@ public class Boost : Card
         body.transform.SetParent(zone.gameObject.transform, false);
 
         GlobalContext.gameMaster.ModifyZones();
-        GlobalContext.gameMaster.globalModified = true;
-
         ActivateEffect(GlobalContext.gameMaster.currentplayer);
+        GlobalContext.gameMaster.ModifyZones();
+
+        GlobalContext.gameMaster.globalModified = true;
         GlobalContext.gameMaster.NextTurn();
     }
 }
@@ -287,9 +293,10 @@ public class Clear : Card
         }
 
         GlobalContext.gameMaster.ModifyZones();
-        GlobalContext.gameMaster.globalModified=true;
-
         ActivateEffect(GlobalContext.gameMaster.currentplayer);
+        GlobalContext.gameMaster.ModifyZones();
+
+        GlobalContext.gameMaster.globalModified=true;
         GlobalContext.gameMaster.NextTurn();
     }
 }

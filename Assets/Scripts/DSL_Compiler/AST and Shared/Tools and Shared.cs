@@ -68,13 +68,15 @@ public static class Tools
         }
         return result;
     }
+    
     public static Dictionary<TKey, TValue> CopyDictionary<TKey,TValue>(Dictionary<TKey, TValue> dict){
         Dictionary<TKey,TValue> copy = new Dictionary<TKey,TValue>();
-        foreach(var pair in dict){
+        if(dict != null )foreach(var pair in dict){
             copy.Add(pair.Key, pair.Value);
         }
         return copy;
     }
+    
 }
 
 // Enum representing the types of expressions that can appear in the DSL

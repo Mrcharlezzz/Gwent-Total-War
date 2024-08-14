@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -134,7 +135,7 @@ public class GameMaster : MonoBehaviour
             child.gameObject.GetComponent<DropZone>().ZoneClear();
         }
 
-        if((math.abs(player1.roundpoints-player2.roundpoints)==2))
+        if(math.abs(player1.roundpoints-player2.roundpoints)==2)
         {
             EndGame();
         }
@@ -240,6 +241,8 @@ public class GameMaster : MonoBehaviour
     }
 
     public void SetDecks(){
+        List<string> debug=Database.deck1.Concat(Database.deck2).Select(t => t.name).ToList();
+        
         foreach(Card card in Database.deck1){
             if(card is Leader leader) player1.leaderCard.leader=leader;
             else player1.deck.Push(card);

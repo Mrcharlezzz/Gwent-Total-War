@@ -129,7 +129,6 @@ public class Foreach : Block
         this.collection = collection;
         this.variable = variable;
     }
-
     public Token variable;
     public IExpression collection;
 
@@ -137,7 +136,7 @@ public class Foreach : Block
     {
         this.context = new Context(context.triggerplayer, context, new Dictionary<string, object>());
 
-        foreach (Card card in (List<Card>)collection)
+        foreach (Card card in (List<Card>)collection.Evaluate(context, targets))
         {
             this.context.Set(variable, card);
             foreach (IStatement statement in statements)

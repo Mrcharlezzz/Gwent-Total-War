@@ -341,18 +341,17 @@ public class SemanticCheck
 
     public void CheckForEach(Foreach loop, Scope scope)
     {
-        Scope newScope = new Scope(scope);
         if (scope.types.ContainsKey(loop.variable.lexeme))
             SemanticError(loop.variable, "Loop variable was already declared in the scope");
         CheckExpression(loop.collection, scope);
         if (expressiontypes[loop.collection] == ExpressionType.List || expressiontypes[loop.collection] == ExpressionType.Targets)
-            newScope.Set(loop.variable, ExpressionType.Card);
+            scope.Set(loop.variable, ExpressionType.Card);
         else if (expressiontypes[loop.collection] == ExpressionType.RangeList)
-            newScope.Set(loop.variable, ExpressionType.String);
+            scope.Set(loop.variable, ExpressionType.String);
         else SemanticError(loop.keyword, "Invalid collection, expected card range or card list");
         foreach (IStatement statement in loop.statements)
         {
-            if (statement is Foreach || statement is While) CheckStatement(statement, newScope);
+            if (statement is Foreach || statement is While) CheckStatement(statement, new Scope(scope));
             else CheckStatement(statement, scope);
         }
     }
@@ -544,15 +543,17 @@ public class Scope
     // Sets a variable's type in the scope
     public void Set(Token key, ExpressionType type)
     {
-        key.literal = type;
-        if (types.ContainsKey(key.lexeme) && types[key.lexeme] != type) SemanticCheck.SemanticError(key, "Assignation type differs from variable type");
-        if (enclosing != null && enclosing.types.ContainsKey(key.lexeme))
+        if (enclosing != null && enclosing.Contains(key))
         {
-            if (enclosing.types[key.lexeme] != type) SemanticCheck.SemanticError(key, "Assignation type differs from variable type");
-            else enclosing.types[key.lexeme] = type;
+            enclosing.Set(key,type);
             return;
         }
         types[key.lexeme] = type;
+    }
+    public bool Contains(Token key){
+        if(types.ContainsKey(key.lexeme))return true;
+        if(enclosing != null) return enclosing.Contains(key);
+        else return false;
     }
 }
 

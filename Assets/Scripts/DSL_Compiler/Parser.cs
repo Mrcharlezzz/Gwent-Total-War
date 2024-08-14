@@ -117,7 +117,8 @@ public class Parser
         {
             if (Check(synchroTypes)) return;
             Advance();
-            if (synchroTypes.Equals(Block.synchroTypes) && Previous().type == TokenType.Semicolon) return;
+            if (synchroTypes == Block.synchroTypes && Previous().type == TokenType.Semicolon) return;
+            if (synchroTypes == RangeAccess.synchrotypes && Previous().type == TokenType.Comma) return;
         }
     }
 

@@ -68,8 +68,10 @@ public class EffectActivation : IASTNode
                 case "field": selector.filtre.list = new FieldList(null,new Literal(triggerplayer), null, null); break;
                 case "otherField": selector.filtre.list = new FieldList(null,new Literal(triggerplayer.Other()), null, null); break;
             }
-            if (postAction.selector == null) postAction.selector = selector;
-            else if ((string)postAction.selector.source.literal == "parent") postAction.selector.filtre.list = selector.filtre;
+            if(postAction != null){
+                if (postAction.selector == null) postAction.selector = selector;
+                else if ((string)postAction.selector.source.literal == "parent") postAction.selector.filtre.list = selector.filtre;
+            }
             var temp = selector.Select(triggerplayer);
             if ((bool)selector.single && temp.Count > 0)
             {
@@ -80,7 +82,7 @@ public class EffectActivation : IASTNode
         }
         else GlobalEffects.effects[effect.definition].action.targets=new List<Card>();
         effect.Execute(triggerplayer);
-        postAction.Execute(triggerplayer);
+        if(postAction !=null )postAction.Execute(triggerplayer);
     }
 }
 
@@ -123,7 +125,9 @@ public class Effect : IASTNode
 
     public void Execute(Player triggerplayer)
     {
-        Dictionary<string, object> copy = Tools.CopyDictionary(parameters.parameters);
+        Dictionary<string, object> copy;
+        if(parameters is null) copy = new Dictionary<string, object>();
+        else copy = Tools.CopyDictionary<string,object>(parameters.parameters);
         Context rootContext = new Context(triggerplayer, null, copy);
         GlobalEffects.effects[definition].action.context = new Context(triggerplayer, rootContext, new Dictionary<string, object>());
         GlobalEffects.effects[definition].Execute();
@@ -151,7 +155,7 @@ public class Selector : IASTNode
 
     public List<Card> Select(Player triggerplayer)
     {
-        return (List<Card>)filtre.Evaluate(new Context(), new List<Card>());
+        return (List<Card>)filtre.Evaluate(new Context(triggerplayer), new List<Card>());
     }
 }
 
@@ -169,7 +173,10 @@ public class ProgramNode : IASTNode
 [Serializable]
 public class Context : IASTNode
 {
-    public Context() { }
+    public Context(Player triggerplayer) {
+        this.triggerplayer = triggerplayer;
+        variables = new Dictionary<string, object>();
+    }
 
     public Context(Player triggerplayer, Context enclosing, Dictionary<string, object> variables)
     {
@@ -196,16 +203,16 @@ public class Context : IASTNode
     // Sets a variable's value in the context
     public void Set(Token key, object value)
     {
-        if (variables.ContainsKey(key.lexeme))
+        if (enclosing != null && enclosing.Contains(key))
         {
-            variables[key.lexeme] = value;
-            return;
-        }
-        if (enclosing.variables.ContainsKey(key.lexeme))
-        {
-            enclosing.variables[key.lexeme] = value;
+            enclosing.Set(key,value);
             return;
         }
         variables[key.lexeme] = value;
+    }
+    public bool Contains(Token key){
+        if(variables.ContainsKey(key.lexeme))return true;
+        if(enclosing != null) return enclosing.Contains(key);
+        else return false;
     }
 }
