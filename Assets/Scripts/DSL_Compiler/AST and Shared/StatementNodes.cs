@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,10 +13,10 @@ public interface IStatement : IASTNode
 
 // Abstract class for blocks of statements
 
-[Serializable]
+
 public abstract class Block : IStatement
 {
-    public readonly static List<TokenType> synchroTypes = new List<TokenType>() {TokenType.For, TokenType.While, TokenType.RightBrace};
+    public readonly static List<TokenType> synchroTypes = new List<TokenType>() { TokenType.For, TokenType.While, TokenType.RightBrace };
     public Block(List<IStatement> statements, Token keyword)
     {
         this.statements = statements;
@@ -28,7 +29,7 @@ public abstract class Block : IStatement
 }
 
 // Action block
-[Serializable]
+
 public class Action : Block
 {
     public Action(List<IStatement> statements, Token contextID, Token targetsID, Token keyword) : base(statements, keyword)
@@ -53,7 +54,7 @@ public class Action : Block
 }
 
 // Assignment statement
-[Serializable]
+
 public class Assignation : IStatement
 {
     public Assignation(IExpression operand, IExpression assignation, Token operation)
@@ -70,17 +71,17 @@ public class Assignation : IStatement
     public virtual void Execute(Context context, List<Card> targets)
     {
         if (operand is ICardAtom) (operand as ICardAtom).Set(context, targets, assignation.Evaluate(context, targets) as Card);
-        else if (operand is PropertyAccess) (operand as PropertyAccess).Set(context, targets, assignation.Evaluate(context,targets));
+        else if (operand is PropertyAccess) (operand as PropertyAccess).Set(context, targets, assignation.Evaluate(context, targets));
         else if (operand is Variable) context.Set((operand as Variable).name, assignation.Evaluate(context, targets));
     }
 }
 
 // Increment and decrement operations
-[Serializable]
+
 public class Increment_Decrement : Assignation, IExpression
 {
-    public Increment_Decrement(IExpression operand, Token operation) : base(operand, null, operation){}
-    
+    public Increment_Decrement(IExpression operand, Token operation) : base(operand, null, operation) { }
+
     public object Evaluate(Context context, List<Card> targets)
     {
         int result = (int)operand.Evaluate(context, targets);
@@ -99,10 +100,10 @@ public class Increment_Decrement : Assignation, IExpression
 }
 
 // Numeric modification operations (e.g., +=, -=, etc.)
-[Serializable]
+
 public class NumericModification : Assignation
 {
-    public NumericModification(IExpression operand, IExpression assignation, Token operation) : base(operand, assignation ,operation){}
+    public NumericModification(IExpression operand, IExpression assignation, Token operation) : base(operand, assignation, operation) { }
 
     public override void Execute(Context context, List<Card> targets)
     {
@@ -121,7 +122,7 @@ public class NumericModification : Assignation
 }
 
 // Foreach loop statement
-[Serializable]
+
 public class Foreach : Block
 {
     public Foreach(List<IStatement> statements, IExpression collection, Token variable, Token keyword) : base(statements, keyword)
@@ -136,7 +137,10 @@ public class Foreach : Block
     {
         this.context = new Context(context.triggerplayer, context, new Dictionary<string, object>());
 
-        foreach (Card card in (List<Card>)collection.Evaluate(context, targets))
+        var evaluation = collection.Evaluate(context, targets);
+        if (evaluation is GameComponent component) evaluation = component.cards;
+
+        foreach (Card card in (List<Card>)evaluation)
         {
             this.context.Set(variable, card);
             foreach (IStatement statement in statements)
@@ -148,7 +152,7 @@ public class Foreach : Block
 }
 
 // While loop statement
-[Serializable]
+
 public class While : Block
 {
     public While(List<IStatement> statements, IExpression predicate, Token keyword) : base(statements, keyword)
@@ -161,8 +165,14 @@ public class While : Block
     public override void Execute(Context context, List<Card> targets)
     {
         this.context = new Context(context.triggerplayer, context, new Dictionary<string, object>());
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         while ((bool)predicate.Evaluate(context, targets))
         {
+            if (stopwatch.ElapsedMilliseconds >= 5000) // Check if 5 seconds have passed
+            {
+                throw new TimeoutException("Potential infinite loop detected.");
+            }
             foreach (IStatement statement in statements)
             {
                 statement.Execute(this.context, targets);
@@ -172,7 +182,7 @@ public class While : Block
 }
 
 // Abstract class for list methods
-[Serializable]
+
 public abstract class Method : IStatement
 {
     public Method(IExpression list, Token accessToken)
@@ -187,87 +197,121 @@ public abstract class Method : IStatement
 }
 
 // Pop operation on lists
-[Serializable]
+
 public class Pop : Method, ICardAtom
 {
-    public Pop(IExpression list, Token accessToken) : base(list, accessToken) {}
+    public Pop(IExpression list, Token accessToken) : base(list, accessToken) { }
 
     public object Evaluate(Context context, List<Card> targets)
     {
-        List<Card> evaluation = list.Evaluate(context, targets) as List<Card>;
-        if (evaluation.Count == 0) throw new Exception("Cannot Apply Pop method to empty list");
-        Card result = evaluation[evaluation.Count - 1];
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) evaluation = component.cards;
+        List<Card> safeList = (List<Card>)evaluation;
+
+        if (safeList.Count == 0) throw new InvalidOperationException("Cannot Apply Pop method to empty list");
+        Card result = safeList[safeList.Count - 1];
         Execute(context, targets);
         return result;
     }
 
     public override void Execute(Context context, List<Card> targets)
     {
-        list.Evaluate(context, targets);
-        (list as List).gameComponent.Pop();
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) component.Pop();
+        else
+        {
+            List<Card> safeList = (List<Card>)evaluation;
+            if (safeList.Count == 0) throw new InvalidOperationException("Cannot Apply Pop method to empty list");
+            safeList.RemoveAt(safeList.Count - 1);
+        }
     }
 
-    public void Set(Context context, List<Card> targets, Card card) {}
+    public void Set(Context context, List<Card> targets, Card card) { }
 }
 
 // Shuffle method (shuffles the list of cards)
-[Serializable]
+
 public class Shuffle : Method
 {
-    public Shuffle(IExpression list, Token accessToken) : base(list,accessToken) {}
+    public Shuffle(IExpression list, Token accessToken) : base(list, accessToken) { }
 
     public override void Execute(Context context, List<Card> targets)
     {
-        list.Evaluate(context, targets);
-        (list as List).gameComponent.Shuffle();
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) component.Shuffle();
+        else
+        {
+            List<Card> safeList = (List<Card>)evaluation;
+            for (int i = safeList.Count - 1; i > 0; i--)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, i + 1);
+                Card container = safeList[i];
+                safeList[i] = safeList[randomIndex];
+                safeList[randomIndex] = container;
+            }
+        }
     }
 }
 
-[Serializable]
-public abstract class ArgumentMethod: Method{
-    public ArgumentMethod(IExpression list,IExpression card, Token accessToken) : base(list,accessToken){
+
+public abstract class ArgumentMethod : Method
+{
+    public ArgumentMethod(IExpression list, IExpression card, Token accessToken) : base(list, accessToken)
+    {
         this.card = card;
     }
     public IExpression card;
 }
 
 // Push method (adds card to list)
-[Serializable]
+
 public class Push : ArgumentMethod
 {
-    public Push(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
+    public Push(IExpression list, IExpression card, Token accessToken) : base(list, card, accessToken) { }
 
     public override void Execute(Context context, List<Card> targets)
     {
-        list.Evaluate(context, targets);
-        (list as List).gameComponent.Push((Card)card.Evaluate(context, targets));
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) component.Push((Card)card.Evaluate(context, targets));
+        else{
+            List<Card> safeList = (List<Card>)evaluation;
+            safeList.Add((Card)card.Evaluate(context, targets));
+        }
     }
 }
 
 // SendBottom method (adds card to the bottom of the list)
-[Serializable]
+
 public class SendBottom : ArgumentMethod
 {
-    public SendBottom(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
+    public SendBottom(IExpression list, IExpression card, Token accessToken) : base(list, card, accessToken) { }
 
 
     public override void Execute(Context context, List<Card> targets)
     {
-        list.Evaluate(context, targets);
-        (list as List).gameComponent.SendBottom((Card)card.Evaluate(context, targets));
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) component.SendBottom((Card)card.Evaluate(context, targets));
+        else{
+            List<Card> safeList = (List<Card>)evaluation;
+            safeList.Insert(0,(Card)card.Evaluate(context, targets));
+        }
     }
 }
 
 // Remove method (removes card from list)
-[Serializable]
+
 public class Remove : ArgumentMethod
 {
-    public Remove(IExpression list, IExpression card, Token accessToken) : base(list,card,accessToken){}
+    public Remove(IExpression list, IExpression card, Token accessToken) : base(list, card, accessToken) { }
 
 
     public override void Execute(Context context, List<Card> targets)
     {
-        list.Evaluate(context, targets);
-        (list as List).gameComponent.Remove((Card)card.Evaluate(context, targets));
+        var evaluation = list.Evaluate(context, targets);
+        if (evaluation is GameComponent component) component.Remove((Card)card.Evaluate(context, targets));
+        else{
+            List<Card> safeList = (List<Card>) evaluation;
+            safeList.Remove((Card)card.Evaluate(context,targets));
+        }
     }
 }

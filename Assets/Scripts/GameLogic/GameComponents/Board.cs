@@ -22,13 +22,16 @@ public class Board: GameComponent{
     public override Card Pop(){
         Card removed = cards[Size - 1];
         cards.RemoveAt(Size - 1);
-        return cardField[removed].Pop();
+        Card result=cardField[removed].Pop();
+        cardField.Remove(removed);
+        return result;
     }
 
     public override void Remove(Card card)
     {
         cards.Remove(card);
         cardField[card].Remove(card);
+        cardField.Remove(card);
     }
 
     public override void SendBottom(Card card)

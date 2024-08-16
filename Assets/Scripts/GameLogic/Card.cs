@@ -36,7 +36,13 @@ public abstract class Card
 
     public void ActivateEffect(Player triggerplayer)
     {
-        activation.Execute(triggerplayer);
+        try{
+            activation.Execute(triggerplayer);
+        }
+        catch{
+            GlobalContext.gameMaster.invalidEffectSign.SetActive(true);
+            return;
+        }
     }
 
     protected bool Playable(Player triggerplayer,  GameObject dropzone){

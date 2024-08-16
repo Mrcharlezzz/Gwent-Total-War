@@ -8,6 +8,7 @@ using System.Linq;
 
 public static class DSL
 {
+    public static TMP_InputField outputField;
     static bool hadError = false;
     public static int destinyDeck = 0;
 
@@ -17,7 +18,8 @@ public static class DSL
 
     public static void Report(int line, int column, string where, string message)
     {
-        Debug.LogError($"[Ln {line+1}, Col {column}] {where} Error: " + message);
+        Debug.LogError($"[Ln {line}, Col {column}] {where} Error: " + message);
+        outputField.text+=$"[Ln {line}, Col {column}] {where} Error: " + message+'\n';
         hadError = true;
     }
     public static void Error(Token token, string message)
@@ -28,12 +30,14 @@ public static class DSL
 
     public static void CancelCompilation(){
         Debug.Log("Invalid code\n");
+        outputField.text+= "Invalid code\n";
         return;
     }
 
     public static void Compile(string source)
     {
         hadError=false;
+        outputField.text= "";
 
         if(source==""){
             Debug.LogError("Empty source");
@@ -64,6 +68,7 @@ public static class DSL
         }
 
         Debug.Log("Successfull Compilation");
+        outputField.text+="Successfull Compilation\n";
 
         foreach(var effect in nodes.nodes.Where(n => n is EffectDefinition).Select(n => (EffectDefinition)n)) {
             

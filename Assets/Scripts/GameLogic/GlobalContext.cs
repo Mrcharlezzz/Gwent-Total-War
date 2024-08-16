@@ -6,21 +6,21 @@ public static class GlobalContext
 {
     public static GameMaster gameMaster;
     public static GameComponent Board{get => gameMaster.board;}   
-    public static GameComponent Hand(Player player)
+    public static GameComponent Hand(int player)
     {
-        return player.hand;
+        return GetPlayer(player).hand;
     }
-    public static GameComponent Deck(Player player)
+    public static GameComponent Deck(int player)
     {
-        return player.deck;
+        return GetPlayer(player).deck;
     }
-    public static GameComponent Field(Player player)
+    public static GameComponent Field(int player)
     {
-        return player.field;
+        return GetPlayer(player).field;
     }
-    public static GameComponent Graveyard(Player player)
+    public static GameComponent Graveyard(int player)
     {
-        return player.graveyard;
+        return GetPlayer(player).graveyard;
     }
 
     public static Player GetPlayer(int n){

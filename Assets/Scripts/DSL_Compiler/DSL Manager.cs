@@ -7,6 +7,11 @@ public class DSLManager : MonoBehaviour
 {
     public TextMeshProUGUI SelectionText;
     public TextMeshProUGUI source;
+    public TMP_InputField outputField;
+
+    void Start(){
+        DSL.outputField= outputField;
+    }
     
     public void CreateCard(){
         string aux=source.text.Substring(0,source.text.Length-1);

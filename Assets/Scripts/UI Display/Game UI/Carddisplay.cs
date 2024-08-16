@@ -67,9 +67,9 @@ public class Carddisplay : MonoBehaviour
             }
         }
         string result="";
-        if(melee) result+="Melee ";
-        if(ranged) result+=", Ranged ";
-        if(siege) result+=" Siege";
+        if(melee) result+="M";
+        if(ranged) result+="R";
+        if(siege) result+="S";
         return result;
     }
     

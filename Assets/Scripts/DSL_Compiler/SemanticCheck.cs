@@ -112,6 +112,12 @@ public class SemanticCheck
                 SemanticError(indlist.playertoken, "Individual list argument must be a player");
             return;
         }
+        if(list is BoardList boardlist){
+            CheckExpression(boardlist.context,scope);
+            if (expressiontypes[boardlist.context] != ExpressionType.Context)
+                SemanticError(boardlist.accessToken, "Invalid board list, must be called by context");
+            return;
+        }
         if (list is ListFind find)
         {
             scope.Set(find.parameter, ExpressionType.Card);
@@ -329,8 +335,8 @@ public class SemanticCheck
     public void CheckMethod(Method method, Scope scope)
     {
         CheckExpression(method.list, scope);
-        if (!(method.list is IndividualList || method.list is BoardList))
-            SemanticError(method.accessToken, "Method must be called by a Context List (Hand, Deck, Field, Graveyard, Board)");
+        if (expressiontypes[method.list] != ExpressionType.List && expressiontypes[method.list] != ExpressionType.Targets)
+            SemanticError(method.accessToken, "Method must be called by a List");
         if (method is ArgumentMethod argMethod)
         {
             CheckExpression(argMethod.card, scope);
@@ -401,28 +407,28 @@ public class SemanticCheck
         {
             case Card.Type.Boost:
                 if (card.power != null) SemanticError(card.keyword, "Invalid card, boost card cannot have power field");
-                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, boost card position field cannot be empty");
+                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, boost card range field cannot be empty");
                 break;
             case Card.Type.Clear:
                 if (card.power != null) SemanticError(card.keyword, "Invalid card, clear card cannot have power field");
-                if (card.position.Count != 0) SemanticError(card.keyword, "Invalid card, clear card position field must be empty");
+                if (card.position.Count != 0) SemanticError(card.keyword, "Invalid card, clear card range field must be empty");
                 break;
             case Card.Type.Decoy:
                 if (card.power != 0) SemanticError(card.keyword, "Invalid card, decoy must have 0 power");
-                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, boost card position field cannot be empty");
+                if (card.position.Count > 0) SemanticError(card.keyword, "Invalid card, decoy range field must be empty");
                 break;
             case Card.Type.Golden:
             case Card.Type.Silver:
                 if (card.power == null) SemanticError(card.keyword, "Invalid card, unit card must have power field");
-                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, unit card position field cannot be empty");
+                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, unit card range field cannot be empty");
                 break;
             case Card.Type.Leader:
                 if (card.power != null) SemanticError(card.keyword, "Invalid card, leader card cannot have power field");
-                if (card.position.Count != 0) SemanticError(card.keyword, "Invalid card, leader card position field must be empty");
+                if (card.position.Count != 0) SemanticError(card.keyword, "Invalid card, leader card range field must be empty");
                 break;
             case Card.Type.Weather:
                 if (card.power != null) SemanticError(card.keyword, "Invalid card, weather card cannot have power field");
-                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, weather card position field cannot be empty");
+                if (card.position.Count == 0) SemanticError(card.keyword, "Invalid card, weather card range field cannot be empty");
                 break;
         }
         foreach (EffectActivation activation in card.activation.activations)
@@ -556,13 +562,6 @@ public class Scope
         else return false;
     }
 }
-
-
-// Pending implementation notes
-///////-PENDIENTE MANEJAR QUE NO SE PARSEE +-
-///////-MANEJAR DUPLICADO DE ERRORES EN EL ERROR DE ADD DEL PARSER
-///////-MEJORAR METODOS QUE BRUTAMENTE OPERAN SOBRE LOS GAMECOMPONENT (ZONECLEAR, METODOS PLAY DE CARD)
-
 
 
 

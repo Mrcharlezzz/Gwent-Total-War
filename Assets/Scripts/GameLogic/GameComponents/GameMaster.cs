@@ -23,6 +23,7 @@ public class GameMaster : MonoBehaviour
     private bool playerpassed=false;
     public GameObject turnUI;
     public GameObject message;
+    public GameObject invalidEffectSign;
     public GameObject WeatherSlots;
     public GameObject cardPrefab;
     public Button pass;

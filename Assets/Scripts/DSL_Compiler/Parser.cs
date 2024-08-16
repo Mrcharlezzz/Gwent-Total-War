@@ -308,15 +308,15 @@ public class Parser
                 TokenType.Hand, TokenType.Deck,
                 TokenType.Graveyard, TokenType.Field,
             };
-            if (Match(types))
+            if (Check(types))
             {
                 types = new List<TokenType>(){
                     TokenType.HandOfPlayer, TokenType.DeckOfPlayer,
                     TokenType.GraveyardOfPlayer, TokenType.FieldOfPlayer,
                 };
                 //store list token
-                Token aux = Previous();
-                if (Check(types))
+                Token aux = Peek();
+                if (Match(types))
                 {
 
                     Token player = Consume(TokenType.LeftParen, "Expected Player Argument", Atom.synchrotypes);
@@ -337,6 +337,7 @@ public class Parser
                 }
                 else
                 {
+                    Advance();
                     //Syntax sugar for player lists
                     switch (aux.type)
                     {
@@ -435,7 +436,10 @@ public class Parser
     //Parses a statement
     public IStatement Statement()
     {
+        
+
         Token statementHead=Peek();
+        
         //This token is for checking if Consume method had a non-null return, in order
         //to check if an error was found to reset the parser to a good state
         Token check;

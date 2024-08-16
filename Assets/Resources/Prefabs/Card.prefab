@@ -509,7 +509,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -1.409729, y: 0, z: 0, w: -0.7582245}
+  m_margin: {x: -11.283447, y: 0, z: -9.458923, w: -0.7582245}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -978,6 +978,7 @@ MonoBehaviour:
   RangeRow1: {fileID: 0}
   RangeRow2: {fileID: 0}
   PassButton: {fileID: 0}
+  show: 1
 --- !u!114 &5244831887435599107
 MonoBehaviour:
   m_ObjectHideFlags: 0
