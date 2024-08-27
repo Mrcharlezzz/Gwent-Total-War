@@ -16,24 +16,39 @@ public static class DSL
         destinyDeck = (destinyDeck + 1) % 2;
     }
 
+    /// <summary>
+    /// Prints the error in the console
+    /// </summary>
+    /// <param name="line"> error line</param>
+    /// <param name="column">error column</param>
+    /// <param name="where"> error token</param>
+    /// <param name="message"> error message</param>
     public static void Report(int line, int column, string where, string message)
     {
         Debug.LogError($"[Ln {line}, Col {column}] {where} Error: " + message);
         outputField.text+=$"[Ln {line}, Col {column}] {where} Error: " + message+'\n';
         hadError = true;
     }
+
     public static void Error(Token token, string message)
     {
         if (token.type == TokenType.EOF) Report(token.line, token.column, "at end", message);
         else Report(token.line, token.column, $"at'{token.lexeme}'", message);
     }
 
+    /// <summary>
+    /// Informs that compilation ended and the given code is invalid
+    /// </summary>
     public static void CancelCompilation(){
         Debug.Log("Invalid code\n");
         outputField.text+= "Invalid code\n";
         return;
     }
 
+    /// <summary>
+    /// Compile user code
+    /// </summary>
+    /// <param name="source"> source code</param>
     public static void Compile(string source)
     {
         hadError=false;

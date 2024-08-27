@@ -12,7 +12,9 @@ using System;
 public class Lexer
 {
     string source;
-    // Reserved words
+    /// <summary>
+    /// Reserved words
+    /// </summary>
     private static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType> {
         {"card", TokenType.Card},
         {"effect", TokenType.effect},
@@ -63,13 +65,15 @@ public class Lexer
     int line = 1;
     int column = 1;
 
-    // Constructor that initializes the source code to be tokenized
     public Lexer(string source)
     {
         this.source = source;
     }
 
-    // Main method to scan and generate tokens from the source code
+    /// <summary>
+    /// Main method to scan and generate tokens from the source code
+    /// </summary>
+    /// <returns></returns>
     public List<Token> ScanTokens()
     {
         while (!IsAtEnd())
@@ -81,13 +85,18 @@ public class Lexer
         return tokens;
     }
 
-    // Checks if the lexer has reached the end of the source code
+    /// <summary>
+    /// Checks if the lexer has reached the end of the source code
+    /// </summary>
+    /// <returns></returns>
     public bool IsAtEnd()
     {
         return current >= source.Length;
     }
 
-    // Scans the next token from the source code
+    /// <summary>
+    /// Scans the next token from the source code
+    /// </summary>
     void ScanToken()
     {
         char c = Advance();
@@ -182,20 +191,29 @@ public class Lexer
         return source[current - 1];
     }
 
-    // Adds a token without a literal value
+    /// <summary>
+    /// Adds a token without a literal value
+    /// </summary>
+    /// <param name="type"></param>
     void AddToken(TokenType type)
     {
         AddToken(type, null);
     }
 
-    // Adds a token with a literal value
+    /// <summary>
+    /// Adds a token with a literal value
+    /// </summary>
     void AddToken(TokenType type, object literal)
     {
         string lexeme = source.Substring(start, current - start);
         tokens.Add(new Token(type, lexeme, literal, line, column - lexeme.Length));
     }
 
-    // Matches the current character with the expected one and advances if they match
+    /// <summary>
+    /// Matches the current character with the expected one and advances if they match
+    /// </summary>
+    /// <param name="expected">expected character</param>
+    /// <returns></returns>
     bool Match(char expected)
     {
         if (IsAtEnd()) return false;
@@ -204,14 +222,18 @@ public class Lexer
         return true;
     }
 
-    // Peeks at the current character without consuming it
+    /// <summary>
+    /// Peeks at the current character without consuming it
+    /// </summary>
     char Peek()
     {
         if (IsAtEnd()) return '\0';
         return source[current];
     }
 
-    // Reads a string literal from the source code
+    /// <summary>
+    /// Reads a string literal from the source code
+    /// </summary>
     private void String()
     {
         // Read the string until it reaches the string ending (") or a line change (\n)
@@ -238,7 +260,9 @@ public class Lexer
         AddToken(TokenType.StringLiteral, value);
     }
 
-    // Reads a number literal from the source code
+    /// <summary>
+    /// Reads a number literal from the source code
+    /// </summary>
     void Number()
     {
         while (IsDigit(Peek())) Advance();
@@ -247,7 +271,9 @@ public class Lexer
         AddToken(TokenType.NumberLiteral, value);
     }
 
-    // Reads an identifier from the source code
+    /// <summary>
+    /// Reads an identifier from the source code
+    /// </summary>
     void Identifier()
     {
         while (IsAlphaNumeric(Peek())) Advance();
@@ -261,32 +287,42 @@ public class Lexer
         else AddToken(TokenType.Identifier);
     }
 
-    // Checks if the character is a digit
+    /// <summary>
+    /// Checks if the character is a digit
+    /// </summary>
     bool IsDigit(char c)
     {
         return c >= '0' && c <= '9';
     }
 
-    // Checks if the character is an alphabetical character or underscore
+    /// <summary>
+    /// Checks if the character is an alphabetical character or underscore
+    /// </summary>
     bool IsAlpha(char c)
     {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
-    // Checks if the character is alphanumeric
+    /// <summary>
+    /// Checks if the character is alphanumeric
+    /// </summary>
     bool IsAlphaNumeric(char c)
     {
         return IsAlpha(c) || IsDigit(c);
     }
 
-    // Prints the list of tokens to the console
+    /// <summary>
+    /// Prints the list of tokens to the console
+    /// </summary>
     public void Print()
     {
         foreach (Token token in tokens) System.Console.WriteLine(token.ToString());
     }
 }
 
-[Serializable]
+/// <summary>
+/// Types of tokens
+/// </summary>
 public enum TokenType
 {
     // Single character tokens
@@ -331,8 +367,9 @@ public enum TokenType
     EOF
 }
 
-[Serializable]
-
+/// <summary>
+/// represents a word in the DSL
+/// </summary>
 public class Token
 {
     public TokenType type;
@@ -341,7 +378,6 @@ public class Token
     public int line;
     public int column;
 
-    // Constructor to initialize a token
     public Token(TokenType type, string lexeme, object literal, int line, int column)
     {
         this.type = type;
@@ -351,7 +387,9 @@ public class Token
         this.column = column;
     }
 
-    // Overrides the ToString method to provide a string representation of the token
+    /// <summary>
+    /// Overrides the ToString method to provide a string representation of the token
+    /// </summary>
     public override string ToString()
     {
         string res = $"{type.ToString()} {lexeme}";

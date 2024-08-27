@@ -6060,7 +6060,7 @@ PrefabInstance:
       objectReference: {fileID: 1003288243}
     - target: {fileID: 576462809804299976, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Julio
+      value: ActivateLeaderEffect
       objectReference: {fileID: 0}
     - target: {fileID: 576462809804299976, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -10996,6 +10996,18 @@ PrefabInstance:
     - target: {fileID: -2812743423819890127, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: ShowCard, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 576462809804299976, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1874792260}
+    - target: {fileID: 576462809804299976, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ActivateLeaderEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 576462809804299976, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LeaderCard, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5174761619671674795, guid: e3999c0830b8edf46858c4f38fa75f8c, type: 3}
       propertyPath: m_IsActive

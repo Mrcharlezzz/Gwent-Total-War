@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-// Represents a card in the AST
 
 
+/// <summary>
+/// Represents a card in the AST
+/// </summary>
 public class CardNode : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType>() {
@@ -23,10 +25,16 @@ public class CardNode : IASTNode
     public Token keyword;
 }
 
-// Represents the onactivation field of a card
 
+/// <summary>
+/// This parameters contains the behaviour of the effects executed when a card is played
+/// </summary>
 public class Onactivation : IASTNode
 {
+    /// <summary>
+    /// This list contains the types that will stop the
+    /// synchronization of the parser when an error occurs
+    /// </summary>
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.LeftBrace, TokenType.RightBracket, TokenType.Comma};
     public Onactivation(List<EffectActivation> activations)
     {
@@ -35,6 +43,10 @@ public class Onactivation : IASTNode
 
     public List<EffectActivation> activations;
 
+    /// <summary>
+    /// Executes each effect activation in activations
+    /// </summary>
+    /// <param name="triggerplayer"> player who played the card and triggered the effect</param>
     public void Execute(Player triggerplayer)
     {
         foreach (EffectActivation activation in activations)
@@ -44,15 +56,30 @@ public class Onactivation : IASTNode
     }
 }
 
-// Represents an effect activation in the AST
+/// <summary>
+/// Represents the behaviour of one of the effects in the onactivation list
+/// </summary>
 
 public class EffectActivation : IASTNode
 {
+    /// <summary>
+    /// This list contains the types that will stop the
+    /// synchronization of the parser when an error occurs
+    /// </summary>
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Effect, TokenType.Selector, TokenType.PostAction, TokenType.RightBrace, TokenType.RightBracket};
+    
     public Effect effect;
+
+    /// <summary>
+    /// Selects the target list that will be used in the effect definition
+    /// </summary>
     public Selector selector;
     public EffectActivation postAction;
 
+    /// <summary>
+    /// Selects the target list, executes the effect definition and then executes the postAction
+    /// </summary>
+    /// <param name="triggerplayer"> player who play the card and triggered the effect</param>
     public void Execute(Player triggerplayer)
     {
         if(selector != null){
@@ -86,16 +113,29 @@ public class EffectActivation : IASTNode
     }
 }
 
-// Represents an effect definition in the AST
-
+/// <summary>
+/// Represent the behaviour of the effect after the parameters are set
+/// </summary>
 public class EffectDefinition : IASTNode
 {
+    /// <summary>
+    /// This list contains the types that will stop the
+    /// synchronization of the parser when an error occurs
+    /// </summary>
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {
         TokenType.Name, TokenType.Params,
         TokenType.Action, TokenType.RightBrace
     };
     public string name;
+
+    /// <summary>
+    /// List of defined parameters
+    /// </summary>
     public ParameterDef parameterdefs;
+
+    /// <summary>
+    /// Block ofm statements which contain the effect behaviour
+    /// </summary>
     public Action action;
     public Token keyword;
 
@@ -106,7 +146,15 @@ public class EffectDefinition : IASTNode
     }
 }
 
+/// <summary>
+/// Represent the type of each parameter
+/// </summary>
 public class ParameterDef : IASTNode{
+
+    /// <summary>
+    /// This list contains the types that will stop the
+    /// synchronization of the parser when an error occurs
+    /// </summary>
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
     public Dictionary<string, ExpressionType> parameters;
     public ParameterDef(Dictionary<string, ExpressionType> parameters){
@@ -114,10 +162,16 @@ public class ParameterDef : IASTNode{
     }
 }
 
-// Represents an effect in the AST
+/// <summary>
+/// Represents the name of the definition and the parameters that will be copied to it
+/// </summary>
 
 public class Effect : IASTNode
 {
+    /// <summary>
+    /// This list contains the types that will stop the
+    /// synchronization of the parser when an error occurs
+    /// </summary>
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.Name, TokenType.RightBrace, TokenType.RightBracket};
     public string definition;
     public Parameters parameters;
@@ -134,7 +188,9 @@ public class Effect : IASTNode
     }
 }
 
-
+/// <summary>
+/// Represents the value of each parameter
+/// </summary>
 public class Parameters{
     public static readonly List<TokenType> synchroTypes= new List<TokenType>() {TokenType.Identifier, TokenType.RightBrace};
     public Dictionary<string, object> parameters;
@@ -143,14 +199,18 @@ public class Parameters{
     }
 }
 
-// Used ListFind object with predicate based selection Evaluate method
-
+/// <summary>
+/// Filtre that selects the target list
+/// </summary>
 public class Selector : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType> {TokenType.Source, TokenType.Single, TokenType.Predicate, TokenType.RightBrace, TokenType.LeftBracket};
     public Selector() { }
     public Token source;
     public bool? single;
+    /// <summary>
+    /// Used ListFind object with predicate based selection Evaluate method
+    /// </summary>a
     public ListFind filtre;
 
     public List<Card> Select(Player triggerplayer)
@@ -159,6 +219,10 @@ public class Selector : IASTNode
     }
 }
 
+/// <summary>
+/// Its the result of the parsing proccess, contains
+/// a list of card nodes and effect definition nodes
+/// </summary>
 public class ProgramNode : IASTNode
 {
     public static readonly List<TokenType> synchroTypes = new List<TokenType>() {TokenType.effect, TokenType.Card , TokenType.EOF};
@@ -169,7 +233,11 @@ public class ProgramNode : IASTNode
     }
 }
 
-// Represents the execution context in the AST
+/// <summary>
+/// Represents the scopes for the values of variables during
+/// execution, it has a nested structure and auxiliar methods 
+/// for finding and setting elements
+/// </summary>
 
 public class Context : IASTNode
 {

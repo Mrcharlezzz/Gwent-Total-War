@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-
+/// <summary>
+/// Receive a list of tokens from the lexer and turns them into AST nodes
+/// </summary>
 public class Parser
 {
     List<Token> tokens;
@@ -18,14 +20,24 @@ public class Parser
     //All classes in this region has similar logic to their counterparts in Lexer class
     #region Tools
 
-    //Raises an error and reports it
+    /// <summary>
+    /// Raises an error and reports it
+    /// </summary>
+    /// <param name="token">error token</param>
+    /// <param name="message">error message</param>
+    /// <param name="synchroTypes"> Token types that when encountered
+    /// will stop the synchronization proccess</param>
     public void Error(Token token, string message, List<TokenType> synchroTypes)
     {
         Synchronize(synchroTypes);
         DSL.Error(token, message);
     }
 
-    //Tries to match the current token with a list of types and advances if it matches with any of the tokens in the list
+    /// <summary>
+    /// Tries to match the current token with a list of types and advances if it matches with any of the tokens in the list
+    /// </summary>
+    /// <param name="types">list of types</param>
+    /// <returns>whether the current token matches the list or not</returns>
     bool Match(List<TokenType> types)
     {
         foreach (TokenType type in types)
@@ -39,7 +51,9 @@ public class Parser
         return false;
     }
 
-    //Tries to match the current token with the given type and advances if it matches
+    /// <summary>
+    /// Tries to match the current token with the given type and advances if it matches
+    /// </summary>
     bool Match(TokenType type)
     {
         if (Check(type))
@@ -50,15 +64,19 @@ public class Parser
         return false;
     }
 
-    //Checks if the current token matches the given type
+    /// <summary>
+    /// Checks if the current token matches the given type
+    /// </summary>
     bool Check(TokenType type)
     {
         if (IsAtEnd()) return false;
         return Peek().type == type;
     }
 
-    //TChecks if the current token matches an element from a list of types 
-
+    /// <summary>
+    /// Checks if the current token matches an element from a list of types 
+    /// </summary>
+  
     bool Check(List<TokenType> types)
     {
         foreach (TokenType type in types)
@@ -68,39 +86,51 @@ public class Parser
         return false;
     }
 
-    //Advances to the next token
+    /// <summary>
+    /// Advances to the next token
+    /// </summary>
     Token Advance()
     {
         if (!IsAtEnd()) current++;
         return Previous();
     }
 
-    //Check if parser has reached the end of the token list
+    /// <summary>
+    /// Check if parser has reached the end of the token list
+    /// </summary>
     bool IsAtEnd()
     {
         return Peek().type == TokenType.EOF;
     }
 
-    //Returns the current token
+    /// <summary>
+    /// Returns the current token
+    /// </summary>
     Token Peek()
     {
         return tokens[current];
     }
 
-    //Returns the next token
+    /// <summary>
+    /// Returns the next token
+    /// </summary>
     Token PeekNext()
     {
         if (IsAtEnd()) return tokens[current];
         else return tokens[current + 1];
     }
 
-    //Returns the previous token
+    /// <summary>
+    /// Returns the previous token
+    /// </summary>
     Token Previous()
     {
         return tokens[current - 1];
     }
 
-    //Consumes the current token if it matches the given type, otherwise thwros an error
+    /// <summary>
+    /// Consumes the current token if it matches the given type, otherwise thwros an error
+    /// </summary>
     Token Consume(TokenType type, string message, List<TokenType> synchroTypes)
     {
         if (Check(type)) return Advance();
@@ -108,8 +138,10 @@ public class Parser
         return null;
     }
 
-    //Sinchronizes the parser state after an error based on a given list
-    //of tokens that determine where to stop synchronization
+    /// <summary>
+    /// Sinchronizes the parser state after an error based on a given list
+    /// of tokens that determine where to stop synchronization
+    /// </summary>
     void Synchronize(List<TokenType> synchroTypes)
     {
         if (synchroTypes == null) return;
@@ -564,7 +596,9 @@ public class Parser
         return null;
     }
 
-    //Parses a block of statements
+    /// <summary>
+    /// Parses a block of statements
+    /// </summary>
     public List<IStatement> ParseBlock(List<TokenType> synchroTypes)
     {
         List<IStatement> statements = new List<IStatement>();

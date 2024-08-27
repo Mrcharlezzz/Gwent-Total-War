@@ -231,7 +231,7 @@ public class GameMaster : MonoBehaviour
         currentplayer=notcurrentplayer;
         notcurrentplayer=aux;
     }
-
+    
     public void ModifyZones(){
         foreach (Transform zone in player1.field.unitRows.transform){
             zone.gameObject.GetComponent<FieldDropZone>().Modify();
@@ -240,7 +240,7 @@ public class GameMaster : MonoBehaviour
             zone.gameObject.GetComponent<FieldDropZone>().Modify();
         }
     }
-
+    
     public void SetDecks(){
         List<string> debug=Database.deck1.Concat(Database.deck2).Select(t => t.name).ToList();
         

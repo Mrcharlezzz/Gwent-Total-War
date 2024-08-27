@@ -12,14 +12,18 @@ public class DSLManager : MonoBehaviour
     void Start(){
         DSL.outputField= outputField;
     }
-    
+
+    /// <summary>
+    /// Trims the editor input string and run the compiler
+    /// </summary>
     public void CreateCard(){
         string aux=source.text.Substring(0,source.text.Length-1);
         DSL.Compile(aux.Trim());
-        Debug.Log("Source: " + aux);
-        Debug.Log("last " + aux[aux.Length-1]);
     }
 
+    /// <summary>
+    /// Changes destiny deck
+    /// </summary>
     public void DeckSwitch(){
         DSL.DeckSwitch();
         switch (DSL.destinyDeck) {

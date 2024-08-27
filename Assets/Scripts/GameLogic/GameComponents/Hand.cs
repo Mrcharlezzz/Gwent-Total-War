@@ -12,6 +12,10 @@ public class Hand : GameComponent
 
     public override void Push(Card card)
     {
+        if(cards.Count >=10){
+            GlobalContext.Graveyard(owner).Push(card);
+            return;
+        }
         cards.Add(card);
         GameObject body = GameTools.CreateCardInObject(card, gameObject, owner);
         bodies[card] = body;
@@ -36,6 +40,10 @@ public class Hand : GameComponent
 
     public override void SendBottom(Card card)
     {
+        if(cards.Count >=10){
+            GlobalContext.Graveyard(owner).Push(card);
+            return;
+        }
         cards.Insert(0, card);
         GameObject body = GameTools.CreateCardInObject(card, gameObject, owner);
         bodies[card] = body;

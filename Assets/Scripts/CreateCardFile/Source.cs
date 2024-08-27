@@ -1,3 +1,7 @@
+
+/// <summary>
+/// <c>Source code for card editor</c>
+/// </summary>
 public static class CompilationSource{
     public static string Source = @"effect{
         Name:""Draw"",   // Draws a card from the Deck
@@ -114,6 +118,18 @@ public static class CompilationSource{
                     }
                 }
             },
+            {
+                Effect: ""Draw"",
+            }
+        ]
+    }
+
+    card{  
+        Name: ""TestCard5"", 
+        Faction:""Newbies"",
+        Range: [],
+        Type: ""Líder"",
+        OnActivation: [
             {
                 Effect: ""Draw"",
             }

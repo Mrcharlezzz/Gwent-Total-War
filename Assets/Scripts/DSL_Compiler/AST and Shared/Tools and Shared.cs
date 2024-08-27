@@ -8,7 +8,11 @@ using System.Linq;
 
 public static class Tools
 {
-    // Determines the type of a value
+    /// <summary>
+    /// Determines the type of a value
+    /// </summary>
+    /// <param name="value"> value to be clasified</param>
+    /// <returns> Expression type</returns>
     public static ExpressionType GetValueType(object value)
     {
         if (value is int) return ExpressionType.Number;

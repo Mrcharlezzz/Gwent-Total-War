@@ -11,9 +11,9 @@ public interface IStatement : IASTNode
     public void Execute(Context context, List<Card> targets);
 }
 
-// Abstract class for blocks of statements
-
-
+/// <summary>
+/// Represents a group of statements
+/// </summary>
 public abstract class Block : IStatement
 {
     public readonly static List<TokenType> synchroTypes = new List<TokenType>() { TokenType.For, TokenType.While, TokenType.RightBrace };
@@ -28,8 +28,10 @@ public abstract class Block : IStatement
     public abstract void Execute(Context context, List<Card> targets);
 }
 
-// Action block
 
+/// <summary>
+/// It contains the behaviour of the effect coded by the user
+/// </summary>
 public class Action : Block
 {
     public Action(List<IStatement> statements, Token contextID, Token targetsID, Token keyword) : base(statements, keyword)
@@ -53,7 +55,9 @@ public class Action : Block
     }
 }
 
-// Assignment statement
+/// <summary>
+/// Represent variable or property value assignations
+/// </summary>
 
 public class Assignation : IStatement
 {
@@ -76,7 +80,9 @@ public class Assignation : IStatement
     }
 }
 
-// Increment and decrement operations
+/// <summary>
+/// Increment and decrement operations
+/// </summary>
 
 public class Increment_Decrement : Assignation, IExpression
 {
@@ -99,7 +105,9 @@ public class Increment_Decrement : Assignation, IExpression
     }
 }
 
-// Numeric modification operations (e.g., +=, -=, etc.)
+/// <summary>
+/// Numeric modification operations (e.g., +=, -=, etc.)
+/// </summary>
 
 public class NumericModification : Assignation
 {
@@ -121,7 +129,9 @@ public class NumericModification : Assignation
     }
 }
 
-// Foreach loop statement
+/// <summary>
+/// Foreach loop statement
+/// </summary>
 
 public class Foreach : Block
 {
@@ -151,7 +161,9 @@ public class Foreach : Block
     }
 }
 
-// While loop statement
+/// <summary>
+/// While loop statement
+/// </summary>
 
 public class While : Block
 {
@@ -181,7 +193,9 @@ public class While : Block
     }
 }
 
-// Abstract class for list methods
+/// <summary>
+/// Abstract class for list methods
+/// </summary>
 
 public abstract class Method : IStatement
 {
@@ -196,7 +210,9 @@ public abstract class Method : IStatement
     public abstract void Execute(Context context, List<Card> targets);
 }
 
-// Pop operation on lists
+/// <summary>
+/// Pop operation on lists
+/// </summary>
 
 public class Pop : Method, ICardAtom
 {
@@ -229,7 +245,9 @@ public class Pop : Method, ICardAtom
     public void Set(Context context, List<Card> targets, Card card) { }
 }
 
-// Shuffle method (shuffles the list of cards)
+/// <summary>
+/// Shuffle method (shuffles the list of cards)
+/// </summary>
 
 public class Shuffle : Method
 {
@@ -263,7 +281,9 @@ public abstract class ArgumentMethod : Method
     public IExpression card;
 }
 
-// Push method (adds card to list)
+/// <summary>
+/// Push method (adds card to list)
+/// </summary>
 
 public class Push : ArgumentMethod
 {
@@ -280,7 +300,9 @@ public class Push : ArgumentMethod
     }
 }
 
-// SendBottom method (adds card to the bottom of the list)
+/// <summary>
+/// SendBottom method (adds card to the bottom of the list)
+/// </summary>
 
 public class SendBottom : ArgumentMethod
 {
@@ -298,7 +320,9 @@ public class SendBottom : ArgumentMethod
     }
 }
 
-// Remove method (removes card from list)
+/// <summary>
+/// Remove method (removes card from list)
+/// </summary>
 
 public class Remove : ArgumentMethod
 {

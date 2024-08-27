@@ -71,7 +71,13 @@ public class SemanticCheck
         }
     }
 
-    // Checks binary operators, ensuring both operands match the expected types
+    /// <summary>
+    /// Checks binary operators, ensuring both operands match the expected types
+    /// </summary>
+    /// <param name="binaryOp">Node to be checked</param>
+    /// <param name="operandtypes"> expected operand types</param>
+    /// <param name="operatortype"> resulting type after evaluation</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckBinaryOperator(BinaryOperator binaryOp, ExpressionType operandtypes, ExpressionType operatortype, Scope scope)
     {
         CheckExpression(binaryOp.left, scope);
@@ -83,7 +89,11 @@ public class SemanticCheck
         expressiontypes[binaryOp] = operatortype;
     }
 
-
+    /// <summary>
+    /// Checks equality operations
+    /// </summary>
+    /// <param name="binaryOp">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckEqualityOperator(BinaryOperator binaryOp, Scope scope)
     {
         List<ExpressionType> types = new List<ExpressionType>() { ExpressionType.Number, ExpressionType.String, ExpressionType.Bool, ExpressionType.Player};
@@ -98,7 +108,11 @@ public class SemanticCheck
         expressiontypes[binaryOp] = ExpressionType.Bool;
     }
 
-    // Checks lists, handling specific cases like IndividualList and ListFind
+    /// <summary>
+    /// Checks lists, handling specific cases like IndividualList and ListFind
+    /// </summary>
+    /// <param name="list">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckList(List list, Scope scope)
     {
         expressiontypes[list] = ExpressionType.List;
@@ -132,7 +146,12 @@ public class SemanticCheck
 
     }
 
-    // Checks unary operations, ensuring the right operand matches the expected type
+    /// <summary>
+    /// Checks unary operations, ensuring the right operand matches the expected type
+    /// </summary>
+    /// <param name="unary">node to be checked</param>
+    /// <param name="type">expected operand type</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckUnary(Unary unary, ExpressionType type, Scope scope)
     {
         CheckExpression(unary.right, scope);
@@ -141,19 +160,30 @@ public class SemanticCheck
         expressiontypes[unary] = type;
     }
 
-    // Checks literals, setting their type based on the value
+    /// <summary>
+    /// Checks literals, setting their type based on the value
+    /// </summary>
+    /// <param name="literal">node to be checked</param>
     public void CheckLiteral(Literal literal)
     {
         expressiontypes[literal] = Tools.GetValueType(literal.value);
     }
 
-    // Checks variables against the scope
+    /// <summary>
+    /// Checks variables from the scope
+    /// </summary>
+    /// <param name="variable">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckVariable(Variable variable, Scope scope)
     {
         expressiontypes[variable] = scope.Get(variable.name);
     }
 
-    // Checks card atoms, handling special cases like IndexedCard and Pop
+    /// <summary>
+    /// Checks card atoms, handling special cases like IndexedCard and Pop
+    /// </summary>
+    /// <param name="card">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckCardAtom(ICardAtom card, Scope scope)
     {
         expressiontypes[card] = ExpressionType.Card;
@@ -176,7 +206,11 @@ public class SemanticCheck
         }
     }
 
-    // Checks property accesses, ensuring the accessed card is of the correct type
+    /// <summary>
+    /// Checks property accesses, ensuring the accessed card is of the correct type
+    /// </summary>
+    /// <param name="access">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckPropertyAccess(PropertyAccess access, Scope scope)
     {
         CheckExpression(access.card, scope);
@@ -195,7 +229,11 @@ public class SemanticCheck
         expressiontypes[access] = type;
     }
 
-    // Checks indexed ranges, ensuring the range and index are of the correct types
+    /// <summary>
+    /// Checks indexed ranges, ensuring the range and index are of the correct types
+    /// </summary>
+    /// <param name="indexedRange">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckIndexedRange(IndexedRange indexedRange, Scope scope)
     {
         CheckExpression(indexedRange.range, scope);
@@ -207,12 +245,20 @@ public class SemanticCheck
         expressiontypes[indexedRange] = ExpressionType.String;
     }
 
-    // Checks triggerplayernodes, setting their type to Player
+    /// <summary>
+    /// Checks triggerplayernodes, setting their type to Player
+    /// </summary>
+    /// <param name="player">node to be checked</param>
     public void CheckTriggerPlayer(TriggerPlayer player)
     {
         expressiontypes[player] = ExpressionType.Player;
     }
 
+    /// <summary>
+    /// Checks the operand for an increment or decrement is of the right type
+    /// </summary>
+    /// <param name="incdec">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckIncrement_Decrement(Increment_Decrement incdec, Scope scope)
     {
         expressiontypes[incdec] = ExpressionType.Number;
@@ -225,7 +271,11 @@ public class SemanticCheck
     // Region containing methods for checking statements
     #region Statement Check
 
-    // Checks statements, handling different types of statements like Assignation, Method and Loops
+    /// <summary>
+    /// Checks statements, handling different types of statements like Assignation, Method and Loops
+    /// </summary>
+    /// <param name="statement">node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckStatement(IStatement statement, Scope scope)
     {
         switch (statement)
@@ -237,7 +287,11 @@ public class SemanticCheck
         }
     }
 
-    // Checks assignations, ensuring the left and right sides match in type and support the operation
+    /// <summary>
+    /// Checks assignations, ensuring the left and right sides match in type and support the operation
+    /// </summary>
+    /// <param name="assignation"> node to be checked</param>
+    /// <param name="scope">scope that contains stored types of expressions</param>
     public void CheckAssignation(Assignation assignation, Scope scope)
     {
         CheckExpression(assignation.operand, scope);
@@ -251,7 +305,9 @@ public class SemanticCheck
         }
     }
 
-    // Checks card assignations, ensuring the operation is valid and the value is a card
+    /// <summary>
+    /// Checks card assignations, ensuring the operation is valid and the value is a card
+    /// </summary>
     public void CheckCardAssignation(Assignation assignation, Scope scope)
     {
         if (assignation.operation.type != TokenType.Equal)
@@ -260,7 +316,9 @@ public class SemanticCheck
             SemanticError(assignation.operation, "Invalid assignation, assignation value must be card");
     }
 
-    // Checks property assignations, ensuring the operation is valid and the value matches the property type
+    /// <summary>
+    /// Checks property assignations, ensuring the operation is valid and the value matches the property type
+    /// </summary>
     public void CheckPropertyAssignation(Assignation assignation, Scope scope)
     {
         switch (assignation.operand)
@@ -289,7 +347,9 @@ public class SemanticCheck
         }
     }
 
-    // Checks variable assignations, ensuring the types match and handling declarations
+    /// <summary>
+    /// Checks variable assignations, ensuring the types match and handling declarations
+    /// </summary>
     public void CheckVariableAssignation(Assignation assignation, Scope scope)
     {
         if (expressiontypes[assignation.operand] == ExpressionType.Null)
@@ -331,7 +391,9 @@ public class SemanticCheck
         }
     }
 
-    // Checks method lists and arguments and ensures they have the correct type
+    /// <summary>
+    /// Checks method lists and arguments and ensures they have the correct type
+    /// </summary>
     public void CheckMethod(Method method, Scope scope)
     {
         CheckExpression(method.list, scope);
@@ -344,7 +406,9 @@ public class SemanticCheck
                 SemanticError(method.accessToken, "Invalid method argument, expected card argument");
         }
     }
-
+    /// <summary>
+    /// Checks that the loop variable isnt used, and ensures the collection is a valid collection
+    /// </summary>
     public void CheckForEach(Foreach loop, Scope scope)
     {
         if (scope.types.ContainsKey(loop.variable.lexeme))
@@ -361,6 +425,10 @@ public class SemanticCheck
             else CheckStatement(statement, scope);
         }
     }
+
+    /// <summary>
+    /// Ensures the predicate is boolean
+    /// </summary>
     public void CheckWhile(While loop, Scope scope)
     {
         CheckExpression(loop.predicate, scope);
@@ -377,6 +445,9 @@ public class SemanticCheck
 
     #region Compound Nodes Check
 
+    /// <summary>
+    /// sets the action and scope tokens and checks all statements in it
+    /// </summary>
     public void CheckAction(Action action, Scope scope)
     {
         scope.Set(action.contextID, ExpressionType.Context);
@@ -388,6 +459,9 @@ public class SemanticCheck
         }
     }
 
+    /// <summary>
+    /// Set all parameters in the scope and check the action
+    /// </summary>
     public void CheckEffectDefinition(EffectDefinition definition)
     {
         Scope scope = new Scope(null);
@@ -401,6 +475,9 @@ public class SemanticCheck
         CheckAction(definition.action, scope);
     }
 
+    /// <summary>
+    /// Checks if the fields of the created cards are aligned with the card type
+    /// </summary>
     public void CheckCardNode(CardNode card, Dictionary<string, EffectDefinition> effects)
     {
         switch (card.type)
@@ -438,6 +515,13 @@ public class SemanticCheck
 
     }
 
+    /// <summary>
+    /// Checks if the effect activation and its associated effect definition
+    /// have the same type of parameters
+    /// </summary>
+    /// <param name="activation"> node to be checked</param>
+    /// <param name="effects">list of all created effects</param>
+    /// <param name="IsRoot"> wether its a root activation or a postaction from another activation</param>
     public void CheckEffectActivation(EffectActivation activation, Dictionary<string, EffectDefinition> effects, bool IsRoot = false)
     {
         EffectDefinition acteffect = GetEffect(effects, activation.effect.definition, activation.effect.keyword);
@@ -491,7 +575,10 @@ public class SemanticCheck
             SemanticError(activation.postAction.selector.source, "Invalid source, activation parent have no selector");
         if (activation.postAction != null) CheckEffectActivation(activation.postAction, effects);
     }
-
+    /// <summary>
+    /// Checks all the nodes in the source code
+    /// </summary>
+    /// <param name="program"></param>
     public void CheckProgram(ProgramNode program)
     {
         Dictionary<string, EffectDefinition> effects = new Dictionary<string, EffectDefinition>();
@@ -509,6 +596,13 @@ public class SemanticCheck
         }
     }
 
+    /// <summary>
+    /// Gets the effect definition associated to an effect name
+    /// </summary>
+    /// <param name="effects"></param>
+    /// <param name="name"></param>
+    /// <param name="errorPointer"></param>
+    /// <returns></returns>
     public EffectDefinition GetEffect(Dictionary<string, EffectDefinition> effects, string name, Token errorPointer)
     {
         if (effects.ContainsKey(name)) return effects[name];

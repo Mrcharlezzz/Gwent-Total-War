@@ -221,7 +221,9 @@ public abstract class Atom : IExpression
     public abstract object Evaluate(Context context, List<Card> targets);
 }
 
-// Abstract class for lists of cards
+/// <summary>
+/// Represents nodes that when evaluated return lists
+/// </summary>
 public abstract class List : Atom {
     public GameComponent gameComponent;
 }
@@ -241,7 +243,9 @@ public class BoardList : List
     }
 }
 
-// Abstract class for lists specific to a player
+/// <summary>
+/// Lists that represent game components
+/// </summary>
 public abstract class IndividualList : List
 {
     //This field isn't used in the evaluation method, it is only for the semnatic check
@@ -414,13 +418,17 @@ public class Literal : Atom
     }
 }
 
-// Interface for card-related expressions
+/// <summary>
+/// Interface for card-related expressions
+/// </summary>
 public interface ICardAtom : IExpression
 {
     public void Set(Context context, List<Card> targets, Card card);
 }
 
-// Variable expressions
+/// <summary>
+/// Variable expressions
+/// </summary>
 public class Variable : Atom
 {
     public Variable(Token name)
@@ -436,7 +444,9 @@ public class Variable : Atom
     }
 }
 
-// Card variable expressions
+/// <summary>
+/// Card variable expressions
+/// </summary>
 public class CardVariable : Variable, ICardAtom
 {
     public CardVariable(Token name) : base(name) { }
@@ -447,7 +457,9 @@ public class CardVariable : Variable, ICardAtom
     }
 }
 
-// Indexed card expressions
+/// <summary>
+/// Indexed card expressions
+/// </summary>
 public class IndexedCard : ICardAtom
 {
     public IndexedCard(IExpression index, IExpression list, Token indexToken)
@@ -460,7 +472,13 @@ public class IndexedCard : ICardAtom
     public IExpression index;
     public IExpression list;
     public Token indexToken;
-
+    /// <summary>
+    /// If the list is a game component get the component card list
+    /// else get the list evaluation
+    /// </summary>
+    /// <param name="context"> scope with stored variable values</param>
+    /// <param name="targets"> selected list</param>
+    /// <returns></returns>
     public object Evaluate(Context context, List<Card> targets)
     {
         var evaluation = list.Evaluate(context, targets);
@@ -480,7 +498,9 @@ public class IndexedCard : ICardAtom
 }
 
 
-// Abstract class for property access expressions
+/// <summary>
+/// Represent the properties of a card
+/// </summary>
 public abstract class PropertyAccess : Atom
 {
     public PropertyAccess(IExpression card, Token accessToken)
@@ -614,7 +634,9 @@ public class IndexedRange: IExpression{
     }
 }
 
-// Access trigger player
+/// <summary>
+/// Access trigger player
+/// </summary>
 public class TriggerPlayer : Atom
 {
     public override object Evaluate(Context context, List<Card> targets)
