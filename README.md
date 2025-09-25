@@ -25,11 +25,10 @@ GWENT-TOTAL-WAR combines elements of strategy, resource management, and card pla
 
 ### Creating Custom Cards
 - Users can compile any card they wish to create by following the specifications outlined in the compiler files.
-- Detailed instructions on how to use the compiler and examples of card definitions will be provided in "create your own cards" file.
+- Detailed instructions on how to use the compiler and examples of card definitions are provided in the [card creation guide](card_creation_guide.pdf).
 
 ## License
 This project is licensed under the GNU General Public License. See the LICENSE file for more information.
 
 ## Contact Information
-For questions, feedback, or support, please reach out to Carlos Alfonso at carlosmanuelAB48@gmail.com 
-
+For questions, feedback, or support, please reach out to Carlos Alfonso at carlosmanuelAB48@gmail.com
