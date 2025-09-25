@@ -1,22 +1,5 @@
 # GWENT-TOTAL-WAR
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Game Overview](#game-overview)
-3. [Gameplay Mechanics](#gameplay-mechanics)
-   - [Turn Logic](#turn-logic)
-   - [Winning Conditions](#winning-conditions)
-4. [Card Compiler Feature](#card-compiler-feature)
-   - [Gwent Language](#gwent-language)
-   - [Creating Custom Cards](#creating-custom-cards)
-5. [Installation Instructions](#installation-instructions)
-6. [How to Play](#how-to-play)
-7. [Contributing](#contributing)
-8. [License](#license)
-9. [Contact Information](#contact-information)
-
----
-
 ## Introduction
 GWENT-TOTAL-WAR is a strategic card game developed in Unity, inspired by the popular Gwent card game from The Witcher series. This game features a unique blend of personalized rules and a thematic backdrop of Rome vs Greece, allowing players to engage in tactical battles using custom-built decks.
 
@@ -49,3 +32,4 @@ This project is licensed under the GNU General Public License. See the LICENSE f
 
 ## Contact Information
 For questions, feedback, or support, please reach out to Carlos Alfonso at carlosmanuelAB48@gmail.com 
+
