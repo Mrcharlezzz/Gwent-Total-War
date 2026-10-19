@@ -20,7 +20,7 @@ GWENT-TOTAL-WAR combines elements of strategy, resource management, and card pla
 ## Card Compiler Feature
 
 ### Gwent Language
-- GWENT-TOTAL-WAR includes a powerful card compiler that allows users to create custom cards using the Gwent Language.
+- GWENT-TOTAL-WAR includes a powerful [card compiler](Assets/Scripts/DSL_Compiler) that allows users to create custom cards using the Gwent Language.
 - This language is designed to be intuitive and flexible, enabling players to define unique abilities and effects for their cards.
 
 ### Creating Custom Cards
